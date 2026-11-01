@@ -1,0 +1,48 @@
+S0|-|9|451|2|1|1|1|1|1.1|1|25|baseline|day|0|0
+S1|S0|2|22|2|1|0.75|1|1|1.1|1|25|what if less early peas?|day|0|0
+S3|S1|1|-85|2|1|0.75|1|1|1.1|2|32.5|what if shooters further forward + more patience saving sun?|day|0|0
+S4|S1|1|-105|1.5|1|0.75|1|1|0.846153846153846|1|25|what if earlier cherry bombs + shooters further back + less sunflowers?|day|0|0
+S5|S0|1|-80|2|1|1|1|1.3|1.1|1|25|what if shooters further back + more potato mines?|day|0|0
+S6|S0|1|-102.5|2|1|0.75|1|1|1.1|1|25|what if less early peas?|day|0|0
+S7|S0|2|188|2|1|0.75|1|1|1.1|1|25|what if less early peas?|day|0|0
+S8|S7|1|-90|2|1|0.75|1|1|1.1|1|25|first time in night: try my day champion here|night|0|0
+S9|S8|1|-100|2.5|1|0.75|1|1|1.1|1|25|what if more sunflowers?|night|0|0
+S10|S8|6|-382.5|2|1|0.75|1|1|1.1|1|25|what if sun makers at column 0 + spread sun makers across lanes?|night|0|1
+S11|S10|1|-90|2|1|0.75|0.75|0.75|1.1|1|25|what if less potato mines + less wall-nuts?|night|0|1
+S12|S10|7|-295|2|1|0.75|0.75|1|1.1|1|25|what if less wall-nuts?|night|0|1
+S13|S10|1|-97.5|2|0.75|0.975|1|1|1.1|1|25|what if less greed + more early peas + shooters further back?|night|0|1
+S14|S10|1|-105|2|1|0.5625|1|1|1.1|1|32.5|what if less early peas + more patience saving sun?|night|0|1
+S15|S10|1|-100|2.5|1|0.75|1|1|1.46666666666667|1|25|what if more sunflowers + later cherry bombs?|night|0|1
+S16|S10|1|-110|2.5|1|0.75|1|1|1.1|1|25|what if more sunflowers?|night|0|1
+S17|S10|1|-90|2|1|0.75|1|1|1.1|1|32.5|what if pack sun makers in safe lanes + shooters further back + more patience saving sun?|night|0|0
+S18|S10|18|-705|2|1|0.75|1|1.3|1.1|1|25|what if pack sun makers in safe lanes + more potato mines?|night|0|0
+S19|S18|63|-2120|2|1|0.75|1|1.3|1.1|1|18.75|what if spend sun faster?|night|0|0
+S20|S19|2|-100|1.5|1|0.75|1|1.3|1.1|1|18.75|what if less sunflowers?|night|0|0
+S21|S19|9|-360|2|1|0.75|1|1.3|1.1|1|24.375|what if sun makers at column 0 + more patience saving sun?|night|0|0
+S22|S19|5|-225|2|1.3|0.75|1|1.3|1.1|1|14.0625|what if spend sun faster + spread sun makers across lanes + more greed?|night|0|1
+S23|S19|3|-180|2|1|0.75|1|1.3|1.1|1|14.0625|what if spend sun faster?|night|0|0
+S24|S19|3|-190|2|1|0.975|1|1.3|0.846153846153846|1|18.75|what if more early peas + spread sun makers across lanes + earlier cherry bombs?|night|0|1
+S25|S19|3|-185|2|1|0.75|0.75|1.3|1.1|1|18.75|what if less wall-nuts + sun makers at column 1?|night|1|0
+S26|S19|1|-90|2|1|0.75|1|1.3|0.846153846153846|1|18.75|what if earlier cherry bombs?|night|0|0
+S27|S19|3|-185|1.5|0.75|0.75|1|1.3|1.1|1|18.75|what if less sunflowers + shooters further back + less greed?|night|0|0
+S28|S19|1|-65|2|0.75|0.75|1|1.3|1.1|2|14.0625|what if less greed + shooters further forward + spend sun faster?|night|0|0
+S29|S19|2|-95|2.5|1|0.75|1|0.975|1.1|1|18.75|what if more sunflowers + less potato mines?|night|0|0
+S30|S19|1|-80|2|1|0.75|1.3|1.3|1.1|1|18.75|what if more wall-nuts?|night|0|0
+S31|S19|3|-210|1.5|0.75|0.75|1|1.3|1.1|1|18.75|what if spread sun makers across lanes + less sunflowers + less greed?|night|0|1
+S32|S19|4|-180|1.5|1|0.75|1|1.3|1.1|1|18.75|what if less sunflowers?|night|0|0
+S33|S19|11|-470|2|0.75|0.75|1|0.975|1.1|1|18.75|what if sun makers at column 1 + less greed + less potato mines?|night|1|0
+S34|S19|3|-180|2|1|0.75|1|1.69|0.846153846153846|1|18.75|what if more potato mines + earlier cherry bombs?|night|0|0
+S35|S19|3|-135|2|1|0.5625|1|1.3|0.846153846153846|1|24.375|what if earlier cherry bombs + less early peas + more patience saving sun?|night|0|0
+S36|S19|3|-180|2|0.75|0.75|1.3|1.3|1.1|1|18.75|what if less greed + more wall-nuts?|night|0|0
+S37|S19|3|-130|2|1|0.75|1|0.975|1.46666666666667|1|18.75|what if less potato mines + later cherry bombs + spread sun makers across lanes?|night|0|1
+S38|S19|3|-200|2|1|0.75|1|1.3|1.1|1|18.75|what if spread sun makers across lanes?|night|0|1
+S39|S19|3|-245|2|1.3|0.75|1|1.3|1.1|1|18.75|what if more greed?|night|0|0
+S40|S19|2|-140|2|1|0.5625|1|1.3|1.1|1|18.75|what if less early peas?|night|0|0
+S41|S19|3|-135|2|1|0.975|1|1.3|1.46666666666667|1|18.75|what if sun makers at column 1 + more early peas + later cherry bombs?|night|1|0
+S42|S19|3|-190|2|1|0.75|1|1.3|1.1|1|18.75|what if sun makers at column 0?|night|0|0
+S43|S33|3|-175|2.5|0.75|0.75|1|1.2675|1.1|1|18.75|what if more sunflowers + more potato mines + sun makers at column 2?|night|2|0
+S44|S7|6|-80|2|1|0.75|1|1|1.1|1|25|first time in pool: try my day champion here|pool|0|0
+S45|S44|5|-30|2|1.3|0.75|1|1|1.1|1|25|what if more greed?|pool|0|0
+S46|S45|7|-40|2|1.3|0.75|1|1.3|1.1|1|25|what if more potato mines?|pool|0|0
+S47|S46|3|-135|2|1.3|0.75|0.75|1.3|1.1|1|25|what if less wall-nuts?|pool|0|0
+S48|S46|1|-45|2|1.3|0.75|1|1.3|0.846153846153846|2|25|what if earlier cherry bombs + shooters further forward?|pool|0|0

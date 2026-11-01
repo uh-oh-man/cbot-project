@@ -1,0 +1,220 @@
+2026-10-31 00:22:07 PUFF was learned as MELEE but its description says SHOOT (only 4 observations)
+2026-10-31 00:29:49 SNOW was learned as MELEE but its description says SHOOT (only 5 observations)
+2026-10-31 00:38:41 PUFF was learned as MELEE but its description says SHOOT (only 0 observations)
+2026-10-31 00:42:25 SNOW was learned as MELEE but its description says SHOOT (only 0 observations)
+2026-10-31 01:19:48 FUME was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 01:30:40 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 02:09:54 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 02:40:20 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 02:51:20 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 03:07:04 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 03:23:01 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 04:13:44 PUFF was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 04:39:40 SCAREDY was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 05:30:40 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 05:30:40 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 05:33:25 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 06:06:27 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 06:06:27 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 06:10:12 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 06:48:21 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 06:48:21 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 06:50:40 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 06:59:10 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 06:59:10 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 07:00:39 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 07:17:21 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 07:17:21 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 07:20:05 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 07:28:18 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 07:28:18 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 07:32:05 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 08:32:45 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 08:32:45 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 08:33:10 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 08:33:10 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 08:34:35 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 09:35:37 FOOT+helm walking speed (px/s) = 82.64 is outside the plausible range 2 to 80
+2026-10-31 09:49:44 PEA measured range 297px but its description does not say short range
+2026-10-31 09:49:44 rangedesc:0 back in range, trusted again
+2026-10-31 09:51:15 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 09:51:15 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 09:51:15 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 09:57:41 PEA measured range 294px but its description does not say short range
+2026-10-31 09:57:45 rangedesc:0 back in range, trusted again
+2026-10-31 09:58:48 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 09:58:48 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 09:58:48 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 09:59:56 PEA measured range 375px but its description does not say short range
+2026-10-31 10:00:06 rangedesc:0 back in range, trusted again
+2026-10-31 10:03:19 PEA measured range 353px but its description does not say short range
+2026-10-31 10:03:48 rangedesc:0 back in range, trusted again
+2026-10-31 10:05:26 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:05:26 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:05:26 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:07:20 PEA measured range 365px but its description does not say short range
+2026-10-31 10:07:25 rangedesc:0 back in range, trusted again
+2026-10-31 10:08:23 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:08:23 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:08:23 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:10:08 PEA measured range 351px but its description does not say short range
+2026-10-31 10:10:16 rangedesc:0 back in range, trusted again
+2026-10-31 10:11:28 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:11:28 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:11:28 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:20:23 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:20:23 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:20:23 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:21:42 PEA measured range 361px but its description does not say short range
+2026-10-31 10:22:09 rangedesc:0 back in range, trusted again
+2026-10-31 10:23:25 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:23:25 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:23:25 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:26:27 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:26:27 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:26:27 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:27:49 PEA measured range 366px but its description does not say short range
+2026-10-31 10:27:53 rangedesc:0 back in range, trusted again
+2026-10-31 10:30:50 REPEAT measured range 397px but its description does not say short range
+2026-10-31 10:31:03 rangedesc:7 back in range, trusted again
+2026-10-31 10:32:38 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:32:38 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:32:38 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:35:46 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:35:46 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:35:46 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 10:39:38 PEA measured range 349px but its description does not say short range
+2026-10-31 10:39:43 rangedesc:0 back in range, trusted again
+2026-10-31 10:57:07 PEA measured range 389px but its description does not say short range
+2026-10-31 10:57:57 rangedesc:0 back in range, trusted again
+2026-10-31 10:59:20 PEA measured range 381px but its description does not say short range
+2026-10-31 10:59:24 rangedesc:0 back in range, trusted again
+2026-10-31 10:59:24 PEA measured range 397px but its description does not say short range
+2026-10-31 10:59:25 rangedesc:0 back in range, trusted again
+2026-10-31 11:09:02 PEA measured range 398px but its description does not say short range
+2026-10-31 11:10:57 rangedesc:0 back in range, trusted again
+2026-10-31 11:24:08 PEA measured range 397px but its description does not say short range
+2026-10-31 11:24:09 rangedesc:0 back in range, trusted again
+2026-10-31 11:24:10 PEA measured range 395px but its description does not say short range
+2026-10-31 11:24:10 rangedesc:0 back in range, trusted again
+2026-10-31 11:32:11 PEA measured range 391px but its description does not say short range
+2026-10-31 11:32:21 rangedesc:0 back in range, trusted again
+2026-10-31 11:34:02 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 11:38:40 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 11:41:45 PEA measured range 362px but its description does not say short range
+2026-10-31 11:41:51 rangedesc:0 back in range, trusted again
+2026-10-31 11:46:34 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 11:58:20 SNOW measured range 206px but its description does not say short range
+2026-10-31 11:58:31 rangedesc:5 back in range, trusted again
+2026-10-31 12:00:36 PEA measured range 396px but its description does not say short range
+2026-10-31 12:00:42 rangedesc:0 back in range, trusted again
+2026-10-31 12:58:22 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 12:58:36 PEA measured range 390px but its description does not say short range
+2026-10-31 12:58:44 rangedesc:0 back in range, trusted again
+2026-10-31 13:10:25 REPEAT measured range 196px but its description does not say short range
+2026-10-31 13:10:26 rangedesc:7 back in range, trusted again
+2026-10-31 13:28:26 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 13:28:40 PEA measured range 397px but its description does not say short range
+2026-10-31 13:28:44 rangedesc:0 back in range, trusted again
+2026-10-31 13:30:47 PEA measured range 397px but its description does not say short range
+2026-10-31 13:34:11 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 13:39:15 PEA measured range 399px but its description does not say short range
+2026-10-31 13:39:21 rangedesc:0 back in range, trusted again
+2026-10-31 13:39:23 PEA measured range 399px but its description does not say short range
+2026-10-31 13:39:27 rangedesc:0 back in range, trusted again
+2026-10-31 13:41:29 PEA measured range 385px but its description does not say short range
+2026-10-31 13:42:16 rangedesc:0 back in range, trusted again
+2026-10-31 13:44:16 PEA measured range 333px but its description does not say short range
+2026-10-31 13:44:18 rangedesc:0 back in range, trusted again
+2026-10-31 13:46:01 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 13:58:41 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 14:06:29 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 14:10:54 SPIKE was learned as INSTANT but its description says SHOOT (only 4 observations)
+2026-10-31 14:18:50 LILY was learned as WALL but its description says PAD (only 4 observations)
+2026-10-31 14:21:31 SPIKE was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 14:24:12 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:24:12 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:24:12 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:32:47 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:32:47 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:32:47 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:34:54 PUFF was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:34:54 FUME was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:34:54 SCAREDY was learned as WALL but its description says SHOOT (only 0 observations)
+2026-10-31 14:42:40 PEA measured range 398px but its description does not say short range
+2026-10-31 14:43:38 rangedesc:0 back in range, trusted again
+2026-10-31 14:46:20 SNOW measured range 359px but its description does not say short range
+2026-10-31 14:46:22 rangedesc:5 back in range, trusted again
+2026-10-31 14:51:14 PEA measured range 349px but its description does not say short range
+2026-10-31 14:51:35 SNOW measured range 328px but its description does not say short range
+2026-10-31 14:52:47 rangedesc:0 back in range, trusted again
+2026-10-31 14:52:50 rangedesc:5 back in range, trusted again
+2026-10-31 14:53:37 PEA measured range 385px but its description does not say short range
+2026-10-31 14:54:04 rangedesc:0 back in range, trusted again
+2026-10-31 14:55:05 PEA measured range 344px but its description does not say short range
+2026-10-31 14:55:58 SNOW measured range 367px but its description does not say short range
+2026-10-31 14:59:57 PEA measured range 379px but its description does not say short range
+2026-10-31 15:07:57 rangedesc:0 back in range, trusted again
+2026-10-31 15:07:59 PEA measured range 394px but its description does not say short range
+2026-10-31 15:16:19 PEA measured range 400px but its description does not say short range
+2026-10-31 15:18:28 PEA measured range 391px but its description does not say short range
+2026-10-31 15:22:13 SNOW measured range 373px but its description does not say short range
+2026-10-31 15:22:49 PEA measured range 379px but its description does not say short range
+2026-10-31 15:27:02 rangedesc:5 back in range, trusted again
+2026-10-31 15:27:58 rangedesc:0 back in range, trusted again
+2026-10-31 15:27:59 PEA measured range 392px but its description does not say short range
+2026-10-31 15:31:18 PEA measured range 359px but its description does not say short range
+2026-10-31 15:31:26 rangedesc:0 back in range, trusted again
+2026-10-31 15:32:38 PEA measured range 379px but its description does not say short range
+2026-10-31 15:34:36 rangedesc:0 back in range, trusted again
+2026-10-31 15:34:39 PEA measured range 393px but its description does not say short range
+2026-10-31 15:36:26 rangedesc:0 back in range, trusted again
+2026-10-31 15:40:09 PEA measured range 366px but its description does not say short range
+2026-10-31 15:42:27 SNOW measured range 356px but its description does not say short range
+2026-10-31 15:45:44 PEA measured range 381px but its description does not say short range
+2026-10-31 15:46:36 rangedesc:0 back in range, trusted again
+2026-10-31 15:55:11 PEA measured range 394px but its description does not say short range
+2026-10-31 15:55:40 rangedesc:0 back in range, trusted again
+2026-10-31 15:57:14 PEA measured range 394px but its description does not say short range
+2026-10-31 15:57:31 rangedesc:0 back in range, trusted again
+2026-10-31 15:59:07 PEA measured range 394px but its description does not say short range
+2026-10-31 16:01:04 rangedesc:0 back in range, trusted again
+2026-10-31 16:01:09 PEA measured range 387px but its description does not say short range
+2026-10-31 16:03:32 PEA measured range 358px but its description does not say short range
+2026-10-31 18:23:22 SNOW was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 18:29:37 SNOW measured range 378px but its description does not say short range
+2026-10-31 18:34:33 rangedesc:5 back in range, trusted again
+2026-10-31 18:35:48 SNOW was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 18:40:16 PEA was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 18:45:54 SNOW measured range 400px but its description does not say short range
+2026-10-31 18:52:54 rangedesc:5 back in range, trusted again
+2026-10-31 20:23:41 SNOW measured range 378px but its description does not say short range
+2026-10-31 20:32:20 PEA measured range 371px but its description does not say short range
+2026-10-31 20:32:44 rangedesc:0 back in range, trusted again
+2026-10-31 20:34:40 SNOW measured range 303px but its description does not say short range
+2026-10-31 20:35:09 SNOW was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 20:36:30 rangedesc:5 back in range, trusted again
+2026-10-31 20:38:41 PEA measured range 379px but its description does not say short range
+2026-10-31 20:39:25 rangedesc:0 back in range, trusted again
+2026-10-31 20:46:16 SNOW was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 20:59:56 PEA measured range 152px but its description does not say short range
+2026-10-31 21:02:19 SNOW measured range 258px but its description does not say short range
+2026-10-31 21:02:37 rangedesc:0 back in range, trusted again
+2026-10-31 21:02:38 PEA was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 21:02:57 SNOW was learned as WALL but its description says SHOOT (only 4 observations)
+2026-10-31 21:04:02 rangedesc:5 back in range, trusted again
+2026-10-31 21:11:03 PEA measured range 379px but its description does not say short range
+2026-10-31 21:12:11 rangedesc:0 back in range, trusted again
+2026-10-31 21:49:56 SNOW was learned as WALL but its description says SHOOT (only 5 observations)
+2026-10-31 21:56:20 PEA measured range 127px but its description does not say short range
+2026-10-31 21:57:08 rangedesc:0 back in range, trusted again
+2026-10-31 22:01:51 PEA measured range 257px but its description does not say short range
+2026-10-31 22:01:59 rangedesc:0 back in range, trusted again
+2026-10-31 22:13:47 PEA measured range 154px but its description does not say short range
+2026-10-31 22:14:55 rangedesc:0 back in range, trusted again
+2026-10-31 22:19:21 SNOW measured range 229px but its description does not say short range
+2026-10-31 22:20:03 PEA measured range 374px but its description does not say short range
+2026-10-31 22:20:42 rangedesc:0 back in range, trusted again
+2026-10-31 22:20:45 PEA measured range 374px but its description does not say short range
+2026-10-31 22:21:27 rangedesc:0 back in range, trusted again
+2026-10-31 22:37:28 SNOW was learned as WALL but its description says SHOOT (only 4 observations)

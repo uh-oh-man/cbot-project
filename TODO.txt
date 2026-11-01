@@ -1,0 +1,2 @@
+After 4-5 is beaten: play darthspiker's tutorial level (main menu > Help vase), then continue Adventure. (requested 2026-10-31 22:43)
+BUCKSHOT: installed via Steam; VM has no GPU (Vulkan+OpenGL fail; Godot build only has vulkan/opengl3). Fix = Mesa llvmpipe opengl32.dll+libgallium_wgl.dll (C:\cbot\downloads\mesa\x\x64, pal1000 26.2.5, unsigned) next to exe + --rendering-driver opengl3. Needs user OK. watch.ps1 honours C:\cbot\hold.flag to park PvZ.

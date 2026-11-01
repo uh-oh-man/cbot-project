@@ -1,0 +1,12 @@
+*.dpapi
+*token*
+*.exe
+*.dll
+*.pdb
+*.obj
+*.png
+*.gif
+*.zip
+attachments/
+outbox/
+*.flag
