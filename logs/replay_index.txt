@@ -1,0 +1,9 @@
+2026-11-01 16:59:17 lvl=35 result=DIED round=3 killer=BDANCE dur=238.2s lines=250 file=20261101_165917_lvl35_DIED.txt round 3 vases left 13 killer=BDANCE
+2026-11-01 16:59:55 lvl=35 result=RELOAD round=1 killer=- dur=50.2s lines=153 file=20261101_165955_lvl35_RELOAD.txt
+2026-11-01 17:01:17 lvl=35 result=DIED round=2 killer=PAIL dur=156.7s lines=250 file=20261101_170117_lvl35_DIED.txt round 2 vases left 0 killer=PAIL
+2026-11-01 17:01:30 lvl=35 result=RELOAD round=1 killer=- dur=1.8s lines=11 file=20261101_170130_lvl35_RELOAD.txt
+2026-11-01 17:02:30 lvl=35 result=DIED round=2 killer=FOOT dur=113.3s lines=250 file=20261101_170230_lvl35_DIED.txt round 2 vases left 4 killer=FOOT
+2026-11-01 17:03:28 lvl=35 result=RELOAD round=2 killer=- dur=91.1s lines=250 file=20261101_170328_lvl35_RELOAD.txt
+2026-11-01 17:03:32 lvl=35 result=DIED round=1 killer=FOOT dur=0.0s lines=4 file=20261101_170332_lvl35_DIED.txt round 2 vases left 4 killer=FOOT
+2026-11-01 17:04:22 lvl=35 result=DIED round=2 killer=FOOT dur=74.3s lines=220 file=20261101_170422_lvl35_DIED.txt round 2 vases left 9 killer=FOOT
+2026-11-01 17:05:45 lvl=35 result=DIED round=2 killer=FOOT dur=140.8s lines=250 file=20261101_170545_lvl35_DIED.txt round 2 vases left 1 killer=FOOT

@@ -18,42 +18,135 @@ public static class Learn {
   static readonly Dictionary<int, double> dmgAcc = new Dictionary<int, double>(), shooterSec = new Dictionary<int, double>();
   public static double Caution = 1.0;
   public static int Lessons;
-  // Summoners: zombie kinds next to which new zombies keep popping up mid-lawn (e.g. a dancer calling backup).
-  public static readonly Dictionary<string, int> SummonEvidence = new Dictionary<string, int>();
-  public static bool IsSummoner(string key) { int n; return SummonEvidence.TryGetValue(key, out n) && n >= 3; }
-  // Shooter range, learned: the farthest a zombie has been from the front-most shooter of a lane (with only that
-  // kind of shooter) when it took damage. Unknown = assume it covers the whole lane.
+  // Summoners: zombie kinds next to which BURSTS of new zombies pop up mid-lawn (a dancer calling backup).
+  // One event = 2+ new zombies within 0.6 game-s around the same caller. A kind is a summoner only if its events
+  // came on 2+ levels and its event rate per zombie-second (Wilson lower bound) is well above every other kind's.
+  public class SumKnow { public int Events; public double Exposure; public readonly HashSet<int> Levels = new HashSet<int>(); }
+  public static readonly Dictionary<string, SumKnow> Summon = new Dictionary<string, SumKnow>();
+  static double sumEvents, sumExposure;   // totals over all kinds (base rate)
+  const double SUM_TRIAL = 10;            // zombie-seconds per "trial" for the proportion test
+  static readonly Dictionary<uint, List<double>> pendingSummon = new Dictionary<uint, List<double>>();   // caller id -> recent arrivals
+  static readonly Dictionary<uint, double> lastSummonEvent = new Dictionary<uint, double>();
+  static readonly HashSet<uint> fogSeen = new HashSet<uint>();   // zombies first seen hidden in fog: walking out of it is not a summon
+  static SumKnow SK(string key) { SumKnow k; if (!Summon.TryGetValue(key, out k)) Summon[key] = k = new SumKnow(); return k; }
+  static double WilsonLow(double k, double n) {
+    if (n <= 0) return 0; double z2 = 1.96 * 1.96, p = Math.Min(1, k / n);
+    return Math.Max(0, (p + z2 / (2 * n) - 1.96 * Math.Sqrt(p * (1 - p) / n + z2 / (4 * n * n))) / (1 + z2 / n));
+  }
+  // 0 = not a summoner; 0.3..1 = how far its burst rate stands above the base rate of all other kinds.
+  public static double SummonConfidence(string key) {
+    SumKnow k; if (key == null || !Summon.TryGetValue(key, out k) || k.Events < 3 || k.Levels.Count < 2) return 0;
+    double lb = WilsonLow(k.Events, Math.Max(k.Events, k.Exposure / SUM_TRIAL));
+    double oe = Math.Max(0, sumEvents - k.Events), on = Math.Max(oe, Math.Max(0, sumExposure - k.Exposure) / SUM_TRIAL);
+    double ratio = lb / ((oe + 0.5) / (on + 50));   // smoothed base rate of the other kinds
+    return ratio < 3 ? 0 : Math.Min(1, 0.3 + 0.7 * (ratio - 3) / 7);
+  }
+  public static bool IsSummoner(string key) { return SummonConfidence(key) > 0; }
+  static bool NoSummon(int type) { string n = Mem.ZomName(type); return n == "BUNGEE" || n == "IMP"; }   // dropped / thrown in, never called
+  static bool NearGrave(State s, int row, int col) { for (int c = col - 1; c <= col + 1; c++) if (s.Graves.Contains(row * 10 + c)) return true; return false; }
+  static bool Tracked(uint id, double now) { ZRec r; return zr.TryGetValue(id, out r) && r.SeenT < now; }   // seen before this frame
+  static void NoteSummon(Zom caller, double now) {
+    double last; if (lastSummonEvent.TryGetValue(caller.Id, out last) && now - last < 2) return;   // rest of the same burst
+    List<double> ts; if (!pendingSummon.TryGetValue(caller.Id, out ts)) pendingSummon[caller.Id] = ts = new List<double>();
+    ts.RemoveAll(t => now - t > 0.6); ts.Add(now);
+    if (ts.Count < 2) return;
+    ts.Clear(); lastSummonEvent[caller.Id] = now;
+    string ck = KeyOf(caller); bool was = IsSummoner(ck); var k = SK(ck); k.Events++; k.Levels.Add(CurLevel); sumEvents++;
+    Viz.AddEvent("LEARN summon burst next to " + ck + " (" + k.Events + " bursts on " + k.Levels.Count + " level" + (k.Levels.Count == 1 ? "" : "s") + ")");
+    if (!was && IsSummoner(ck)) Lesson(ck + " summons other zombies around it - kill it first (confidence " + SummonConfidence(ck).ToString("0.00") + ")");
+  }
+  // Shooter range, learned as CENSORED data from lanes holding a single (awake) shooter kind:
+  //  - a hit at distance d from the front-most shooter proves range >= d  (RangeMax = robust proven reach, never lowered);
+  //  - the nearest zombie sitting unhurt >= 2.5s at distance d, with that shooter alive and awake all along, proves range < d.
+  // The range is only treated as short when the description says so or the "unhurt" evidence is strong; otherwise 900 (whole lane).
   public static readonly Dictionary<int, double> RangeMax = new Dictionary<int, double>();
   static readonly Dictionary<int, int> rangeN = new Dictionary<int, int>();
-  static readonly Dictionary<int, List<double>> rangeSamples = new Dictionary<int, List<double>>();
+  static readonly Dictionary<int, List<double>> rangeSamples = new Dictionary<int, List<double>>();   // fresh hits since start (not persisted)
+  static readonly Dictionary<int, List<double>> unhurtD = new Dictionary<int, List<double>>();        // persisted (RU|)
+  static readonly Dictionary<int, double> rangeCap = new Dictionary<int, double>();                   // upper bound, set once evidence is strong
+  static readonly Dictionary<int, int> unhurtNew = new Dictionary<int, int>();
   static readonly HashSet<uint> damagedNow = new HashSet<uint>();   // zombies that lost health this frame
+  const int RANGE_EVERY = 20, UNHURT_EVERY = 5;
+  static readonly long[] laneSig = new long[6]; static readonly double[] laneSince = new double[6];
+  static readonly uint[] laneNear = new uint[6]; static readonly double[] laneNearSince = new double[6];
   public static double Range(int seed) {
-    double r; int n;
-    if (RangeMax.TryGetValue(seed, out r) && rangeN.TryGetValue(seed, out n) && n >= 40 && Sane("range:" + seed, r, 60, 900, Mem.SeedName(seed) + " range (px)")) {
-      // Sanity vs description: only plants described as short-range should measure short.
-      if (!Roles.RangeMentioned.Contains(seed) && !Flag("rangedesc:" + seed, r < 400, Mem.SeedName(seed) + " measured range " + r.ToString("0") + "px but its description does not say short range")) return 900;
-      return r >= 550 ? 900 : r;   // ~7+ tiles = whole lane
-    }
-    return Roles.ShortRange.Contains(seed) ? 260 : 900;   // until measured, trust the description ("short range")
+    double lo, cap; int n;
+    bool haveLo = RangeMax.TryGetValue(seed, out lo) && rangeN.TryGetValue(seed, out n) && n >= 40 && Sane("range:" + seed, lo, 60, 900, Mem.SeedName(seed) + " range (px)");
+    bool capped = rangeCap.TryGetValue(seed, out cap);
+    if (!capped && !Roles.ShortRange.Contains(seed)) return 900;   // no evidence of a short range: whole lane
+    double r = haveLo ? lo : capped ? Math.Max(60, cap - 40) : 260;
+    return r >= 550 ? 900 : r;   // ~7+ tiles = whole lane
   }
-  static void ObserveRange(State s, double[] laneDmg, HashSet<int> shooterTypes) {
+  static void RecalcCap(int t) {
+    List<double> u; double lo; if (!unhurtD.TryGetValue(t, out u)) return;
+    RangeMax.TryGetValue(t, out lo); u.RemoveAll(d => d <= lo);   // contradicted by a proven hit: that zombie was out of reach for another reason
+    int need = Roles.RangeMentioned.Contains(t) ? 20 : 40;        // a description silent on range needs twice the evidence
+    if (u.Count < need) { rangeCap.Remove(t); return; }
+    var sorted = u.OrderBy(x => x).ToList(); double cap = sorted[(int)(sorted.Count * 0.2)];
+    bool first = !rangeCap.ContainsKey(t); rangeCap[t] = cap;
+    if (first) Lesson(Mem.SeedName(t) + " leaves zombies ~" + (cap / 80).ToString("0.0") + " tiles away untouched (" + u.Count + " times) -> short range");
+  }
+  static bool Awake(int t) { return !(Daytime && Roles.Nocturnal.Contains(t)); }
+  // Something other than this lane's straight shooters can hurt its zombies: ground spikes, biters, unknown plants,
+  // charmed zombies, or a multi-lane / splash shooter next door.
+  static bool OtherDamage(State s, int row, Func<int, bool> isShooter) { return OtherDamage(s, row, isShooter, -1); }
+  public static bool OtherDamage(State s, int row, Func<int, bool> isShooter, int excludeSeed) {
+    foreach (var p in s.Plants) {
+      if (p.Type == excludeSeed) continue;
+      if (p.Row == row && !isShooter(p.Type)) { string r = Roles.RoleOf(p.Type); if (r == null || r == "GROUND" || r == "MELEE" || r == "HYPNO") return true; }
+      if (Math.Abs(p.Row - row) == 1 && isShooter(p.Type) && Roles.MultiLane.Contains(p.Type)) return true;
+    }
+    foreach (var z in s.Zombies) if (z.Row == row && z.Charmed) return true;
+    return false;
+  }
+  static void ObserveRange(State s, double[] laneDmg, HashSet<int> shooterTypes, float visibleX, double now) {
+    CapsOnce();
     for (int row = 0; row < 6; row++) {
-      if (laneDmg[row] <= 0 || laneDmg[row] > 150) continue;
-      var sh = s.Plants.Where(p => p.Row == row && shooterTypes.Contains(p.Type)).ToList();
-      if (sh.Count == 0 || sh.Select(p => p.Type).Distinct().Count() != 1) continue;
+      int rw = row;
+      var sh = s.Plants.Where(p => p.Row == rw && shooterTypes.Contains(p.Type) && Awake(p.Type)).ToList();
+      if (sh.Count == 0 || sh.Select(p => p.Type).Distinct().Count() != 1 || OtherDamage(s, row, shooterTypes.Contains)) { laneSig[row] = -1; continue; }
       int t = sh[0].Type; double front = sh.Max(p => 40 + p.Col * 80 + 40);
-      // Reach = the FARTHEST zombie in this lane that actually lost health this frame (nearest-zombie distance underestimates long range).
-      var hit = s.Zombies.Where(z => z.Row == row && z.X + 40 > front && damagedNow.Contains(z.Id)).Select(z => z.X + 40 - front).DefaultIfEmpty(-1).Max();
-      if (hit < 0) continue;
-      // Robust range: 85th percentile of recent hit distances (a stray pea from a dead shooter must not inflate it).
-      List<double> hs; if (!rangeSamples.TryGetValue(t, out hs)) rangeSamples[t] = hs = new List<double>();
-      hs.Add(hit); if (hs.Count > 300) hs.RemoveAt(0);
-      int n; rangeN.TryGetValue(t, out n);
-      if (hs.Count >= 40) { var sorted = hs.OrderBy(x => x).ToList(); RangeMax[t] = sorted[(int)(sorted.Count * 0.97)]; }
-      rangeN[t] = n + 1;
-      if (n + 1 == 40) Lesson(Mem.SeedName(t) + " hits zombies up to ~" + (RangeMax[t] / 80).ToString("0.0") + " tiles away" + (RangeMax[t] < 500 ? " (short range!)" : ""));
+      // The shooter line-up must be unchanged (alive, same front) for the "unhurt" test.
+      long sig = ((long)t << 32) | ((long)sh.Count << 8) | (long)(front / 80);
+      if (laneSig[row] != sig) { laneSig[row] = sig; laneSince[row] = now; }
+      Zom near = null; foreach (var z in s.Zombies) if (z.Row == row && !z.Charmed && z.X < visibleX && z.X + 40 > front && (near == null || z.X < near.X)) near = z;
+      if (near == null) laneNear[row] = 0; else if (laneNear[row] != near.Id) { laneNear[row] = near.Id; laneNearSince[row] = now; }
+      // Proven reach: the FARTHEST zombie in this lane that lost health this frame.
+      if (laneDmg[row] > 0 && laneDmg[row] <= 150) {
+        var hit = s.Zombies.Where(z => z.Row == rw && z.X + 40 > front && damagedNow.Contains(z.Id)).Select(z => z.X + 40 - front).DefaultIfEmpty(-1).Max();
+        if (hit >= 0) {
+          List<double> hs; if (!rangeSamples.TryGetValue(t, out hs)) rangeSamples[t] = hs = new List<double>();
+          hs.Add(hit); if (hs.Count > 300) hs.RemoveAt(0);
+          int n; rangeN.TryGetValue(t, out n); rangeN[t] = n + 1;
+          // Recompute only every RANGE_EVERY samples; fresh samples can raise the long-run reach but never lower it.
+          if (hs.Count >= 40 && (n + 1) % RANGE_EVERY == 0) {
+            var sorted = hs.OrderBy(x => x).ToList(); double p95 = sorted[(int)(sorted.Count * 0.95)], old;
+            bool had = RangeMax.TryGetValue(t, out old);
+            if (!had || p95 > old) {
+              RangeMax[t] = p95; RecalcCap(t);
+              if (!had || p95 > old + 40) Lesson(Mem.SeedName(t) + " hits zombies at least ~" + (p95 / 80).ToString("0.0") + " tiles away");
+            }
+          }
+        }
+      }
+      // Unhurt: the nearest zombie, nearest and undamaged for 2.5s plus projectile flight time, shooter line-up stable as long.
+      ZRec zrec;
+      double dn = near == null ? 0 : near.X + 40 - front, win = 2.5 + dn / 250;
+      if (near != null && now - laneSince[row] >= win && now - laneNearSince[row] >= win && zr.TryGetValue(near.Id, out zrec) && !zrec.UnhurtNoted
+          && now - zrec.LastHurt >= win && !Untargetable(near.Type)) {
+        double d = dn, lo; RangeMax.TryGetValue(t, out lo);
+        if (d >= 200 && d > lo + 20) {
+          zrec.UnhurtNoted = true;
+          List<double> u; if (!unhurtD.TryGetValue(t, out u)) unhurtD[t] = u = new List<double>();
+          u.Add(d); if (u.Count > 100) u.RemoveAt(0);
+          int k; unhurtNew.TryGetValue(t, out k); unhurtNew[t] = ++k;
+          if (k % UNHURT_EVERY == 0) RecalcCap(t);
+        }
+      }
     }
   }
+  // Kinds plain shots often cannot touch (in the air, underground, under water, or dropping in).
+  static bool Untargetable(int type) { string n = Mem.ZomName(type); return n == "BALLOON" || n == "DIGGER" || n == "SNORK" || n == "BUNGEE" || n == "DOLPH" || n == "BOSS" || n == "POLE"; }
   // Dropped seed packets: how long they stay on the lawn before fading (learned from ones that expired untouched).
   public static double PacketLifetime = -1; static int lifetimeN;
   static readonly Dictionary<uint, double> packetSeen = new Dictionary<uint, double>();
@@ -118,7 +211,11 @@ public static class Learn {
     foreach (var p in s.Plants) { HashSet<uint> h; if (!levelPlanted.TryGetValue(p.Type, out h)) levelPlanted[p.Type] = h = new HashSet<uint>(); h.Add(p.Id); }
     for (int row = 0; row < 6; row++) {
       if (LastLaneDmg[row] <= 0 || LastLaneDmg[row] > 150) continue;   // skip explosions
-      var sh = s.Plants.Where(p => p.Row == row && isShooter(p.Type)).ToList();
+      if (OtherDamage(s, row, isShooter)) continue;                      // not only shooters could have done it
+      int rw = row;
+      // Credit only shooters that are awake and have a zombie within their reach (a col-0 puff did not hit the col-8 zombie).
+      var sh = s.Plants.Where(p => p.Row == rw && isShooter(p.Type) && Awake(p.Type) && s.Zombies.Any(z => z.Row == rw && !z.Charmed && z.X < Bot.VISIBLE_X
+                 && z.X + 40 > 40 + p.Col * 80 + 20 && z.X + 40 - (40 + p.Col * 80 + 40) <= Range(p.Type))).ToList();
       double tot = sh.Sum(p => Dps(p.Type)); if (tot <= 0) continue;
       foreach (var p in sh) Credit(p.Type, LastLaneDmg[row] * Dps(p.Type) / tot / 10.0);   // 10 damage ~ 1 sun
     }
@@ -165,7 +262,7 @@ public static class Learn {
   public static int CurLevel;
   public static int DeathsHere { get { int n; return LevelDeaths.TryGetValue(CurLevel, out n) ? n : 0; } }
 
-  class ZRec { public string Key; public float SeenX, LastX, AnchorX; public double AnchorT; public int LastTotal; public double Absorbed; public int Row; }
+  class ZRec { public string Key; public float SeenX, LastX, AnchorX; public double AnchorT, SeenT, LastHurt; public int LastTotal; public double Absorbed; public int Row; public bool UnhurtNoted; }
   static readonly Dictionary<uint, ZRec> zr = new Dictionary<uint, ZRec>();
   class MRec { public double Planted; public int Row, Col; }
   static readonly Dictionary<uint, MRec> mines = new Dictionary<uint, MRec>();
@@ -229,34 +326,39 @@ public static class Learn {
     if (levelStartTime < 0 || now < levelStartTime) levelStartTime = now;
     TrackPackets(s, now);
     foreach (var c in s.Suns) if ((c.Type == 11 || c.Type == 12 || c.Type == 13) && c.Motion <= 1 && skySeen.Add(c.Id)) skyThisLevel++;
-    double dt = lastFrame < 0 || now < lastFrame ? 0 : Math.Min(5, now - lastFrame);
+    bool hadPrev = lastFrame >= 0;   // captured BEFORE lastFrame moves: the first frame after a start/reset sees everyone as "new"
+    double dt = !hadPrev || now < lastFrame ? 0 : Math.Min(5, now - lastFrame);
     lastFrame = now;
     var present = new HashSet<uint>();
     var laneDmg = new double[6]; bool explosion = false; damagedNow.Clear();
     var vanished = new List<ZRec>();
+    foreach (var z in s.FogZombies) fogSeen.Add(z.Id);
+    // Summons are only judged where nothing else drops zombies mid-lawn: no vases, nothing hidden in fog.
+    bool summonWatch = hadPrev && s.Vases.Count == 0 && s.FogHidden <= 0 && s.FogZombies.Count == 0;
 
     foreach (var z in s.Zombies) {
       if (z.X >= visibleX) continue;
       present.Add(z.Id);
       ZRec r;
       if (!zr.TryGetValue(z.Id, out r)) {
-        // A zombie appearing mid-lawn (not walking in from the right, not out of a grave) next to another one: summoned.
+        // A zombie appearing mid-lawn (not walking in from the right, not out of a grave / the pool / the sky) next to another one.
         int zcol = Math.Max(0, Math.Min(8, (int)((z.X + 30 - 40) / 80)));
-        if (lastFrame >= 0 && z.X < 735 && !s.Graves.Contains(z.Row * 10 + zcol)) {   // walkers first appear near x~755
-          var caller = s.Zombies.Where(o => o.Id != z.Id && zr.ContainsKey(o.Id) && Math.Abs(o.Row - z.Row) <= 1 && Math.Abs(o.X - z.X) < 170).OrderBy(o => Math.Abs(o.X - z.X)).FirstOrDefault();
-          if (caller != null) {
-            string ck = KeyOf(caller); int n; SummonEvidence.TryGetValue(ck, out n); SummonEvidence[ck] = n + 1;
-            if (n + 1 == 3) Lesson(ck + " summons other zombies around it - kill it first");
-          }
+        bool water = z.Row >= 0 && z.Row < 6 && s.Square[z.Row, zcol] == 3;
+        if (summonWatch && z.X < 735 && !z.Charmed && !NoSummon(z.Type) && !fogSeen.Contains(z.Id) && !water && !NearGrave(s, z.Row, zcol)) {   // walkers first appear near x~755
+          Zom caller = null; float best = 170;
+          foreach (var o in s.Zombies)
+            if (o.Id != z.Id && !o.Charmed && !NoSummon(o.Type) && Math.Abs(o.Row - z.Row) <= 1 && Math.Abs(o.X - z.X) < best && Tracked(o.Id, now)) { caller = o; best = Math.Abs(o.X - z.X); }
+          if (caller != null) NoteSummon(caller, now);
         }
-        r = new ZRec { Key = KeyOf(z), SeenX = z.X, LastX = z.X, AnchorX = z.X, AnchorT = now, LastTotal = z.Total, Row = z.Row };
+        r = new ZRec { Key = KeyOf(z), SeenX = z.X, LastX = z.X, AnchorX = z.X, AnchorT = now, SeenT = now, LastHurt = now, LastTotal = z.Total, Row = z.Row };
         zr[z.Id] = r;
         var k = K(r.Key); k.Seen++;
         if (k.Seen == 1) { Lesson("new zombie kind spotted: " + r.Key); Quips.NewKind(r.Key); }
         continue;
       }
+      if (summonWatch && dt > 0 && !z.Charmed) { SK(r.Key).Exposure += dt; sumExposure += dt; }   // zombie-seconds watched
       int drop = r.LastTotal - z.Total;
-      if (drop > 0) damagedNow.Add(z.Id);
+      if (drop > 0) { damagedNow.Add(z.Id); r.LastHurt = now; }
       if (drop > 0) { r.Absorbed += drop; if (z.Row >= 0 && z.Row < 6) laneDmg[z.Row] += drop; if (drop > 150) explosion = true; }
       r.LastTotal = z.Total; r.LastX = z.X; r.Row = z.Row;
       double el = now - r.AnchorT;
@@ -267,8 +369,8 @@ public static class Learn {
         r.AnchorX = z.X; r.AnchorT = now;
       }
     }
-    foreach (var id in zr.Keys.Where(id => !present.Contains(id)).ToList()) { vanished.Add(zr[id]); zr.Remove(id); }
-    ObserveRange(s, laneDmg, shooterTypes);
+    foreach (var id in zr.Keys.Where(id => !present.Contains(id)).ToList()) { vanished.Add(zr[id]); zr.Remove(id); pendingSummon.Remove(id); lastSummonEvent.Remove(id); fogSeen.Remove(id); }
+    ObserveRange(s, laneDmg, shooterTypes, visibleX, now);
     LastLaneDmg = laneDmg; LastDt = dt; LastVanished = vanished.Select(v => Tuple.Create(v.Row, v.LastX, v.LastTotal)).ToList();
 
     // Toughness = damage it soaked before dying, only for zombies watched from the moment they walked in.
@@ -328,16 +430,19 @@ public static class Learn {
     // Shooter DPS: lanes with a single shooter kind and a zombie in front; explosions excluded.
     if (dt > 0 && !explosion) {
       for (int row = 0; row < 6; row++) {
-        if (!s.Zombies.Any(z => z.Row == row && z.X < visibleX)) continue;
-        var sh = s.Plants.Where(p => p.Row == row && shooterTypes.Contains(p.Type)).ToList();
-        if (sh.Count == 0 || sh.Select(p => p.Type).Distinct().Count() != 1) continue;
+        int rw = row;
+        if (!s.Zombies.Any(z => z.Row == rw && z.X < visibleX)) continue;
+        // Awake shooters only (night mushrooms sleep by day), and only lanes where nothing else hurts zombies.
+        var sh = s.Plants.Where(p => p.Row == rw && shooterTypes.Contains(p.Type) && Awake(p.Type)).ToList();
+        if (sh.Count == 0 || sh.Select(p => p.Type).Distinct().Count() != 1 || OtherDamage(s, row, shooterTypes.Contains)) continue;
         int t = sh[0].Type;
         // Only count time when a zombie is actually within this shooter's reach (else short-range plants look useless).
         double front = sh.Max(p => 40 + p.Col * 80 + 40);
-        double gap = s.Zombies.Where(z => z.Row == row && z.X + 40 > front - 20).Select(z => z.X + 40 - front).DefaultIfEmpty(9999).Min();
-        if (gap > Range(t)) continue;
+        double gap = s.Zombies.Where(z => z.Row == rw && z.X + 40 > front - 20).Select(z => z.X + 40 - front).DefaultIfEmpty(9999).Min();
+        double rg = Range(t); if (gap > rg) continue;
+        int inReach = sh.Count(p => gap + front - (40 + p.Col * 80 + 40) <= rg);   // shooters further back may not reach it
         double a, b; dmgAcc.TryGetValue(t, out a); shooterSec.TryGetValue(t, out b);
-        dmgAcc[t] = a + laneDmg[row]; shooterSec[t] = b + sh.Count * dt;
+        dmgAcc[t] = a + laneDmg[row]; shooterSec[t] = b + Math.Max(1, inReach) * dt;
         if (shooterSec[t] >= 20) {
           double d = dmgAcc[t] / shooterSec[t];
           bool first = !DpsLearned.ContainsKey(t);
@@ -367,7 +472,8 @@ public static class Learn {
       if (rate < SkyBaseline * 0.4) Lesson("barely any sun fell from the sky this level (" + rate.ToString("0.0") + "/min vs usual " + SkyBaseline.ToString("0.0") + ") - more sunflowers next time it is like this");
     }
     if (IncomePerMin >= 0) Viz.AddEvent("level economy: collected ~" + IncomePerMin.ToString("0") + " sun/min");
-    zr.Clear(); mines.Clear(); lastFrame = -1; levelStartTime = -1; skyThisLevel = 0; skySeen.Clear(); collected = 0;
+    zr.Clear(); mines.Clear(); pendingSummon.Clear(); lastSummonEvent.Clear(); fogSeen.Clear(); lastFrame = -1;
+    for (int i = 0; i < 6; i++) { laneSig[i] = -1; laneNear[i] = 0; } levelStartTime = -1; skyThisLevel = 0; skySeen.Clear(); collected = 0;
   }
 
   // ----- persistence -----
@@ -379,10 +485,11 @@ public static class Learn {
       lines.Add(string.Join("|", "M", MineArm.ToString(IC), MineOk, MineFail, MaxFailAge.ToString(IC), MinOkAge.ToString(IC)));
       foreach (var d in DpsLearned) lines.Add(string.Join("|", "D", d.Key, d.Value.ToString(IC)));
       lines.Add("C|" + Caution.ToString(IC));
-      foreach (var se in SummonEvidence) lines.Add("SU|" + se.Key + "|" + se.Value);
+      foreach (var se in Summon) lines.Add("SE|" + se.Key + "|" + se.Value.Events + "|" + se.Value.Exposure.ToString("0.#", IC) + "|" + string.Join(",", se.Value.Levels));
       foreach (var d in LevelDeaths) lines.Add("D2|" + d.Key + "|" + d.Value);
       foreach (var lv in LevelUse) foreach (var u in lv.Value) lines.Add("LU|" + lv.Key + "|" + u.Key + "|" + u.Value);
       foreach (var rg in RangeMax) lines.Add("R|" + rg.Key + "|" + rg.Value.ToString(IC) + "|" + (rangeN.ContainsKey(rg.Key) ? rangeN[rg.Key] : 0));
+      foreach (var u in unhurtD) if (u.Value.Count > 0) lines.Add("RU|" + u.Key + "|" + string.Join(";", u.Value.Select(d => d.ToString("0", IC))));
       lines.Add("T|" + PacketLifetime.ToString(IC) + "|" + lifetimeN);
       foreach (var v in SeedValue) lines.Add("V|" + v.Key + "|" + v.Value.ToString(IC));
       lines.Add("K|" + SkyBaseline.ToString(IC));
@@ -401,7 +508,9 @@ public static class Learn {
         else if (p[0] == "M") { MineArm = double.Parse(p[1], IC); MineOk = int.Parse(p[2]); MineFail = int.Parse(p[3]); MaxFailAge = double.Parse(p[4], IC); MinOkAge = double.Parse(p[5], IC); }
         else if (p[0] == "D") DpsLearned[int.Parse(p[1])] = double.Parse(p[2], IC);
         else if (p[0] == "C") Caution = double.Parse(p[1], IC);
-        else if (p[0] == "SU") SummonEvidence[p[1]] = int.Parse(p[2]);
+        else if (p[0] == "SE") { var k = SK(p[1]); k.Events = int.Parse(p[2]); k.Exposure = double.Parse(p[3], IC); k.Levels.Clear(); if (p.Length > 4) foreach (var lv in p[4].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)) k.Levels.Add(int.Parse(lv)); }
+        else if (p[0] == "SU") { if (p[1] == "DANCER") legacySummon[p[1]] = int.Parse(p[2]); }   // old raw counts: all coincidences except the dancer
+        else if (p[0] == "RU") { var u = new List<double>(); foreach (var d in p[2].Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)) u.Add(double.Parse(d, IC)); unhurtD[int.Parse(p[1])] = u; }
         else if (p[0] == "D2") LevelDeaths[int.Parse(p[1])] = int.Parse(p[2]);
         else if (p[0] == "LU") { int lv = int.Parse(p[1]); if (!LevelUse.ContainsKey(lv)) LevelUse[lv] = new Dictionary<int, int>(); LevelUse[lv][int.Parse(p[2])] = int.Parse(p[3]); }
         else if (p[0] == "R") { RangeMax[int.Parse(p[1])] = double.Parse(p[2], IC); rangeN[int.Parse(p[1])] = int.Parse(p[3]); }
@@ -412,5 +521,16 @@ public static class Learn {
         else if (p[0] == "S") { Deaths = int.Parse(p[1]); Wins = int.Parse(p[2]); Streak = int.Parse(p[3]); BestStreak = int.Parse(p[4]); }
       } catch { }
     }
+    // One-time migration of the old SU| counts (only DANCER survives): no exposure or levels were recorded, so its
+    // exposure is estimated from sightings and it is marked as seen on two (unknown) levels.
+    foreach (var kv in legacySummon) {
+      if (Summon.ContainsKey(kv.Key)) continue;
+      ZKnow z; var k = SK(kv.Key); k.Events = kv.Value; k.Exposure = Z.TryGetValue(kv.Key, out z) ? z.Seen * 20.0 : kv.Value * 200.0; k.Levels.Add(-1); k.Levels.Add(-2);
+    }
+    legacySummon.Clear();
+    sumEvents = Summon.Values.Sum(k => (double)k.Events); sumExposure = Summon.Values.Sum(k => k.Exposure);
   }
+  static readonly Dictionary<string, int> legacySummon = new Dictionary<string, int>();
+  static bool capsReady;
+  static void CapsOnce() { if (capsReady || !Roles.DescriptionsLoaded) return; capsReady = true; foreach (var t in unhurtD.Keys.ToList()) RecalcCap(t); }
 }

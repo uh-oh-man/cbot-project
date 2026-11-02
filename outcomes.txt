@@ -1,0 +1,41 @@
+2026-11-01 16:57:24 lvl35 OUTCOME SQUASH HIT_KILL target=FOOT row 0 col 1 round 2 t=236.2 hp=1590 age=2.6
+2026-11-01 16:57:32 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 8 round 2 t=251.7 hp=270 age=2.6
+2026-11-01 16:57:39 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 4 round 2 t=266.8 hp=260 age=2.6
+2026-11-01 16:57:40 lvl35 OUTCOME SQUASH MISS target=- row 3 col 3 round 2 t=267.0 age=2.6
+2026-11-01 16:59:36 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 8 round 1 t=10.9 hp=270 age=2.6
+2026-11-01 16:59:38 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 8 round 1 t=14.7 hp=300 age=2.6
+2026-11-01 16:59:54 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 7 round 1 t=45.2 hp=270 age=2.6
+2026-11-01 17:00:10 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 6 round 1 t=67.7 hp=570 age=2.6
+2026-11-01 17:00:22 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 1 col 7 round 2 t=102.9 hp=110 age=2.6
+2026-11-01 17:00:39 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 4 round 2 t=137.4 hp=190 kills=2 age=22.4
+2026-11-01 17:00:41 lvl35 OUTCOME SQUASH HIT_KILL target=FOOT row 2 col 1 round 2 t=140.9 hp=1480 age=2.6
+2026-11-01 17:01:40 lvl35 OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 8 round 1 t=23.0 hp=1670 age=2.6
+2026-11-01 17:01:46 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 6 round 1 t=33.9 hp=570 age=2.6
+2026-11-01 17:01:50 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 8 round 1 t=41.4 hp=270 age=2.6
+2026-11-01 17:01:56 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 6 round 1 t=53.4 hp=270 age=2.6
+2026-11-01 17:02:09 lvl35 OUTCOME SQUASH WIPED target=- row 2 col 5 round 2 t=79.2 age=38.6
+2026-11-01 17:02:15 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 7 round 2 t=92.0 hp=230 age=2.6
+2026-11-01 17:02:24 lvl35 OUTCOME SQUASH MISS target=- row 3 col 4 round 2 t=110.3 age=4.6
+2026-11-01 17:02:24 lvl35 OUTCOME SQUASH MISS target=- row 3 col 3 round 2 t=110.7 age=2.6
+2026-11-01 17:02:54 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 5 round 1 t=22.2 hp=300 age=4.1
+2026-11-01 17:02:58 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 8 round 1 t=29.8 hp=270 age=2.6
+2026-11-01 17:03:04 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 5 round 1 t=41.5 hp=270 age=12.4
+2026-11-01 17:03:05 lvl35 OUTCOME SQUASH HIT_KILL target=PAIL row 2 col 7 round 1 t=43.6 hp=1370 age=2.6
+2026-11-01 17:03:22 lvl35 OUTCOME SQUASH HIT_KILL target=PAIL row 0 col 7 round 2 t=79.0 hp=1370 age=2.6
+2026-11-01 17:03:27 lvl35 OUTCOME SQUASH MISS target=- row 4 col 4 round 2 t=88.4 age=15.5
+2026-11-01 17:03:55 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 7 round 1 t=19.3 hp=100 age=2.6
+2026-11-01 17:03:59 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 5 round 1 t=26.2 hp=270 age=5.7
+2026-11-01 17:04:05 lvl35 OUTCOME SQUASH HIT_KILL target=PAIL row 3 col 5 round 1 t=37.6 hp=1670 age=6.7
+2026-11-01 17:04:06 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 5 round 1 t=41.0 hp=570 kills=2 age=10.4
+2026-11-01 17:04:13 lvl35 OUTCOME SQUASH MISS target=- row 4 col 6 round 1 t=43.8 age=2.6
+2026-11-01 17:04:22 lvl35 OUTCOME SQUASH MISS target=- row 3 col 4 round 2 t=72.1 age=4.5
+2026-11-01 17:04:44 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 6 round 1 t=15.8 hp=60 age=2.7
+2026-11-01 17:04:47 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 8 round 1 t=22.2 hp=100 age=2.6
+2026-11-01 17:04:53 lvl35 OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 5 round 1 t=33.5 hp=1310 kills=2 age=12.1
+2026-11-01 17:05:08 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 6 round 1 t=54.3 hp=570 age=2.6
+2026-11-01 17:05:20 lvl35 OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 8 round 2 t=89.2 hp=1370 age=2.6
+2026-11-01 17:05:26 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 1 col 5 round 2 t=100.5 hp=190 age=2.6
+2026-11-01 17:05:33 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 4 round 2 t=114.7 hp=570 age=5.6
+2026-11-01 17:06:13 lvl35 OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 5 round 1 t=27.5 hp=1340 age=2.6
+2026-11-01 17:06:16 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 8 round 1 t=33.5 hp=270 age=2.6
+2026-11-01 17:06:28 lvl35 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 4 round 1 t=58.3 hp=110 age=2.7

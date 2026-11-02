@@ -10,3 +10,5 @@
 attachments/
 outbox/
 *.flag
+discord/relay.ps1
+discord/inbox.jsonl

@@ -14,7 +14,13 @@ public static class Roles {
   // No built-in beliefs: roles come from the in-game descriptions (hypotheses) and are then confirmed or corrected in play.
   static readonly Dictionary<int, string> Prior = new Dictionary<int, string>();
 
-  class Watch { public uint Id; public int Seed, Row, Col; public double Planted, BesideSince = -1; public bool Done; }
+  class Watch { public uint Id; public int Seed, Row, Col; public double Planted; public bool Done, HpTested; }
+  static readonly Dictionary<int, int> maxHpOf = new Dictionary<int, int>();   // seed -> real max health seen (Plant::mPlantMaxHealth)
+  // Median max health of the known shooters and sun makers (the "ordinary" plants a wall is compared with); -1 if none seen.
+  static double MedianHp(int exclude) {
+    var hs = maxHpOf.Where(kv => kv.Key != exclude && kv.Value > 0 && (Is(kv.Key, "SHOOT") || Is(kv.Key, "SUN"))).Select(kv => kv.Value).OrderBy(v => v).ToList();
+    return hs.Count == 0 ? -1 : hs.Count % 2 == 1 ? hs[hs.Count / 2] : (hs[hs.Count / 2 - 1] + hs[hs.Count / 2]) / 2.0;
+  }
   static readonly Dictionary<uint, Watch> watching = new Dictionary<uint, Watch>();
   public static int Trials;
 
@@ -29,10 +35,17 @@ public static class Roles {
   public static readonly HashSet<int> RoofPad = new HashSet<int>();      // lets plants stand on the roof (flower pot)
   public static readonly HashSet<int> Aquatic = new HashSet<int>();      // must be planted in water
   public static readonly HashSet<int> NeedsPad = new HashSet<int>();     // must be planted on a lily pad
+  public static readonly HashSet<int> MultiLane = new HashSet<int>();    // hits other lanes too (three lanes, 5 directions, splash)
   public static bool IsPad(int seed) { LoadDescriptions(); return WaterPad.Contains(seed) || RoofPad.Contains(seed); }
-  static bool descLoaded;
+  // Latched only once descriptions really loaded (file read AND plant names readable from the game); otherwise retried every 30s.
+  static bool descLoaded, descTried; static int descRetryAt;
+  public static bool DescriptionsLoaded { get { return descLoaded; } }
+  static readonly System.Text.RegularExpressions.Regex ArmWord = new System.Text.RegularExpressions.Regex(@"\barm(s|ed|ing)?\b");
   public static void LoadDescriptions() {
-    if (descLoaded) return; descLoaded = true;
+    if (descLoaded) return;
+    int tick = Environment.TickCount;
+    if (descTried && unchecked(tick - descRetryAt) < 0) return;
+    descTried = true; descRetryAt = unchecked(tick + 30000);
     string f = @"C:\Users\User\Downloads\Modded Plants VS Zombies\Release\properties\LawnStrings.txt";
     string[] t; try { t = System.IO.File.ReadAllLines(f); } catch { return; }
     Func<string, string> section = key => {
@@ -41,8 +54,11 @@ public static class Roles {
       for (int j = i + 1; j < t.Length && !t[j].StartsWith("["); j++) sb.Append(t[j]).Append(" ");
       return sb.ToString();
     };
+    var names = new string[59];
+    try { for (int seed = 0; seed < 59; seed++) names[seed] = Mem.PlantName(seed) ?? ""; } catch { return; }   // game not attached yet
+    if (names.All(n => n.Length == 0)) return;
     for (int seed = 0; seed < 59; seed++) {
-      string name = Mem.PlantName(seed); if (name.Length == 0) continue;
+      string name = names[seed]; if (name.Length == 0) continue;
       string tip = section(name + "_TOOLTIP").Trim(), head = section(name + "_DESCRIPTION_HEADER"), body = section(name + "_DESCRIPTION");
       string all = (tip + " " + head + " " + body).ToLower();
       if (tip.Length > 0) Tooltip[seed] = tip;
@@ -54,6 +70,9 @@ public static class Roles {
       if (all.Contains("aquatic plant")) Aquatic.Add(seed);
       if (all.Contains("must be planted on lily pads")) NeedsPad.Add(seed);
       if (all.Contains("range:{stat} short") || all.Contains("short distance") || all.Contains("short-ranged")) ShortRange.Add(seed);
+      if (all.Contains("three lanes") || all.Contains("directions") || all.Contains("any lane") || all.Contains("nearby enemies on impact") || all.Contains("nearby zombies on impact")) MultiLane.Add(seed);
+      // Ground contact (spikes): hurts what walks over it and is never eaten. Not a shooter, whatever its "damage:" line says.
+      bool ground = all.Contains("walk over") || all.Contains("walks over") || all.Contains("step on") || all.Contains("can't be eaten") || all.Contains("caltrop") || all.Contains("spikeweed");
       string role = null;
       if (WaterPad.Contains(seed) || RoofPad.Contains(seed)) role = "PAD";
       else if (all.Contains("wake") && all.Contains("mushroom")) role = "WAKE";
@@ -64,12 +83,14 @@ public static class Roles {
       else if (all.Contains("two of the same")) role = "IMITATE";
       else if (all.Contains("sun production") || all.Contains("gives") && all.Contains("sun")) role = "SUN";
       else if (all.Contains("devour") || all.Contains("chomp")) role = "MELEE";
-      else if (all.Contains("delayed activation") || all.Contains("arm")) role = "MINE";
+      else if (ground) role = "GROUND";
+      else if (all.Contains("delayed activation") || ArmWord.IsMatch(all)) role = "MINE";   // the word "arm", not "armadillo"
       else if (all.Contains("single use") || all.Contains("explode") || all.Contains("blow up")) role = "INSTANT";
       else if (all.Contains("damage:")) role = "SHOOT";
       else if (all.Contains("toughness") || all.Contains("block") || all.Contains("protect")) role = "WALL";
       if (role != null) DescRole[seed] = role;
     }
+    if (DescRole.Count > 0) descLoaded = true;
   }
 
   public static string RoleOf(int seed) {
@@ -108,18 +129,26 @@ public static class Roles {
     if (best.Value >= need && best.Key != old) {
       Learned[seed] = best.Key;
       Viz.AddEvent("LEARN " + Mem.SeedName(seed) + " is a " + best.Key + " plant (" + why + ")" + (old != null ? " - was believed " + old : ""));
-      Save();
     } else if (n == 1 && Unknown(seed)) Viz.AddEvent("LEARN clue: " + Mem.SeedName(seed) + " looks like " + role + " (" + why + ")");
+    Save();   // evidence is persisted too (rare: at most once per watched plant)
   }
 
   // laneDmg: damage zombies took this frame per row; vanished: zombies (row, x) that disappeared this frame.
+  // Old signature: the plant's OWN kind is taken out of the known lane DPS here (same filter as bot.cs: known shooters).
   public static void Observe(State s, double[] laneDmg, double dt, List<Tuple<int, float, int>> vanished, Func<int, double> knownLaneDps) {
+    Observe(s, laneDmg, dt, vanished, (row, ex) => knownLaneDps(row) - (Is(ex, "SHOOT") && !Unknown(ex) ? s.Plants.Count(p => p.Row == row && p.Type == ex) * Learn.Dps(ex) : 0));
+  }
+  // knownLaneDps(row, excludeSeed): DPS of the known shooters in that row, leaving out every plant of excludeSeed's kind.
+  public static void Observe(State s, double[] laneDmg, double dt, List<Tuple<int, float, int>> vanished, Func<int, int, double> knownLaneDps) {
     double now = s.GameTime;
     var present = new HashSet<uint>();
     foreach (var p in s.Plants) {
       present.Add(p.Id);
       Watch w;
-      if (!watching.TryGetValue(p.Id, out w)) { watching[p.Id] = w = new Watch { Id = p.Id, Seed = p.Type, Row = p.Row, Col = p.Col, Planted = now, Done = !Unconfirmed(p.Type) }; continue; }
+      if (!watching.TryGetValue(p.Id, out w)) {
+        int hp; if (p.MaxHp > 0 && p.MaxHp < 100000 && (!maxHpOf.TryGetValue(p.Type, out hp) || p.MaxHp > hp)) maxHpOf[p.Type] = p.MaxHp;
+        watching[p.Id] = w = new Watch { Id = p.Id, Seed = p.Type, Row = p.Row, Col = p.Col, Planted = now, Done = !Unconfirmed(p.Type) }; continue;
+      }
       if (w.Done) continue;
       float cx = 40 + w.Col * 80 + 40, cy = (Bot.CellY(w.Row) - 5);
       // sun appearing right next to it
@@ -136,17 +165,25 @@ public static class Roles {
       if (descSaysOther) mowerHere = true;   // reuse the skip below
       if (!mowerHere && vanished.Any(v => v.Item1 == w.Row && v.Item2 + 40 > cx - 20 && v.Item2 + 40 < cx + 130 && v.Item3 > 120))
         { Add(w.Seed, "MELEE", "a zombie next to it disappeared"); w.Done = true; continue; }
-      // being chewed for a long time and still standing -> wall
-      bool beside = s.Zombies.Any(z => z.Row == w.Row && Math.Abs(z.X + 40 - cx) < 60);
-      if (beside) { if (w.BesideSince < 0) w.BesideSince = now; if (now - w.BesideSince > 12) { Add(w.Seed, "WALL", "survived 12s of chewing"); w.Done = true; continue; } }
-      else w.BesideSince = -1;
+      // Wall = real max health far above the ordinary plants (3x the median of shooters / sun makers, or 1000+), checked once per plant.
+      // Not tested when the description says it is something else. The watch stays open: a tough plant can still prove it shoots.
+      bool beside = s.Zombies.Any(z => z.Row == wrow && Math.Abs(z.X + 40 - wcx) < 60);
+      if (!w.HpTested && p.MaxHp > 0) {
+        w.HpTested = true;
+        string hd; bool descOther = DescRole.TryGetValue(w.Seed, out hd) && hd != "WALL";
+        double med = MedianHp(w.Seed);
+        if (!descOther && (p.MaxHp >= 1000 || (med > 0 && p.MaxHp >= 3 * med)))
+          Add(w.Seed, "WALL", "max health " + p.MaxHp + (med > 0 ? " vs ~" + med.ToString("0") + " for shooters/sun makers" : ""));
+      }
       // lane damage beyond what known shooters explain -> it shoots
       // A big single chunk taken by the zombie right beside it is a bite, not shooting.
       if (laneDmg[w.Row] > 150 && beside && Unknown(w.Seed) && !descSaysOther) { Add(w.Seed, "MELEE", "the zombie beside it lost " + laneDmg[w.Row].ToString("0") + " hp in one go"); w.Done = true; continue; }
       // Sustained lane damage beyond what known shooters explain, averaged over 6 game-seconds -> it shoots.
-      if (dt > 0 && laneDmg[w.Row] < 150 && s.Zombies.Any(z => z.Row == w.Row && z.X > cx && z.X < 760) && now - w.Planted > 2 && Unknown(w.Seed)) {
+      // Runs for described plants too (Unconfirmed, not just Unknown), with the plant's own kind left out of the "known" damage.
+      if (dt > 0 && laneDmg[w.Row] < 150 && s.Zombies.Any(z => z.Row == wrow && z.X > wcx && z.X < 760) && now - w.Planted > 2 && Unconfirmed(w.Seed)
+          && !(Learn.Daytime && Nocturnal.Contains(w.Seed)) && !Learn.OtherDamage(s, w.Row, sd => Is(sd, "SHOOT"), w.Seed)) {
         double[] acc; if (!extraAcc.TryGetValue(w.Id, out acc)) extraAcc[w.Id] = acc = new double[2];
-        acc[0] += laneDmg[w.Row] - knownLaneDps(w.Row) * dt; acc[1] += dt;
+        acc[0] += laneDmg[w.Row] - knownLaneDps(w.Row, w.Seed) * dt; acc[1] += dt;
         if (acc[1] >= 6) {
           double extra = acc[0] / acc[1];
           if (extra > 8) { Add(w.Seed, "SHOOT", "lane took ~" + extra.ToString("0") + " extra dmg/s for 6s"); w.Done = true; }
@@ -155,7 +192,7 @@ public static class Roles {
       }
     }
     foreach (var id in watching.Keys.Where(id => !present.Contains(id)).ToList()) {
-      var w = watching[id]; watching.Remove(id);
+      var w = watching[id]; watching.Remove(id); extraAcc.Remove(id);
       if (w.Done) continue;
       double age = now - w.Planted;
       float cx = 40 + w.Col * 80 + 40;
@@ -165,12 +202,23 @@ public static class Roles {
   }
   static readonly Dictionary<uint, double[]> extraAcc = new Dictionary<uint, double[]>();   // {extra damage, seconds}
 
+  // roles.txt: "seed|ROLE" (learned role, old format) plus "E|seed|ROLE|n" (the evidence behind it, survives restarts).
   public static void Save() {
     if (Bot.ProMode) return;   // pro mode never writes learned knowledge
-    try { File.WriteAllLines(FILE, Learned.Select(kv => kv.Key + "|" + kv.Value)); } catch { }
+    try {
+      var lines = Learned.Select(kv => kv.Key + "|" + kv.Value).ToList();
+      foreach (var e in Evidence) foreach (var r in e.Value) lines.Add("E|" + e.Key + "|" + r.Key + "|" + r.Value);
+      File.WriteAllLines(FILE, lines);
+    } catch { }
   }
   public static void Load() {
     if (!File.Exists(FILE)) return;
-    foreach (var l in File.ReadAllLines(FILE)) { var p = l.Split('|'); try { Learned[int.Parse(p[0])] = p[1]; } catch { } }
+    foreach (var l in File.ReadAllLines(FILE)) {
+      var p = l.Split('|');
+      try {
+        if (p[0] == "E") { int sd = int.Parse(p[1]); if (!Evidence.ContainsKey(sd)) Evidence[sd] = new Dictionary<string, int>(); Evidence[sd][p[2]] = int.Parse(p[3]); }
+        else Learned[int.Parse(p[0])] = p[1];
+      } catch { }
+    }
   }
 }

@@ -1,0 +1,45 @@
+I'll go deeper this time: the main loop, the learning system, memory reading, and the rest of Pro mode that I only skimmed before.
+
+Verdict first: don't rebuild. Rebuild one layer and add one tool. Here's the deeper read and the ideas that come out of it.
+
+## What the code actually says about the problem
+
+The numbers are blunter than the notes. `pro_record.txt` shows 474 Pro deaths, and 360 of them are "wave 0/20" on level 35 (4-5). `nemesis.txt` says 13 of the last 15 killers were FOOT. So this isn't "the bot is weak." It's one puzzle level, one zombie type, and a brain built for a different kind of level.
+
+Why the current brain can't solve it:
+
+1. **Pro mode is a tower-defense brain. Vasebreaker is a resource puzzle.** The simulator asks "does this lane hold for 40 seconds?" That's the right question when you have sun income and a seed bank. In Vasebreaker there's no sun, your weapons are inside the vases, and the whole game is which vase to open next. That decision is handled by about 40 lines of hand-ordering in `bot.cs` plus four timers. The clever part of the bot never touches the decision that matters.
+
+2. **Scoring is a pile of bonuses.** Every candidate gets `900 + min(700, gain/8) + 500 if fixes + ... - 250 if ...`. Each number was added after a specific death. Nobody, including the Claude on your VM, can predict how they interact. That's why "fixes" keep producing new deaths.
+
+3. **The bot can't tell a good squash from a wasted one.** The log says `lost SQUASH at r4c6` two seconds after planting. That line fires whether the squash crushed a football or got eaten before it landed. If you can't measure the outcome, you can't tune it.
+
+4. **The only test is dying live.** Every change costs real attempts at x2 speed, with random vase contents on top. 475 deaths is what tuning-by-dying looks like.
+
+5. **The "learning bot" is a knob-tweaker, not a learner.** It mutates 9 numbers (sunflowers per row, wall weight, etc.), gives each variant 3 runs, keeps the best. Three runs of a random-ish game is noise. It's a fun gimmick for the Discord panel, but it will never discover a strategy. Worth knowing before you invest in it.
+
+## Real ideas, ranked by payoff per effort
+
+| Idea | What it is | Effort | Why it matters |
+|---|---|---|---|
+| **1. Death replay buffer** | Save the last 60 s of `State` snapshots to a file on every death. The bot already builds a `State` object 50+ times a second; this is "write it to a ring buffer." | Small | Every later fix becomes checkable against real deaths instead of guessing. This is the single highest-value change. |
+| **2. Outcome tracking for squash and instants** | When a squash disappears, check whether a zombie in that cell lost most of its health in the same tick. Log "SQUASH HIT football" vs "SQUASH WASTED." Same for cherry/hypno. | Small | Turns the football problem from a feeling into a number: hit rate. If it's 30%, the aim logic is the problem. If it's 90%, vase order is. |
+| **3. A Vasebreaker planner that replaces the vase rules** | Separate small brain, only active when vases exist. Tracks: lanes with/without a shooter, zombies out, vases by look (green/?/skull), what the level's vase set contains overall. Picks the break that keeps the worst lane survivable. | Medium | Fixes the actual decision that kills the bot. A few hundred lines, no touching Pro mode. |
+| **4. Use the level's known vase composition** | 4-5 has a fixed set of contents, only shuffled. A human who has died 475 times knows "there are N squashes left somewhere." Count what's come out, infer what's left. Not peeking: the bot still never reads a vase's hidden type. | Small, inside #3 | Lets the planner say "two squashes remain in 6 vases, football is out, break the ? vases now" with real odds instead of a 0.5 s timer. |
+| **5. Make the simulator the judge, then grade it** | Replace the bonus pile with "score = simulated outcome" (prosim already computes cost). Then use the replay buffer to compare what the sim predicted with what happened. | Medium | Tuning becomes "make predictions match reality," which is measurable. Today's tuning is "add a bonus and pray." |
+| **6. Offline strategy learning instead of live mutation** | Feed the replay files and friends' recordings into an offline pass that fits numbers (speeds, hp, hit rates) and tests scoring weights against hundreds of recorded moments. | Medium-large | Real learning from real data. The live mutation loop with 3 runs per idea can't do this. |
+| **7. Imitation from recordings** | You already shipped the recorder. If darthspiker records beating 4-5 twice, extract his vase order and timings and give the planner his sequence as a starting template. | Small once recordings exist | He already solved the puzzle. Copying a human on a puzzle level is legitimate "pro" play. |
+
+## What I'd leave alone
+
+Memory reading, fog handling, the input layer, the watchdog, the panel, the Discord relay. The simulator for normal levels too. 3-2 through 4-4 with 0-2 deaths each proves that part works. A restart throws away the 80% that's hard and keeps the 20% that's wrong.
+
+## Honest expectations
+
+Vasebreaker has random vase contents, so even a well-built planner will die sometimes. The target should be "wins 4-5 in under 5 tries," not zero deaths. Also, 4-5 is the only Vasebreaker in Adventure. Beyond it, worlds 4 and 5 are normal levels where the existing brain already does well, plus roof levels where the damage table I flagged earlier needs correcting. So don't over-build the planner; it's a tool for one wall, then it sits mostly unused.
+
+## Order I'd do it in
+
+1 → 2 (one evening, no gameplay change, pure measurement). Then 4-5 runs for a few hours to collect data. Then 3 + 4 built against that data. Then 5 if you want the whole bot to get sharper, 6 and 7 only if you want "learning" to mean something.
+
+Same caveat as before: I read the decision code closely but couldn't run anything here, since it needs Windows, the game, and the mod. If you want, I'll write the hand-off brief for the VM's Claude for steps 1 to 4, with exactly what to log and what the planner's inputs and rules should be.

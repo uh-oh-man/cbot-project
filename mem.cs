@@ -6,10 +6,15 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-public class Zom { public uint Id; public int Row, Type, Hp, MaxHp, Helm, Shield; public float X, Y; public int Total { get { return Hp + Helm + Shield; } } }
+public class Zom { public uint Id; public int Row, Type, Hp, MaxHp, Helm, Shield, Phase; public float X, Y; public int Total { get { return Hp + Helm + Shield; } }
+  public bool Eating;    // Zombie::mIsEating (+0x51): visible as the chewing animation
+  public bool Charmed;   // Zombie::mMindControlled (+0xBC): hypnotized, fights FOR us - never a threat or a target
+}
 public class Plt { public uint Id; public int Row, Col, Type, Hp, MaxHp; }
 // Sun.Motion: 0/1 fell from the sky, 2 popped out of a plant
-public class Sun { public uint Id; public int X, Y, Type, Seed, Motion; public bool IsPacket { get { return Type == 23 || Type == 24; } } }
+public class Sun { public uint Id; public int X, Y, Type, Seed, Motion; public bool IsPacket { get { return Type == 23 || Type == 24; } }
+  public int Age, Disappear;   // Coin::mCoinAge (+0x4C), mDisappearCounter (+0x54): drive the visible blink before a drop fades
+}
 public class Pkt {
   public int Slot, Type, Cost, X, Y, W, H, OffsetX; public bool Ready, Active; public int Cd;
   public bool FromCoin; public int CoinX, CoinY; public uint CoinId;   // a seed packet dropped on the lawn
@@ -21,6 +26,7 @@ public class Pkt {
 public class State {
   public int Scene, Sun, Wave, Waves, Level, Background, Tutorial, FogHidden; public double GameTime; public bool Paused, HasBoard, Complete;   // GameTime: game seconds (Board::mMainCounter / 100)
   public List<Zom> Zombies = new List<Zom>();
+  public List<Zom> FogZombies = new List<Zom>();   // hidden in fog: bookkeeping ONLY (so they don't count as kills), never for decisions
   public List<Plt> Plants = new List<Plt>();
   public List<Sun> Suns = new List<Sun>();
   public List<Pkt> Packets = new List<Pkt>();
@@ -106,7 +112,8 @@ public static class Mem {
       if (it[0xF4] != 0) return;
       s.Zombies.Add(new Zom { Id = id, Row = BitConverter.ToInt32(it, 0x1C), Type = BitConverter.ToInt32(it, 0x24),
         X = BitConverter.ToSingle(it, 0x2C), Y = BitConverter.ToSingle(it, 0x30), Hp = BitConverter.ToInt32(it, 0xCC), MaxHp = BitConverter.ToInt32(it, 0xD0),
-        Helm = BitConverter.ToInt32(it, 0xD4), Shield = BitConverter.ToInt32(it, 0xE4) });
+        Helm = BitConverter.ToInt32(it, 0xD4), Shield = BitConverter.ToInt32(it, 0xE4),
+        Phase = BitConverter.ToInt32(it, 0x28), Eating = it[0x51] != 0, Charmed = it[0xBC] != 0 });
     });
     // Fog (fog levels): a zombie standing in dense fog is invisible to a player, so it is invisible to the bots too.
     // Board::mGridCelFog int[9][7] (column-major, density 0-255) at +0x4C0, slid right by mFogOffset (+0x5C8, grows when blown away).
@@ -119,7 +126,9 @@ public static class Mem {
         int col = (int)Math.Floor((z.X + 40 - 40 - fogOff) / 80f);
         if (col < 0) return false;          // left of where the fog starts
         if (col > 8) col = 8;
-        return BitConverter.ToInt32(fog, (col * 7 + z.Row) * 4) >= 200;   // hidden in thick fog
+        bool hidden = BitConverter.ToInt32(fog, (col * 7 + z.Row) * 4) >= 200;   // hidden in thick fog
+        if (hidden) s.FogZombies.Add(z);
+        return hidden;
       });
       s.FogHidden = before - s.Zombies.Count;
     }
@@ -132,7 +141,8 @@ public static class Mem {
       if (it[0x38] != 0 || it[0x50] != 0) return;   // dead or already being collected
       int w = BitConverter.ToInt32(it, 0x10), h = BitConverter.ToInt32(it, 0x14);
       s.Suns.Add(new Sun { Id = id, X = (int)BitConverter.ToSingle(it, 0x24) + w / 2, Y = (int)BitConverter.ToSingle(it, 0x28) + h / 2,
-        Type = BitConverter.ToInt32(it, 0x58), Seed = BitConverter.ToInt32(it, 0x68), Motion = BitConverter.ToInt32(it, 0x5C) });   // Seed: plant pictured on a dropped packet
+        Type = BitConverter.ToInt32(it, 0x58), Seed = BitConverter.ToInt32(it, 0x68), Motion = BitConverter.ToInt32(it, 0x5C),   // Seed: plant pictured on a dropped packet
+        Age = BitConverter.ToInt32(it, 0x4C), Disappear = BitConverter.ToInt32(it, 0x54) });
     });
 
     ForEach(board + 0xF4, 0x48, 0x44, (it, id) => {

@@ -10,7 +10,29 @@ using System.Linq;
 public static partial class Bot {
   public static bool ProMode;
   // Mod author: after the football is dealt with, spend the remaining squashes on the last zombies.
-  static bool SquashFree(State s) { return s.Vases.Count <= 3 && !s.Zombies.Any(z => z.X < VISIBLE_X && Mem.ZomName(z.Type) == "FOOT"); }
+  // Where to park a hypno that has no target yet: in front of the likeliest zombie vases (planner), else one column
+  // left of the biggest unopened vase cluster in a lane, never on an occupied/blocked cell.
+  static int HypnoPark(State s) {
+    int ac = VasePlanner.AmbushCell(s);
+    Func<int, int, bool> free = (r, c) => c >= 0 && c <= 8 && !s.Blocked.Contains(r * 10 + c) && !s.Plants.Any(q => q.Row == r && q.Col == c);
+    if (ac >= 0 && free(ac / 10, ac % 10)) return ac;
+    foreach (var g in s.Vases.GroupBy(k => k / 10).OrderByDescending(g => g.Count())) {
+      int r = g.Key; for (int c = g.Min(k => k % 10) - 1; c >= 1; c--) if (free(r, c)) return r * 10 + c;
+    }
+    return -1;
+  }
+  // Already handled: a squash/kelp/chomper waiting right by it, or a cherry/jalapeno/doom about to go off over it.
+  // Without this the next tick saw the same zombie still alive (a squash takes ~1 s to jump) and planted another
+  // (owner, 2026-11-01: "uses more than one squash on one zombie in a single action").
+  static bool Covered(State s, Zom z) {
+    float zc = z.X + 40;
+    return s.Plants.Any(q =>
+      ((q.Type == SQUASH || q.Type == KELP) && q.Row == z.Row && Math.Abs(CellX(q.Col) - zc) < 170) ||
+      (q.Type == CHERRY && Math.Abs(q.Row - z.Row) <= 1 && Math.Abs(CellX(q.Col) - zc) < 130) ||
+      (q.Type == JALA && q.Row == z.Row) ||
+      q.Type == DOOM);
+  }
+  static bool SquashFree(State s) { return VasePlanner.SquashReserve(s) == 0; }   // vasebreaker: the planner knows whether a football can still come
   public static string ProStatus = "";
   static double ProBreachT = 9999;
 
@@ -145,6 +167,7 @@ public static partial class Bot {
   // ---------- Playing ----------
   static List<Cand> ProScore(State s) {
     var list = new List<Cand>();
+    Seen.Frame(s); Seen.Prune(proTrack);   // the visible-only view of this frame; forget zombies gone for 30 s
     var rowTypes = Mem.RowTypes();
     var rows = Enumerable.Range(0, 6).Where(r => rowTypes[r] == 1 || rowTypes[r] == 2 || rowTypes[r] == 3).ToList();
     if (rows.Count == 0) return list;
@@ -182,7 +205,7 @@ public static partial class Bot {
     // A cell a normal plant could use once a pad/pot is down (the pad comes first).
     Func<int, int, bool> needsBase = (r, c) => !blocked(r, c) && top(r, c) == null && !padAt(r, c) && (isWater(r, c) || roof);
 
-    var live = s.Zombies.Where(z => z.X < VISIBLE_X && rows.Contains(z.Row)).ToList();
+    var live = s.Zombies.Where(z => z.X < VISIBLE_X && rows.Contains(z.Row) && !z.Charmed).ToList();   // hypnotized zombies fight for us
     var spd = live.ToDictionary(z => z.Id, z => ProSpeed(z, now));
     // Lane firepower now (threepeaters help neighbours; torchwood doubles peas passing through).
     var dps = new double[6];
@@ -199,7 +222,7 @@ public static partial class Bot {
     foreach (var r in rows) {
       var zs = live.Where(z => z.Row == r).ToList();
       if (zs.Count == 0) { danger[r] = 0; continue; }
-      double hp = zs.Sum(z => (double)z.Total);
+      double hp = zs.Sum(z => Seen.Hp(z));
       var lead = zs.OrderBy(z => z.X).First();
       double secs = Math.Max(1, (lead.X - 60) / spd[lead.Id]);
       // With no shooter yet, judge against what one peashooter planted now would manage before it arrives.
@@ -282,9 +305,9 @@ public static partial class Bot {
           // Best shooter for the job: cheap now, strong later.
           double val = ProDps(t) / 14.0;
           if (t == THREE) val = Math.Min(3, rows.Count(rr => Math.Abs(rr - r) <= 1 && target(rr) - dps[rr] > 0)) * 0.9;
-          if (t == SNOW && live.Any(z => z.Row == r && z.Total > 600)) val += 0.6;
+          if (t == SNOW && live.Any(z => z.Row == r && Seen.Hp(z) > 600)) val += 0.6;
           if (t == SNOW && shooters[r] >= 2 && !s.Plants.Any(q => q.Row == r && q.Type == SNOW)) val += 1.5;   // slowing the lane ~doubles every shooter's damage
-          if ((t == FUME || t == GLOOM) && live.Any(z => z.Row == r && z.Shield > 0)) val += 1;
+          if ((t == FUME || t == GLOOM) && live.Any(z => z.Row == r && Seen.HasShield(z))) val += 1;
           if (t == PUFF) val = p.Cost == 0 && s.Plants.Count(q => q.Row == r && q.Type == PUFF) < 2 ? 1.1 : 0.3;
           sc *= 0.75 + 0.25 * Math.Min(3, val);
           int[] cols = t == PUFF || t == SEASH ? new[] { 4, 5, 3, 6 } : t == SCAREDY ? new[] { 1, 0, 2 } : shootCols;
@@ -310,7 +333,7 @@ public static partial class Bot {
           if (!canPlace(t, r, c)) { var occ = top(r, c); if (occ == null || !ProSun.Contains(occ.Type) || !live.Any(z => z.X < 300)) continue; dig = true; }
           var hit = live.Where(z => Math.Abs(z.Row - r) <= rr0 && Math.Abs(z.X + 30 - CellX(c)) <= reach).ToList();
           if (hit.Count == 0) continue;
-          double hp = hit.Sum(z => (double)z.Total);
+          double hp = hit.Sum(z => Seen.Hp(z));
           double close = hit.Min(z => z.X);
           if (close > 620 && hp < 3000) continue;   // still at the lawn edge: shooters get their full run at them first
           bool worth = t == DOOM ? (hit.Count >= 6 || hp >= 3500 || (close < 250 && hp >= 1500)) : (hit.Count >= 3 || hp >= 1500 || (close < 260 && hp >= 700));
@@ -325,7 +348,7 @@ public static partial class Bot {
       // --- Jalapeno: a whole lane at once ---
       if (t == JALA) foreach (var r in rows) {
         var zs = live.Where(z => z.Row == r).ToList();
-        double hp = zs.Sum(z => (double)z.Total);
+        double hp = zs.Sum(z => Seen.Hp(z));
         if (zs.Count >= 4 || hp >= 2000 || (danger[r] > 1.5 && nearest[r] < 350 && hp >= 600)) {
           int c = Enumerable.Range(0, 9).Where(cc => canPlace(t, r, cc)).Select(cc => (int?)cc).FirstOrDefault() ?? -1;
           if (c >= 0) add(p, r, c, 500 + hp / 4 + (nearest[r] < 350 ? 250 : 0), "jalapeno lane " + r + ": " + zs.Count + " zombies (~" + hp.ToString("0") + " hp)");
@@ -344,33 +367,42 @@ public static partial class Bot {
       // then buckets / footballs; peas handle the rest. Other plants just take the nearest worthy target.
       Func<string, int> hypPri = nm => nm == "DANCER" ? 4 : nm == "BDANCE" ? 3 : (nm == "PAIL" || nm == "FOOT" || nm == "REGEN" || nm == "GARG") ? 2 : 0;
       var order = t == HYPNO ? live.OrderByDescending(z => hypPri(Mem.ZomName(z.Type))).ThenBy(z => z.X) : live.OrderBy(z => z.X);
-      if (t == SQUASH || t == KELP || t == CHOMP || t == HYPNO) foreach (var z in order) {
+      // Vasebreaker hypno: the planner picks the target (dancer > backups > tough), never one already charmed or already handled.
+      if (t == HYPNO && PrecisionLevel) {
+        var hz = VasePlanner.HypnoTarget(s);
+        if (hz != null) { string hn = Mem.ZomName(hz.Type); int hc = Math.Max(0, ColOf(hz.X) - 1);
+          for (int cc = hc; cc >= Math.Max(0, hc - 2); cc--) if (canPlace(t, hz.Row, cc)) { add(p, hz.Row, cc, 700 + 150 * (hn == "DANCER" ? 4 : hn == "BDANCE" ? 3 : 2) + (hz.X < 300 ? 250 : 0), "DARTH'S GAMBIT: hypno the " + hn.ToLower() + " (" + Seen.Hp(hz).ToString("0") + " hp)"); break; }
+        }
+      }
+      if (t == SQUASH || t == KELP || t == CHOMP || (t == HYPNO && !PrecisionLevel)) foreach (var z in order) {
         string n = Mem.ZomName(z.Type);
+        if ((t == SQUASH || t == KELP || t == CHOMP) && Covered(s, z)) continue;   // a squash/bomb already waiting on it: don't stack a second
         // A hypno already waiting in front of this zombie means it is handled - do not stack a second one.
         if (t == HYPNO && s.Plants.Any(q => q.Row == z.Row && q.Type == HYPNO && CellX(q.Col) < z.X + 30)) continue;
         if (t == HYPNO && hypPri(n) > 0 && z.X < 650) {   // hypno the priority target in its path, whatever its hp
           int hc = Math.Max(0, ColOf(z.X) - 1);
           bool put = false;
           for (int cc = hc; cc >= Math.Max(0, hc - 2) && !put; cc--)
-            if (canPlace(t, z.Row, cc)) { add(p, z.Row, cc, 700 + 150 * hypPri(n) + (z.X < 300 ? 250 : 0), "DARTH'S GAMBIT: hypno the " + n.ToLower() + " (" + z.Total + " hp)"); put = true; }
+            if (canPlace(t, z.Row, cc)) { add(p, z.Row, cc, 700 + 150 * hypPri(n) + (z.X < 300 ? 250 : 0), "DARTH'S GAMBIT: hypno the " + n.ToLower() + " (" + Seen.Hp(z).ToString("0") + " hp)"); put = true; }
           if (put) break;
           continue;
         }
         if (t == KELP && !isWater(z.Row, 0)) continue;
         if (t != KELP && isWater(z.Row, 0) && !padAt(z.Row, Math.Max(0, ColOf(z.X) - 1))) continue;
-        bool tough = z.Total >= 1000 || n == "FOOT" || n == "REGEN" || n == "GARG" || n == "ZAMB" || n == "POLE" || n == "DOLPH" || n == "SNORK";
+        bool tough = Seen.Hp(z) >= 1000 || n == "FOOT" || n == "REGEN" || n == "GARG" || n == "ZAMB" || n == "POLE" || n == "DOLPH" || n == "SNORK";
         bool near = z.X < (t == CHOMP ? 420 : 520);
         // Fast zombies dodge a squash in motion: wait until it stops to eat a plant (tip from the mod author).
         bool fast = ProSpeedOf(n) >= 25 || n == "REGEN";
         bool eating = s.Plants.Any(q => q.Row == z.Row && !ProIsPad(q.Type) && Math.Abs(CellX(q.Col) - (z.X + 30)) < 45);
+        eating = eating || z.Eating;   // the game's own chewing flag (the visible animation)
         if (t == SQUASH && fast && !eating) continue;
         if (!(near && (tough || danger[z.Row] > 1))) continue;
-        if (t == SQUASH && PrecisionLevel && VaseRound >= 2 && !SquashFree(s) && !tough && z.Total < 600) continue;   // vasebreaker: squashes are scarce - save them for footballs and other tough zombies
+        if (t == SQUASH && PrecisionLevel && !VasePlanner.SpendSquashOn(s, z, false)) continue;   // vasebreaker: the planner keeps squashes for footballs
         int c = Math.Max(0, ColOf(z.X) - (t == SQUASH ? 0 : 1));
         if (t == HYPNO && !(n == "FOOT" || n == "REGEN" || n == "GARG" || n == "PAIL" || n == "DANCER")) continue;
         if (t == CHOMP && n == "GARG") continue;
         for (int cc = c; cc >= Math.Max(0, c - 1); cc--)
-          if (canPlace(t, z.Row, cc)) { add(p, z.Row, cc, 550 + z.Total / 5 + (z.X < 300 ? 250 : 0), Mem.SeedName(t).ToLower() + " the " + n.ToLower() + " (" + z.Total + " hp)"); break; }
+          if (canPlace(t, z.Row, cc)) { add(p, z.Row, cc, 550 + Seen.Hp(z) / 5 + (z.X < 300 ? 250 : 0), Mem.SeedName(t).ToLower() + " the " + n.ToLower() + " (" + Seen.Hp(z).ToString("0") + " hp)"); break; }
         break;
       }
       // --- Potato mine: free early kill when the zombie is far enough away to let it arm (~15 s) ---
@@ -387,7 +419,7 @@ public static partial class Bot {
         if (shooters[r] < 1 || (shooters[r] < 2 && danger[r] < 0.8 && !(flagSoon || finalSoon))) continue;
         int front = s.Plants.Where(q => q.Row == r && !ProIsPad(q.Type)).Select(q => q.Col).DefaultIfEmpty(0).Max();
         var wall = s.Plants.Where(q => q.Row == r && ProWall.Contains(q.Type)).OrderByDescending(q => q.Col).FirstOrDefault();
-        bool worn = wall != null && wall.MaxHp > 0 && wall.Hp < wall.MaxHp / 3;
+        bool worn = wall != null && Seen.PlantStage(wall) == 3;   // its third crack state is visible
         bool wantTall = live.Any(z => z.Row == r && Jumpers.Contains(Mem.ZomName(z.Type)));
         if (t == PUMPKIN) { if (worn && canPlace(PUMPKIN, r, wall.Col)) add(p, r, wall.Col, 420, "pumpkin over the worn wall in lane " + r); continue; }
         if (wall != null && !worn) continue;
@@ -449,11 +481,16 @@ public static partial class Bot {
         if (c >= 0) add(p, r, c, 220 + 8 * Math.Max(0, need) + 200 * Math.Min(2, danger[r]), (t == LILY ? "lily pad" : "flower pot") + " ready for lane " + r);
       }
     }
-    // Look ahead: simulate each lane ~30 s and let the moves that actually stop a breach outrank everything else.
-    var baseOut = rows.ToDictionary(r => r, r => SimLane(r, s, spd));
+    // Look ahead: simulate each lane 40 s and let the moves that actually stop a breach outrank everything else.
+    var baseOut = new Dictionary<int, SimOut>();
+    foreach (var r in rows) {
+      var probe = SimCal.Due(s, r) ? new Dictionary<uint, double>() : null;   // calibration (report only): every 2 game-s per lane, also note where the sim puts each zombie at +5 s
+      baseOut[r] = SimLane(r, s, ProModel(spd), -1, -1, probe);
+      if (probe != null) SimCal.Predict(s, r, baseOut[r], live, spd, probe);
+    }
     ProSimDefence(s, usable, rows, spd, canPlace, needsBase, add, baseOut);
     var breaking = rows.Where(r => baseOut[r].Breach).ToList();
-    ProStatus += breaking.Count == 0 ? " | sim: all lanes hold 30s" : " | sim: lane " + string.Join(",", breaking.Select(r => r + "@" + baseOut[r].BreachT.ToString("0") + "s")) + " breaking";
+    ProStatus += breaking.Count == 0 ? " | sim: all lanes hold 40s" : " | sim: lane " + string.Join(",", breaking.Select(r => r + "@" + baseOut[r].BreachT.ToString("0") + "s")) + " breaking";
     ProBreachT = breaking.Count == 0 ? 9999 : breaking.Min(r => baseOut[r].BreachT);
     // Conveyor levels: you play what the belt gives you. A backed-up belt stops new plants arriving, so use what is waiting.
     // Same for dropped packets (vases, rewards): they fade, so every one gets a sensible spot instead of disappearing.
@@ -472,37 +509,53 @@ public static partial class Bot {
           // Vasebreaker (no sun makers): shooters at the far left for the longest firing time; one per lane first, and
           // extra shooters only where a tougher-than-normal zombie is (tips from the mod author).
           bool vb = s.Vases.Count > 0;
-          var r3 = rows.OrderByDescending(r => live.Any(z => z.Row == r) && dps[r] < 14 ? live.Where(z => z.Row == r).Sum(z => (double)z.Total) : 0)   // a zombie walking down an undefended lane first
+          var r3 = rows.OrderByDescending(r => live.Any(z => z.Row == r) && dps[r] < 14 ? live.Where(z => z.Row == r).Sum(z => Seen.Hp(z)) : 0)   // a zombie walking down an undefended lane first
                        .ThenBy(r => shooters[r] == 0 ? 0 : 1)
-                       .ThenByDescending(r => live.Where(z => z.Row == r && Mem.ZomName(z.Type) != "NORM").Sum(z => (double)z.Total))
+                       .ThenByDescending(r => live.Where(z => z.Row == r && Mem.ZomName(z.Type) != "NORM").Sum(z => Seen.Hp(z)))
                        .ThenBy(r => dps[r]).First();
           br = r3; var cols3 = vb ? new[] { 0, 1, 2, 3, 4 } : shootCols;
           bc = cols3.FirstOrDefault(cc => canPlace(t, r3, cc) || needsBase(r3, cc)); why = (vb ? "vasebreaker: " : "belt: ") + "shooter for lane " + br;
-        } else if (t == SQUASH && live.Count == 0 && s.Vases.Count > 0 && p.FromCoin && Learn.PacketTimeLeft(p.CoinId) >= 0 && Learn.PacketTimeLeft(p.CoinId) < 3) {   // about to fade: ambush in front of the vases
-          var vl = s.Vases.Where(k => !s.Plants.Any(q => q.Row == k / 10 && q.Type == SQUASH) && !live.Any(zz => zz.Row == k / 10 && zz.X + 30 < CellX(k % 10 - 1))).OrderBy(k => k % 10).Select(k => (int?)k).FirstOrDefault();
-          if (vl != null) { br = vl.Value / 10; bc = s.Vases.Where(k => k / 10 == br).Min(k => k % 10) - 1; why = "packet: squash parked in front of the vases in lane " + br + " (ambush)"; }
+        } else if (t == SQUASH && live.Count == 0 && s.Vases.Count > 0 && p.FromCoin && VasePlanner.Fading(s, p.CoinId)) {   // about to fade: ambush in front of the likeliest zombie vases
+          int ac = VasePlanner.AmbushCell(s);
+          if (ac >= 0 && canPlace(t, ac / 10, ac % 10)) { br = ac / 10; bc = ac % 10; why = "packet: squash ambush, " + VasePlanner.AmbushWhy; }
+        } else if (t == HYPNO && s.Vases.Count > 0 && p.FromCoin && VasePlanner.HypnoTarget(s) == null) {
+          // No worthy target on the lawn yet: never let a hypno fade (seen 2026-11-01: two hypnos faded, then the dancer
+          // and four backups walked in). Park it right away in front of the vases most likely to release a zombie -
+          // whatever comes out eats it and fights for us. The round-end wipe can't take it in the final round.
+          int hcell = HypnoPark(s);
+          if (hcell >= 0) { br = hcell / 10; bc = hcell % 10; why = "packet: hypno parked before it fades, " + VasePlanner.AmbushWhy; }
         } else if ((t == SQUASH || t == CHOMP || t == HYPNO || t == CHERRY || t == JALA || t == DOOM || t == PMINE || t == KELP) && live.Count > 0) {
           // Vasebreaker: a squash is reserved for tough zombies (peas handle the normal ones).
-          var pool = (t == SQUASH && PrecisionLevel && VaseRound >= 2 && !SquashFree(s)) ? live.Where(zz => zz.Total >= 600 || Mem.ZomName(zz.Type) == "FOOT" || Mem.ZomName(zz.Type) == "REGEN").ToList() : live;
-          if (pool.Count == 0 && t == SQUASH && PrecisionLevel && VaseRound >= 2 && !SquashFree(s) && !(p.FromCoin && Learn.PacketTimeLeft(p.CoinId) >= 0 && Learn.PacketTimeLeft(p.CoinId) < 3)) continue;   // hold it for the football
+          bool fadingP = p.FromCoin && VasePlanner.Fading(s, p.CoinId);
+          var pool = (t == SQUASH && PrecisionLevel) ? live.Where(zz => VasePlanner.SpendSquashOn(s, zz, fadingP)).ToList() : live;
+          if (pool.Count == 0 && t == SQUASH && PrecisionLevel && !fadingP) continue;   // hold it for the football
           if (pool.Count == 0) pool = live;
-          if (t == HYPNO) { var hp2 = live.Where(zz => { var nm = Mem.ZomName(zz.Type); return nm == "DANCER" || nm == "BDANCE" || nm == "PAIL" || nm == "FOOT" || nm == "REGEN"; }).ToList(); if (hp2.Count > 0) pool = hp2.OrderByDescending(zz => Mem.ZomName(zz.Type) == "DANCER" ? 3 : Mem.ZomName(zz.Type) == "BDANCE" ? 2 : 1).ThenBy(zz => zz.X).Take(1).ToList(); }
+          if (t == HYPNO && PrecisionLevel) {
+            var hzt = VasePlanner.HypnoTarget(s);
+            if (hzt == null) {   // only weak zombies out: park it for what the vases release instead of letting it fade
+              int hcell = HypnoPark(s); if (hcell < 0) continue;
+              br = hcell / 10; bc = hcell % 10; why = "packet: hypno parked before it fades, " + VasePlanner.AmbushWhy;
+              add(p, br, bc, 260, why); continue;
+            }
+            pool = new List<Zom> { hzt };
+          }
+          else if (t == HYPNO) { var hp2 = live.Where(zz => { var nm = Mem.ZomName(zz.Type); return nm == "DANCER" || nm == "BDANCE" || nm == "PAIL" || nm == "FOOT" || nm == "REGEN"; }).ToList(); if (hp2.Count > 0) pool = hp2.OrderByDescending(zz => Mem.ZomName(zz.Type) == "DANCER" ? 3 : Mem.ZomName(zz.Type) == "BDANCE" ? 2 : 1).ThenBy(zz => zz.X).Take(1).ToList(); }
+          if (t == SQUASH || t == CHERRY || t == JALA || t == DOOM || t == CHOMP || t == KELP) { pool = pool.Where(zz => !Covered(s, zz)).ToList(); if (pool.Count == 0) continue; }   // one killer per zombie
           var z = pool.OrderBy(zz => zz.X).First();   // the most pressing zombie: drop it in its path
           // A squash misses fast zombies on the move: hold it until the target stops to eat, unless the packet is about to fade.
           string zn = Mem.ZomName(z.Type);
           bool zFast = ProSpeedOf(zn) >= 25 || zn == "REGEN";
           bool zEating = s.Plants.Any(q => q.Row == z.Row && !ProIsPad(q.Type) && Math.Abs(CellX(q.Col) - (z.X + 30)) < 45);
-          double fade = p.FromCoin ? Learn.PacketTimeLeft(p.CoinId) : -1;
-          bool toughZ = z.Total >= 600 || zn == "FOOT" || zn == "REGEN";
-          if (t == SQUASH && PrecisionLevel && VaseRound >= 2 && !SquashFree(s) && !toughZ && !(fade >= 0 && fade < 3)) continue;
-          if (t == SQUASH && zFast && !zEating && !(fade >= 0 && fade < 3)) {
-            // Hold it for a football that stops to eat; only in its last seconds park it in front of a vase (tips from the mod author).
-            if (!(fade >= 0 && fade < 3)) continue;
-            var vl = s.Vases.Where(k => !s.Plants.Any(q => q.Row == k / 10 && q.Type == SQUASH) && !live.Any(zz => zz.Row == k / 10 && zz.X + 30 < CellX(k % 10 - 1))).OrderBy(k => k % 10).Select(k => (int?)k).FirstOrDefault();
-            if (vl == null) continue;
-            br = vl.Value / 10; bc = s.Vases.Where(k => k / 10 == br).Min(k => k % 10) - 1;
-            if (bc < 0 || !canPlace(t, br, bc)) continue;
-            why = "packet: squash parked in front of the vases in lane " + br + " (ambush)";
+          bool fadingQ = p.FromCoin && (VasePlanner.Fading(s, p.CoinId) || (Learn.PacketTimeLeft(p.CoinId) >= 0 && Learn.PacketTimeLeft(p.CoinId) < 3));
+          if (t == SQUASH && PrecisionLevel && !VasePlanner.SpendSquashOn(s, z, fadingQ)) continue;
+          zEating = zEating || z.Eating;   // the game's own chewing flag (the visible animation)
+          if (t == SQUASH && zFast && !zEating) {
+            // Fast walkers dodge a squash: hold it until the target stops to eat. Only in its last seconds,
+            // park it in front of the vases most likely to release something dangerous (tips from the mod author).
+            if (!fadingQ) continue;
+            int ac2 = s.Vases.Count > 0 ? VasePlanner.AmbushCell(s) : -1; if (ac2 < 0) continue;
+            br = ac2 / 10; bc = ac2 % 10; if (!canPlace(t, br, bc)) continue;
+            why = "packet: squash parked, " + VasePlanner.AmbushWhy;
           } else {
           br = z.Row; bc = Math.Max(0, Math.Min(8, ColOf(z.X) - (t == SQUASH || t == CHERRY || t == JALA || t == DOOM ? 0 : 1)));
           if (!canPlace(t, br, bc)) bc = Math.Max(0, bc - 1);
@@ -569,7 +622,7 @@ public static partial class Bot {
       lines.Add("deaths per level: " + string.Join("  ", byLvl.Select(g => ln(g.Key) + ":" + g.Count(m => m.Groups[2].Value == "DIED") + (g.Any(m => m.Groups[2].Value == "WON") ? "W" : ""))));
       var nem = File.Exists(@"C:\cbot\nemesis.txt") ? File.ReadAllLines(@"C:\cbot\nemesis.txt").Select(l => l.Split(' ').Last()).GroupBy(x => x).OrderByDescending(g => g.Count()).Take(5).ToList() : null;
       if (nem != null && nem.Count > 0) { nemesisTop = nem[0].Key + " (x" + nem[0].Count() + ")"; lines.Add("super nemesis: " + string.Join("  ", nem.Select(g => g.Key + " x" + g.Count()))); }
-      if (PrecisionLevel) lines.Add("DARTH'S GAMBIT: vase round " + VaseRound + (wasHunting ? "  |  FOOTBALL HUNT ON" : "") + "  |  vases left " + lastVaseCount);
+      if (PrecisionLevel) { lines.Add(VasePlanner.Status()); lines.Add(Outcomes.Summary("SQUASH")); }
       lines.Add("plays from: zombie hp/speed tables, counters, area playbooks, 40s lane simulator - nothing is learned or saved");
     } catch (Exception e) { lines.Add("(panel: " + e.Message + ")"); }
     proKnow = lines;

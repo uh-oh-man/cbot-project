@@ -1,315 +1,4 @@
-﻿21:24:41  ! lost PEA at r2c0
-21:24:41  LEARN POST-MORTEM lane 2 at wave 0/20: BROKE (0 sun makers for 5 lanes) -> more economy, econ 1.21
-21:24:41  LEARN plant value this level: PEA 15/plant  SNOW 7/plant
-21:24:41  SAYS "died on 1-35 after 1m13s. that's death #209. the brains were delicious, apparently."
-21:24:41  STRAT S50 'Potato Prophet x Greedy Gardener' scored -100 (died, 0 mowers, 13 plants lost) -> avg -100
-21:24:41  RESULT lvl 35 DIED (death #420)
-21:24:41  died 10x in a row on lvl 35 - the strategy brain will keep experimenting
-21:24:49  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
-21:24:49  level economy: collected ~0 sun/min
-21:24:49  STRAT weighing: S19 Potato Prophet avg -37 (66 runs) | S21 Potato Prophet avg -40 (9 runs) | S18 Potato Prophet avg -39 (18 runs)
-21:24:49  STRAT EXPERIMENT gen 50: S51 'Potato Prophet' from S19 - hypothesis: what if shooters further back + less early peas?
-21:24:50  DAVE: Me and my buddy...
-21:24:51  DAVE: I have appeared to have forgotten his name...
-21:24:52  DAVE: Well we used to break vases when we were bored.
-21:24:54  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:24:58  PLANT SQUASH r0c6  score 260  (packet: squash in the path of the nearest zombie (lane 0))
-21:25:00  ! lost SQUASH at r0c6
-21:25:06  PLANT PEA r1c2  score 513  (first shooter for the zombie in lane 1 (x=547))
-21:25:08  fail SQUASH r1c6  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:25:08  PLANT SQUASH r1c5  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:25:09  ! lost SQUASH at r1c5
-21:25:11  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:25:13  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
-21:25:15  SAYS "update: planted squash in row 1."
-21:25:15  PLANT SQUASH r1c4  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:25:18  PLANT PEA r4c0  score 260  (vasebreaker: shooter for lane 4)
-21:25:23  PLANT SQUASH r4c5  score 260  (packet: squash in the path of the nearest zombie (lane 4))
-21:25:24  ! lost SQUASH at r4c5
-21:25:24  DAVE: Man, you "REDACTED" those vases nice and good!
-21:25:26  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
-21:25:27  DAVE: Here, I brought you some more vases.
-21:25:28  DAVE: Gotta be careful about "REDACTED" too fast, though.
-21:25:29  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
-21:25:31  ! lost PEA at r0c0
-21:25:31  ! lost PEA at r1c2
-21:25:31  ! lost PEA at r2c0
-21:25:31  ! lost PEA at r3c0
-21:25:31  ! lost SQUASH at r1c4
-21:25:31  ! lost PEA at r4c0
-21:25:33  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:25:37  PLANT SQUASH r0c7  score 260  (packet: squash in the path of the nearest zombie (lane 0))
-21:25:38  fail PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:25:38  ! lost SQUASH at r0c7
-21:25:42  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:25:42  PLANT SQUASH r1c7  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:25:43  ! lost SQUASH at r1c7
-21:25:44  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
-21:25:45  PLANT SNOW r4c0  score 260  (vasebreaker: shooter for lane 4)
-21:25:50  PLANT SNOW r4c1  score 260  (vasebreaker: shooter for lane 4)
-21:25:51  ! lost SNOW at r4c0
-21:25:51  PLANT SNOW r4c0  score 260  (vasebreaker: shooter for lane 4)
-21:25:52  LEARN POST-MORTEM lane 4 at wave 0/20: BROKE (0 sun makers for 5 lanes) -> more economy, econ 1.33
-21:25:52  LEARN plant value this level: PEA 8/plant  SNOW 3/plant
-21:25:52  SAYS "died on 1-35 after 1m02s. that's death #210. the brains were delicious, apparently."
-21:25:52  STRAT S51 'Potato Prophet' scored -100 (died, 0 mowers, 12 plants lost) -> avg -100
-21:25:52  RESULT lvl 35 DIED (death #421)
-21:25:52  died 11x in a row on lvl 35 - the strategy brain will keep experimenting
-21:25:59  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
-21:25:59  level economy: collected ~0 sun/min
-21:25:59  STRAT weighing: S19 Potato Prophet avg -37 (66 runs) | S21 Potato Prophet avg -40 (9 runs) | S18 Potato Prophet avg -39 (18 runs)
-21:25:59  STRAT TRIAL: giving S51 'Potato Prophet' run 2 of 3 before judging it (avg so far -100)
-21:26:00  DAVE: Me and my buddy...
-21:26:02  DAVE: I have appeared to have forgotten his name...
-21:26:03  DAVE: Well we used to break vases when we were bored.
-21:26:04  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:26:12  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:26:14  PLANT SQUASH r0c4  score 260  (packet: squash in the path of the nearest zombie (lane 0))
-21:26:15  PLANT SQUASH r1c6  score 824  (squash the pail (1370 hp))
-21:26:16  SAYS "TRIPLE KILL! 3 zombies down in 2 seconds at 17s. no further questions."
-21:26:17  ! lost SQUASH at r1c6
-21:26:17  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:26:26  PLANT PEA r4c2  score 474  (first shooter for the zombie in lane 4 (x=586))
-21:26:27  fail SQUASH r3c6  score 260  (packet: squash in the path of the nearest zombie (lane 3))
-21:26:27  PLANT SQUASH r3c5  score 260  (packet: squash in the path of the nearest zombie (lane 3))
-21:26:28  ! lost SQUASH at r3c5
-21:26:34  PLANT SQUASH r4c4  score 260  (packet: squash in the path of the nearest zombie (lane 4))
-21:26:36  PLANT PEA r3c2  score 260  (belt: shooter for lane 3)
-21:26:37  DAVE: Man, you "REDACTED" those vases nice and good!
-21:26:38  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
-21:26:40  DAVE: Here, I brought you some more vases.
-21:26:41  DAVE: Gotta be careful about "REDACTED" too fast, though.
-21:26:42  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
-21:26:43  ! lost PEA at r0c0
-21:26:43  ! lost PEA at r1c0
-21:26:43  ! lost SQUASH at r0c4
-21:26:43  ! lost PEA at r2c0
-21:26:43  ! lost PEA at r4c2
-21:26:43  ! lost SQUASH at r4c4
-21:26:43  ! lost PEA at r3c2
-21:26:43  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:26:45  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:26:50  PLANT SNOW r0c1  score 2567  (SIM lane 0 breaks in 18s -> SNOW here holds it)
-21:26:51  PLANT SNOW r0c2  score 426  (lane 0 is losing (danger 0.8, lead at x=565))
-21:26:53  SAYS "planted snow in row 2. anyway."
-21:26:53  PLANT SNOW r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:26:59  PLANT SQUASH r1c7  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:27:00  ! lost SQUASH at r1c7
-21:27:01  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
-21:27:02  PLANT SNOW r4c0  score 260  (vasebreaker: shooter for lane 4)
-21:27:15  PLANT SQUASH r3c4  score 260  (packet: squash in the path of the nearest zombie (lane 3))
-21:27:16  PLANT SQUASH r3c3  score 880  (squash the foot (1650 hp))
-21:27:16  ! lost SQUASH at r3c4
-21:27:17  PLANT SNOW r4c2  score 597  (lane 4 is losing (danger 0.7, lead at x=453))
-21:27:17  ! lost SQUASH at r3c3
-21:27:18  ! lost PEA at r3c0
-21:27:18  SAYS "NEW NEMESIS: FOOT+helm. it has eaten 7 of my plants. this is personal now."
-21:27:19  LEARN POST-MORTEM lane 3 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 2.36
-21:27:19  LEARN plant value this level: PEA 15/plant  SNOW 14/plant
-21:27:19  STRAT S51 'Potato Prophet' scored -100 (died, 0 mowers, 13 plants lost) -> avg -100
-21:27:19  RESULT lvl 35 DIED (death #422)
-21:27:19  died 12x in a row on lvl 35 - the strategy brain will keep experimenting
-21:27:26  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
-21:27:26  level economy: collected ~0 sun/min
-21:27:26  STRAT weighing: S19 Potato Prophet avg -37 (66 runs) | S21 Potato Prophet avg -40 (9 runs) | S18 Potato Prophet avg -39 (18 runs)
-21:27:26  STRAT TRIAL: giving S51 'Potato Prophet' run 3 of 3 before judging it (avg so far -100)
-21:27:27  DAVE: Me and my buddy...
-21:27:29  DAVE: I have appeared to have forgotten his name...
-21:27:30  DAVE: Well we used to break vases when we were bored.
-21:27:37  PLANT PEA r1c2  score 406  (lane 1 is losing (danger 0.7, lead at x=589))
-21:27:37  fail SQUASH r1c7  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:27:37  fail SQUASH r1c6  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:27:38  PLANT SQUASH r1c5  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:27:38  PLANT PEA r1c3  score 420  (lane 1 is losing (danger 0.8, lead at x=548))
-21:27:40  ! lost SQUASH at r1c5
-21:27:41  PLANT SQUASH r1c5  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:27:42  ! lost SQUASH at r1c5
-21:27:44  PLANT PEA r4c2  score 431  (first shooter for the zombie in lane 4 (x=629))
-21:27:53  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:27:55  PLANT SQUASH r2c6  score 824  (squash the pail (1370 hp))
-21:27:55  SAYS "ok so planted squash in row 2. it is what it is."
-21:27:55  PLANT SQUASH r2c5  score 824  (squash the pail (1370 hp))
-21:27:56  ! lost SQUASH at r2c6
-21:27:56  ! lost SQUASH at r2c5
-21:27:57  PLANT PEA r2c2  score 260  (belt: shooter for lane 2)
-21:27:58  DAVE: Man, you "REDACTED" those vases nice and good!
-21:27:59  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
-21:28:00  DAVE: Here, I brought you some more vases.
-21:28:01  DAVE: Gotta be careful about "REDACTED" too fast, though.
-21:28:03  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
-21:28:04  ! lost PEA at r1c2
-21:28:04  ! lost PEA at r4c2
-21:28:04  ! lost PEA at r1c3
-21:28:04  ! lost PEA at r0c0
-21:28:04  ! lost PEA at r2c2
-21:28:04  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:28:06  PLANT SNOW r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:28:08  PLANT SNOW r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:28:15  PLANT PEA r1c2  score 419  (lane 1 is losing (danger 0.7, lead at x=551))
-21:28:18  PLANT SQUASH r1c5  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:28:19  ! lost SQUASH at r1c5
-21:28:20  PLANT SQUASH r0c1  score 2648  (SIM lane 0 breaks in 7s -> SQUASH here holds it)
-21:28:21  ! lost PEA at r0c0
-21:28:21  LEARN POST-MORTEM lane 0 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 2.50
-21:28:21  LEARN plant value this level: PEA 10/plant  SNOW 11/plant
-21:28:21  SAYS "died on 1-35 after 55s. that's death #212. skill issue."
-21:28:21  STRAT S51 'Potato Prophet' scored -100 (died, 0 mowers, 11 plants lost) -> avg -100
-21:28:21  RESULT lvl 35 DIED (death #423)
-21:28:21  died 13x in a row on lvl 35 - the strategy brain will keep experimenting
-21:28:29  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
-21:28:29  level economy: collected ~0 sun/min
-21:28:29  STRAT weighing: S19 Potato Prophet avg -37 (66 runs) | S21 Potato Prophet avg -40 (9 runs) | S18 Potato Prophet avg -39 (18 runs)
-21:28:29  STRAT EXPERIMENT gen 51: S52 'Balanced Botanist' from S19 - hypothesis: what if less potato mines + spread sun makers across lanes + more patience saving sun?
-21:28:30  DAVE: Me and my buddy...
-21:28:31  DAVE: I have appeared to have forgotten his name...
-21:28:32  DAVE: Well we used to break vases when we were bored.
-21:28:34  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:28:36  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:28:45  PLANT PEA r1c2  score 639  (lane 1 is losing (danger 0.9, lead at x=428))
-21:28:47  PLANT SQUASH r1c4  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:28:49  PLANT PEA r3c2  score 408  (lane 3 is losing (danger 0.7, lead at x=632))
-21:28:49  ! lost SQUASH at r1c4
-21:28:49  fail SQUASH r3c7  score 260  (packet: squash in the path of the nearest zombie (lane 3))
-21:28:49  fail SQUASH r3c6  score 260  (packet: squash in the path of the nearest zombie (lane 3))
-21:28:50  PLANT PEA r3c3  score 421  (lane 3 is losing (danger 0.8, lead at x=593))
-21:28:58  SAYS "breaking news: planted squash in row 2."
-21:28:58  PLANT SQUASH r2c6  score 884  (squash the pail (1670 hp))
-21:28:58  PLANT SQUASH r2c5  score 884  (squash the pail (1670 hp))
-21:28:59  ! lost SQUASH at r2c6
-21:28:59  ! lost SQUASH at r2c5
-21:29:02  PLANT SQUASH r4c5  score 260  (packet: squash in the path of the nearest zombie (lane 4))
-21:29:03  ! lost SQUASH at r4c5
-21:29:04  DAVE: Man, you "REDACTED" those vases nice and good!
-21:29:05  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
-21:29:06  DAVE: Here, I brought you some more vases.
-21:29:08  DAVE: Gotta be careful about "REDACTED" too fast, though.
-21:29:09  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
-21:29:10  ! lost PEA at r0c0
-21:29:10  ! lost PEA at r1c0
-21:29:10  ! lost PEA at r1c2
-21:29:10  ! lost PEA at r3c3
-21:29:10  ! lost PEA at r3c2
-21:29:10  PLANT SNOW r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:29:12  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:29:14  PLANT SNOW r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:29:19  PLANT PEA r1c2  score 534  (lane 1 is losing (danger 1.6, lead at x=600))
-21:29:22  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
-21:29:22  ! lost SNOW at r2c0
-21:29:22  LEARN POST-MORTEM lane 2 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 2.50
-21:29:22  LEARN plant value this level: PEA 12/plant  SNOW 4/plant
-21:29:22  SAYS "died on 1-35 after 53s. that's death #213. skill issue."
-21:29:22  STRAT S52 'Balanced Botanist' scored -100 (died, 0 mowers, 10 plants lost) -> avg -100
-21:29:22  RESULT lvl 35 DIED (death #424)
-21:29:22  died 14x in a row on lvl 35 - the strategy brain will keep experimenting
-21:29:30  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
-21:29:30  level economy: collected ~0 sun/min
-21:29:30  STRAT weighing: S19 Potato Prophet avg -37 (66 runs) | S21 Potato Prophet avg -40 (9 runs) | S18 Potato Prophet avg -39 (18 runs)
-21:29:30  STRAT TRIAL: giving S52 'Balanced Botanist' run 2 of 3 before judging it (avg so far -100)
-21:29:31  DAVE: Me and my buddy...
-21:29:32  DAVE: I have appeared to have forgotten his name...
-21:29:34  DAVE: Well we used to break vases when we were bored.
-21:29:39  PLANT PEA r1c2  score 601  (lane 1 is losing (danger 2.0, lead at x=608))
-21:29:42  fail SQUASH r1c6  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:29:42  PLANT SQUASH r1c5  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:29:43  ! lost SQUASH at r1c5
-21:29:45  PLANT PEA r0c2  score 685  (first shooter for the zombie in lane 0 (x=375))
-21:29:50  SAYS "honestly planted squash in row 0. this is fine."
-21:29:50  PLANT SQUASH r0c6  score 260  (packet: squash in the path of the nearest zombie (lane 0))
-21:29:51  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:29:51  ! lost SQUASH at r0c6
-21:29:53  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
-21:29:53  PLANT SQUASH r2c5  score 260  (packet: squash parked in front of the vases in lane 2 (ambush))
-21:29:56  PLANT PEA r4c0  score 260  (vasebreaker: shooter for lane 4)
-21:30:04  PLANT SQUASH r3c5  score 260  (packet: squash in the path of the nearest zombie (lane 3))
-21:30:13  DAVE: Man, you "REDACTED" those vases nice and good!
-21:30:15  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
-21:30:16  DAVE: Here, I brought you some more vases.
-21:30:17  DAVE: Gotta be careful about "REDACTED" too fast, though.
-21:30:18  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
-21:30:20  ! lost PEA at r1c2
-21:30:20  ! lost PEA at r0c2
-21:30:20  ! lost PEA at r3c0
-21:30:20  ! lost PEA at r2c0
-21:30:20  ! lost SQUASH at r2c5
-21:30:20  ! lost PEA at r4c0
-21:30:20  ! lost SQUASH at r3c5
-21:30:20  PLANT SNOW r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:30:28  PLANT SQUASH r0c6  score 260  (packet: squash in the path of the nearest zombie (lane 0))
-21:30:29  ! lost SQUASH at r0c6
-21:30:30  PLANT SNOW r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:30:32  PLANT SNOW r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:30:33  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
-21:30:39  SAYS "for the record, row 3 just hired a legume with a gun. big if true."
-21:30:39  PLANT PEA r3c2  score 424  (lane 3 is losing (danger 0.8, lead at x=564))
-21:30:43  PLANT SNOW r4c0  score 260  (vasebreaker: shooter for lane 4)
-21:30:43  PLANT SQUASH r3c5  score 260  (packet: squash in the path of the nearest zombie (lane 3))
-21:30:44  PLANT PEA r0c1  score 260  (vasebreaker: shooter for lane 0)
-21:30:45  ! lost SQUASH at r3c5
-21:30:46  PLANT SNOW r1c1  score 260  (vasebreaker: shooter for lane 1)
-21:30:51  PLANT SQUASH r1c5  score 860  (squash the pail (1550 hp))
-21:30:52  ! lost SQUASH at r1c5
-21:30:53  PLANT SQUASH r4c1  score 2313  (SIM lane 4 breaks in 18s -> SQUASH here holds it)
-21:30:55  ! lost SQUASH at r4c1
-21:30:55  PLANT PEA r2c2  score 260  (belt: shooter for lane 2)
-21:30:56  DAVE: All right!
-21:30:57  DAVE: This should be the last of 'em.
-21:30:58  DAVE: "REDACTED", and you'll be all done!
-21:31:00  ! lost SNOW at r1c1
-21:31:00  ! lost SNOW at r4c0
-21:31:00  ! lost PEA at r3c2
-21:31:00  ! lost PEA at r3c0
-21:31:00  ! lost SNOW at r2c0
-21:31:00  ! lost SNOW at r1c0
-21:31:00  ! lost SNOW at r0c0
-21:31:00  ! lost PEA at r0c1
-21:31:00  ! lost PEA at r2c2
-21:31:08  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:31:10  PLANT SNOW r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:31:17  PLANT PEA r0c2  score 735  (lane 0 is losing (danger 3.8, lead at x=518))
-21:31:29  ! lost PEA at r0c2
-21:31:29  SAYS "note to self: a PAIL+helm ate my pea at 1m58s. rude."
-21:31:36  ! lost PEA at r0c0
-21:31:42  PLANT SNOW r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:31:42  LEARN POST-MORTEM lane 0 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 2.50
-21:31:42  LEARN plant value this level: PEA 17/plant  SNOW 23/plant
-21:31:42  SAYS "died on 1-35 after 2m11s. that's death #214. i'll be back. literally, in 8 seconds."
-21:31:42  STRAT S52 'Balanced Botanist' scored -100 (died, 0 mowers, 24 plants lost) -> avg -100
-21:31:42  RESULT lvl 35 DIED (death #425)
-21:31:42  died 15x in a row on lvl 35 - the strategy brain will keep experimenting
-21:31:49  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
-21:31:49  level economy: collected ~0 sun/min
-21:31:49  STRAT weighing: S19 Potato Prophet avg -37 (66 runs) | S21 Potato Prophet avg -40 (9 runs) | S18 Potato Prophet avg -39 (18 runs)
-21:31:49  STRAT TRIAL: giving S52 'Balanced Botanist' run 3 of 3 before judging it (avg so far -100)
-21:31:50  DAVE: Me and my buddy...
-21:31:52  DAVE: I have appeared to have forgotten his name...
-21:31:53  DAVE: Well we used to break vases when we were bored.
-21:31:54  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:31:58  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:32:02  PLANT SQUASH r1c7  score 260  (packet: squash in the path of the nearest zombie (lane 1))
-21:32:03  ! lost SQUASH at r1c7
-21:32:05  PLANT PEA r1c2  score 576  (lane 1 is losing (danger 0.6, lead at x=470))
-21:32:07  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:32:13  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
-21:32:15  PLANT SQUASH r4c5  score 260  (packet: squash parked in front of the vases in lane 4 (ambush))
-21:32:17  PLANT SQUASH r4c7  score 260  (packet: squash in the path of the nearest zombie (lane 4))
-21:32:18  ! lost SQUASH at r4c7
-21:32:18  ! lost SQUASH at r4c5
-21:32:21  PLANT SQUASH r3c5  score 260  (packet: squash in the path of the nearest zombie (lane 3))
-21:32:22  ! lost SQUASH at r3c5
-21:32:23  DAVE: Man, you "REDACTED" those vases nice and good!
-21:32:24  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
-21:32:25  DAVE: Here, I brought you some more vases.
-21:32:26  DAVE: Gotta be careful about "REDACTED" too fast, though.
-21:32:27  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
-21:32:29  ! lost PEA at r0c0
-21:32:29  ! lost PEA at r1c0
-21:32:29  ! lost PEA at r1c2
-21:32:29  ! lost PEA at r2c0
-21:32:29  ! lost PEA at r3c0
-21:32:29  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
-21:32:31  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
-21:32:33  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
-21:32:34  PLANT SNOW r3c0  score 260  (vasebreaker: shooter for lane 3)
+﻿21:32:34  PLANT SNOW r3c0  score 260  (vasebreaker: shooter for lane 3)
 21:32:48  PLANT SQUASH r2c4  score 260  (packet: squash in the path of the nearest zombie (lane 2))
 21:32:49  PLANT SNOW r4c0  score 260  (vasebreaker: shooter for lane 4)
 21:32:49  ! lost SQUASH at r2c4
@@ -2998,3 +2687,314 @@
 22:56:18  PLANT SNOW r0c2  score 799  (lane 0 is losing (danger 2.7, lead at x=546))
 23:04:03  PRO MODE: expert brain playing - nothing is learned or saved to knowledge in this mode (pro record so far: 14 wins, 474 deaths)
 23:12:54  PRO MODE: expert brain playing - nothing is learned or saved to knowledge in this mode (pro record so far: 14 wins, 474 deaths)
+16:17:37  PRO MODE: expert brain playing - nothing is learned or saved to knowledge in this mode (pro record so far: 14 wins, 474 deaths)
+16:56:27  PRO MODE: expert brain playing - nothing is learned or saved to knowledge in this mode (pro record so far: 14 wins, 474 deaths)
+16:56:27  game speed x1 -> x5
+16:57:12  WATCHDOG no progress in scene 0 (recovery #1, screenshot C:\cbot\stuck_165712.png) - resetting assumptions
+16:57:16  MENU main menu -> Adventure
+16:57:19  DIALOG continue game? -> CONTINUE
+16:57:20  PRECISION level (vases): capping speed at x2 so timing plays work
+16:57:20  VASEBREAKER: risk planner - opening the vase with the best odds, only when the lawn can take it
+16:57:20  DARTH'S GAMBIT: football out - breaking vases fast to find a squash
+16:57:21  game speed x5 -> x2
+16:57:21  SPEED-UP: message clicks work (seed picked up without moving the mouse) - switching to fast input
+16:57:21  fail PEA r1c2  score 477  (lane 1 is losing (danger 1.2, lead at x=502)) - nothing changed
+16:57:22  PLANT PEA r1c3  score 661  (lane 1 is losing (danger 1.1, lead at x=499))
+16:57:22  PLANT SQUASH r0c1  score 1114  (squash the foot (1570 hp))
+16:57:22  ! lost SNOW at r0c2
+16:57:22  SAYS "for the record, a FOOT+helm ate my snow at 4s. rude."
+16:57:24  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+16:57:24  OUTCOME SQUASH HIT_KILL target=FOOT row 0 col 1 round 2 t=236.2 hp=1590 age=2.6
+16:57:27  PLANT SNOW r3c0  score 260  (vasebreaker: shooter for lane 3)
+16:57:30  PLANT SQUASH r3c8  score 260  (packet: squash in the path of the nearest zombie (lane 3))
+16:57:32  OUTCOME SQUASH HIT_KILL target=NORM row 3 col 8 round 2 t=251.7 hp=270 age=2.6
+16:57:37  PLANT SNOW r3c2  score 630  (lane 3 is losing (danger 0.9, lead at x=391))
+16:57:37  PLANT SQUASH r3c4  score 260  (packet: squash in the path of the nearest zombie (lane 3))
+16:57:37  PLANT SQUASH r3c3  score 260  (packet: squash in the path of the nearest zombie (lane 3))
+16:57:39  OUTCOME SQUASH HIT_KILL target=NORM row 3 col 4 round 2 t=266.8 hp=260 age=2.6
+16:57:40  OUTCOME SQUASH MISS target=- row 3 col 3 round 2 t=267.0 age=2.6
+16:57:48  PLANT PEA r4c2  score 636  (lane 4 is losing (danger 0.9, lead at x=377))
+16:57:55  ! lost PEA at r4c2
+16:57:56  PLANT SNOW r4c0  score 748  (lane 4 is losing (danger 0.6, lead at x=217))
+16:57:57  DAVE: All right!
+16:57:58  DAVE: This should be the last of 'em.
+16:58:00  DAVE: "REDACTED", and you'll be all done!
+16:58:01  PLANT SNOW r0c0  score 260  (vasebreaker: shooter for lane 0)
+16:58:02  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
+16:58:02  PLANT SNOW r2c0  score 260  (vasebreaker: shooter for lane 2)
+16:58:04  PLANT SNOW r3c0  score 260  (vasebreaker: shooter for lane 3)
+16:58:22  PLANT SNOW r4c0  score 260  (vasebreaker: shooter for lane 4)
+16:58:32  PLANT PEA r0c1  score 260  (vasebreaker: shooter for lane 0)
+16:58:56  SAYS "17 ms sun grab. the sun didn't even land."
+16:59:00  ! lost SNOW at r2c0
+16:59:10  ! lost PEA at r1c0
+16:59:11  ! lost SNOW at r3c0
+16:59:11  SAYS "listen, a BDANCE ate my snow at 1m53s. it will be replanted. probably."
+16:59:17  LEARN POST-MORTEM lane 2 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 1.10
+16:59:17  LEARN plant value this level: SNOW 27/plant  PEA 32/plant
+16:59:17  SAYS "died on 1-35 after 1m59s. that's death #200. skill issue."
+16:59:17  RESULT lvl 35 DIED (death #475)
+16:59:25  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
+16:59:25  level economy: collected ~0 sun/min
+16:59:27  DAVE: Me and my buddy...
+16:59:28  DAVE: I have appeared to have forgotten his name...
+16:59:29  DAVE: Well we used to break vases when we were bored.
+16:59:34  PLANT SQUASH r2c8  score 260  (packet: squash in the path of the nearest zombie (lane 2))
+16:59:36  PLANT SQUASH r4c8  score 260  (packet: squash in the path of the nearest zombie (lane 4))
+16:59:36  OUTCOME SQUASH HIT_KILL target=NORM row 2 col 8 round 1 t=10.9 hp=270 age=2.6
+16:59:38  OUTCOME SQUASH HIT_KILL target=NORM row 4 col 8 round 1 t=14.7 hp=300 age=2.6
+16:59:40  PLANT PEA r3c2  score 659  (lane 3 is losing (danger 2.5, lead at x=616))
+16:59:43  PLANT PEA r3c3  score 735  (lane 3 is losing (danger 3.3, lead at x=557))
+16:59:46  PLANT PEA r3c1  score 798  (lane 3 is losing (danger 1.7, lead at x=496))
+16:59:47  PLANT PEA r3c0  score 635  (lane 3 is losing (danger 0.9, lead at x=455))
+16:59:51  PLANT SQUASH r4c7  score 260  (packet: squash in the path of the nearest zombie (lane 4))
+16:59:53  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
+16:59:54  OUTCOME SQUASH HIT_KILL target=NORM row 4 col 7 round 1 t=45.2 hp=270 age=2.6
+16:59:55  ! lost PEA at r3c3
+16:59:55  SAYS "ok so a PAIL ate my pea at 29s. rude."
+16:59:55  bot stopped: hot reload
+16:59:59  PRO MODE: expert brain playing - nothing is learned or saved to knowledge in this mode (pro record so far: 14 wins, 475 deaths)
+16:59:59  game speed x2 -> x5
+16:59:59  PRECISION level (vases): capping speed at x2 so timing plays work
+16:59:59  VASEBREAKER: risk planner - opening the vase with the best odds, only when the lawn can take it
+17:00:00  game speed x5 -> x2
+17:00:02  SPEED-UP: message clicks work (seed picked up without moving the mouse) - switching to fast input
+17:00:02  PLANT SQUASH r2c6  score 664  (squash the norm (570 hp))
+17:00:03  DAVE: Man, you "REDACTED" those vases nice and good!
+17:00:05  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
+17:00:06  DAVE: Here, I brought you some more vases.
+17:00:07  DAVE: Gotta be careful about "REDACTED" too fast, though.
+17:00:08  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
+17:00:10  OUTCOME SQUASH HIT_KILL target=NORM row 2 col 6 round 1 t=67.7 hp=570 age=2.6
+17:00:10  PLANT SNOW r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:00:12  PLANT SNOW r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:00:13  PLANT SQUASH r1c4  score 260  (packet: squash ambush, lane 1: expected zombies in its vases x danger 2.87, P(FOOT|zombie)=0.29)
+17:00:14  PLANT SNOW r1c2  score 416  (lane 1 is losing (danger 0.7, lead at x=662))
+17:00:17  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:00:19  PLANT SQUASH r1c7  score 260  (packet: squash in the path of the nearest zombie (lane 1))
+17:00:19  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
+17:00:20  SAYS "grabbed sun in 23 ms. i am the flash, but leafy."
+17:00:21  PLANT SNOW r4c0  score 260  (vasebreaker: shooter for lane 4)
+17:00:22  OUTCOME SQUASH HIT_KILL target=NORM row 1 col 7 round 2 t=102.9 hp=110 age=2.6
+17:00:25  PLANT SNOW r0c1  score 260  (vasebreaker: shooter for lane 0)
+17:00:27  PLANT SQUASH r2c4  score 260  (packet: squash ambush, lane 2: expected zombies in its vases x danger 4.81, P(FOOT|zombie)=0.40)
+17:00:38  DARTH'S GAMBIT: football out - breaking vases fast to find a squash
+17:00:38  PLANT SQUASH r2c1  score 2653  (SIM lane 2 breaks in 6s -> SQUASH here holds it)
+17:00:39  OUTCOME SQUASH HIT_KILL target=NORM row 2 col 4 round 2 t=137.4 hp=190 kills=2 age=22.4
+17:00:39  SAYS "TRIPLE KILL! 3 zombies down in 2 seconds at 39s. anyway."
+17:00:41  OUTCOME SQUASH HIT_KILL target=FOOT row 2 col 1 round 2 t=140.9 hp=1480 age=2.6
+17:00:42  PLANT PEA r4c2  score 1365  (lane 4 is losing (danger 4.0, lead at x=312))
+17:00:51  ! lost PEA at r4c2
+17:01:06  ! lost SNOW at r4c0
+17:01:06  SAYS "fun fact: a PAIL ate my snow at 1m07s. adding that to the list."
+17:01:07  PLANT PEA r4c0  score 1427  (SIM lane 4 breaks in 16s -> PEA here helps (breaks at 19s))
+17:01:10  ! lost PEA at r4c0
+17:01:10  SAYS "NEW NEMESIS: PAIL. it has eaten 2 of my plants. i will remember this."
+17:01:17  LEARN POST-MORTEM lane 4 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 1.10
+17:01:17  LEARN plant value this level: SNOW 23/plant  PEA 7/plant
+17:01:17  RESULT lvl 35 DIED (death #476)
+17:01:24  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
+17:01:24  level economy: collected ~0 sun/min
+17:01:25  DAVE: Me and my buddy...
+17:01:27  DAVE: I have appeared to have forgotten his name...
+17:01:28  DAVE: Well we used to break vases when we were bored.
+17:01:29  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:01:30  bot stopped: hot reload
+17:01:34  PRO MODE: expert brain playing - nothing is learned or saved to knowledge in this mode (pro record so far: 14 wins, 476 deaths)
+17:01:34  game speed x2 -> x5
+17:01:34  PRECISION level (vases): capping speed at x2 so timing plays work
+17:01:34  VASEBREAKER: risk planner - opening the vase with the best odds, only when the lawn can take it
+17:01:34  game speed x5 -> x2
+17:01:36  SPEED-UP: message clicks work (seed picked up without moving the mouse) - switching to fast input
+17:01:36  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:01:38  PLANT SQUASH r1c8  score 260  (packet: squash in the path of the nearest zombie (lane 1))
+17:01:40  OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 8 round 1 t=23.0 hp=1670 age=2.6
+17:01:44  PLANT SQUASH r0c6  score 664  (squash the norm (570 hp))
+17:01:46  OUTCOME SQUASH HIT_KILL target=NORM row 0 col 6 round 1 t=33.9 hp=570 age=2.6
+17:01:47  PLANT SQUASH r3c8  score 260  (packet: squash in the path of the nearest zombie (lane 3))
+17:01:48  PLANT SQUASH r2c5  score 260  (packet: squash ambush, lane 2: expected zombies in its vases x danger 0.67, P(FOOT|zombie)=0.00)
+17:01:49  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:01:50  OUTCOME SQUASH HIT_KILL target=NORM row 3 col 8 round 1 t=41.4 hp=270 age=2.6
+17:01:51  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
+17:01:53  PLANT SQUASH r3c6  score 260  (packet: squash in the path of the nearest zombie (lane 3))
+17:01:56  OUTCOME SQUASH HIT_KILL target=NORM row 3 col 6 round 1 t=53.4 hp=270 age=2.6
+17:01:57  PLANT PEA r4c2  score 529  (first shooter for the zombie in lane 4 (x=531))
+17:02:01  DAVE: Man, you "REDACTED" those vases nice and good!
+17:02:03  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
+17:02:04  DAVE: Here, I brought you some more vases.
+17:02:05  DAVE: Gotta be careful about "REDACTED" too fast, though.
+17:02:06  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
+17:02:08  PLANT SNOW r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:02:09  OUTCOME SQUASH WIPED target=- row 2 col 5 round 2 t=79.2 age=38.6
+17:02:13  PLANT SQUASH r0c7  score 260  (packet: squash in the path of the nearest zombie (lane 0))
+17:02:14  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:02:15  OUTCOME SQUASH HIT_KILL target=NORM row 0 col 7 round 2 t=92.0 hp=230 age=2.6
+17:02:18  PLANT SNOW r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:02:21  PLANT SQUASH r3c4  score 260  (packet: squash ambush, lane 3: expected zombies in its vases x danger 3.66, P(FOOT|zombie)=0.31)
+17:02:21  PLANT SNOW r3c0  score 260  (vasebreaker: shooter for lane 3)
+17:02:22  PLANT SQUASH r3c3  score 850  (squash the foot (1500 hp))
+17:02:22  PLANT PEA r3c2  score 1365  (lane 3 is losing (danger 16.6, lead at x=347))
+17:02:24  OUTCOME SQUASH MISS target=- row 3 col 4 round 2 t=110.3 age=4.6
+17:02:24  OUTCOME SQUASH MISS target=- row 3 col 3 round 2 t=110.7 age=2.6
+17:02:25  SAYS "breaking news: row 4 just hired a legume with a gun."
+17:02:25  PLANT PEA r4c0  score 260  (vasebreaker: shooter for lane 4)
+17:02:26  ! lost PEA at r3c2
+17:02:28  PLANT PEA r2c2  score 816  (lane 2 is losing (danger 1.8, lead at x=477))
+17:02:29  PLANT SNOW r4c2  score 845  (lane 4 is losing (danger 4.4, lead at x=629))
+17:02:29  ! lost SNOW at r3c0
+17:02:30  LEARN POST-MORTEM lane 3 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 1.10
+17:02:30  LEARN plant value this level: SNOW 7/plant  PEA 2/plant
+17:02:30  SAYS "died on 1-35 after 55s. that's death #200. retrying with notes."
+17:02:30  RESULT lvl 35 DIED (death #477)
+17:02:37  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
+17:02:37  level economy: collected ~0 sun/min
+17:02:38  DAVE: Me and my buddy...
+17:02:40  DAVE: I have appeared to have forgotten his name...
+17:02:41  DAVE: Well we used to break vases when we were bored.
+17:02:42  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:02:44  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:02:51  PLANT SQUASH r0c5  score 260  (packet: squash in the path of the nearest zombie (lane 0))
+17:02:54  OUTCOME SQUASH HIT_KILL target=NORM row 0 col 5 round 1 t=22.2 hp=300 age=4.1
+17:02:56  PLANT SQUASH r3c8  score 260  (packet: squash in the path of the nearest zombie (lane 3))
+17:02:56  PLANT SQUASH r2c5  score 260  (packet: squash ambush, lane 2: expected zombies in its vases x danger 0.89, P(FOOT|zombie)=0.00)
+17:02:58  OUTCOME SQUASH HIT_KILL target=NORM row 3 col 8 round 1 t=29.8 hp=270 age=2.6
+17:03:02  PLANT SQUASH r2c7  score 260  (packet: squash in the path of the nearest zombie (lane 2))
+17:03:04  OUTCOME SQUASH HIT_KILL target=NORM row 2 col 5 round 1 t=41.5 hp=270 age=12.4
+17:03:04  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:03:05  OUTCOME SQUASH HIT_KILL target=PAIL row 2 col 7 round 1 t=43.6 hp=1370 age=2.6
+17:03:05  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
+17:03:06  SAYS "honestly row 4 just hired a legume with a gun. i'm fine."
+17:03:06  PLANT PEA r4c2  score 260  (belt: shooter for lane 4)
+17:03:06  DAVE: Man, you "REDACTED" those vases nice and good!
+17:03:08  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
+17:03:09  DAVE: Here, I brought you some more vases.
+17:03:10  DAVE: Gotta be careful about "REDACTED" too fast, though.
+17:03:11  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
+17:03:17  PLANT SNOW r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:03:18  PLANT SQUASH r0c4  score 260  (packet: squash ambush, lane 0: expected zombies in its vases x danger 3.06, P(FOOT|zombie)=0.29)
+17:03:18  PLANT SQUASH r4c4  score 260  (packet: squash ambush, lane 4: expected zombies in its vases x danger 3.06, P(FOOT|zombie)=0.29)
+17:03:19  PLANT SNOW r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:03:20  PLANT SQUASH r0c7  score 260  (packet: squash in the path of the nearest zombie (lane 0))
+17:03:21  PLANT PEA r0c2  score 735  (lane 0 is losing (danger 3.7, lead at x=585))
+17:03:21  PLANT PEA r4c2  score 431  (first shooter for the zombie in lane 4 (x=629))
+17:03:22  OUTCOME SQUASH HIT_KILL target=PAIL row 0 col 7 round 2 t=79.0 hp=1370 age=2.6
+17:03:25  DARTH'S GAMBIT: football out - breaking vases fast to find a squash
+17:03:26  PLANT SNOW r4c0  score 1709  (SIM lane 4 breaks in 11s -> SNOW here helps (breaks at 28s))
+17:03:26  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:03:27  PLANT SNOW r1c2  score 1003  (lane 1 is losing (danger 2.8, lead at x=419))
+17:03:27  OUTCOME SQUASH MISS target=- row 4 col 4 round 2 t=88.4 age=15.5
+17:03:28  PLANT PEA r1c3  score 701  (lane 1 is losing (danger 1.3, lead at x=407))
+17:03:28  bot stopped: hot reload
+17:03:32  PRO MODE: expert brain playing - nothing is learned or saved to knowledge in this mode (pro record so far: 14 wins, 477 deaths)
+17:03:32  game speed x2 -> x5
+17:03:32  PRECISION level (vases): capping speed at x2 so timing plays work
+17:03:32  DARTH'S GAMBIT: football out - breaking vases fast to find a squash
+17:03:32  VASEBREAKER: risk planner - opening the vase with the best odds, only when the lawn can take it
+17:03:32  game speed x5 -> x2
+17:03:32  LEARN POST-MORTEM lane 4 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 1.10
+17:03:32  SAYS "died on 1-35 after 0s. that's death #200. retrying with notes."
+17:03:32  RESULT lvl 35 DIED (death #478)
+17:03:41  DAVE: Me and my buddy...
+17:03:43  DAVE: I have appeared to have forgotten his name...
+17:03:44  DAVE: Well we used to break vases when we were bored.
+17:03:45  SPEED-UP: message clicks work (seed picked up without moving the mouse) - switching to fast input
+17:03:45  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:03:47  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:03:53  PLANT SQUASH r0c7  score 260  (packet: squash in the path of the nearest zombie (lane 0))
+17:03:54  SAYS "sun collected 20 ms after it appeared. humans could never."
+17:03:55  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:03:55  PLANT SQUASH r2c5  score 260  (packet: squash ambush, lane 2: expected zombies in its vases x danger 1.25, P(FOOT|zombie)=0.00)
+17:03:55  OUTCOME SQUASH HIT_KILL target=NORM row 0 col 7 round 1 t=19.3 hp=100 age=2.6
+17:03:59  OUTCOME SQUASH HIT_KILL target=NORM row 2 col 5 round 1 t=26.2 hp=270 age=5.7
+17:04:00  PLANT SQUASH r4c5  score 260  (packet: squash ambush, lane 4: expected zombies in its vases x danger 1.60, P(FOOT|zombie)=0.00)
+17:04:00  PLANT SQUASH r3c5  score 260  (packet: squash ambush, lane 3: expected zombies in its vases x danger 1.07, P(FOOT|zombie)=0.00)
+17:04:00  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
+17:04:01  PLANT PEA r4c0  score 260  (vasebreaker: shooter for lane 4)
+17:04:05  OUTCOME SQUASH HIT_KILL target=PAIL row 3 col 5 round 1 t=37.6 hp=1670 age=6.7
+17:04:05  PLANT SQUASH r4c6  score 660  (squash the norm (550 hp))
+17:04:06  OUTCOME SQUASH HIT_KILL target=NORM row 4 col 5 round 1 t=41.0 hp=570 kills=2 age=10.4
+17:04:07  DAVE: Man, you "REDACTED" those vases nice and good!
+17:04:08  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
+17:04:10  DAVE: Here, I brought you some more vases.
+17:04:11  DAVE: Gotta be careful about "REDACTED" too fast, though.
+17:04:12  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
+17:04:13  OUTCOME SQUASH MISS target=- row 4 col 6 round 1 t=43.8 age=2.6
+17:04:16  PLANT SNOW r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:04:18  PLANT SNOW r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:04:18  PLANT SQUASH r2c4  score 260  (packet: squash ambush, lane 2: expected zombies in its vases x danger 3.06, P(FOOT|zombie)=0.29)
+17:04:18  PLANT SQUASH r3c4  score 260  (packet: squash ambush, lane 3: expected zombies in its vases x danger 3.06, P(FOOT|zombie)=0.29)
+17:04:19  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:04:20  PLANT PEA r3c0  score 1469  (SIM lane 3 breaks in 14s -> PEA here helps (breaks at 17s))
+17:04:20  DARTH'S GAMBIT: football out - breaking vases fast to find a squash
+17:04:21  PLANT PEA r2c2  score 462  (lane 2 is losing (danger 1.0, lead at x=501))
+17:04:22  OUTCOME SQUASH MISS target=- row 3 col 4 round 2 t=72.1 age=4.5
+17:04:22  ! lost PEA at r3c0
+17:04:22  SAYS "breaking news: a FOOT+helm ate my pea at 41s. rude."
+17:04:22  LEARN POST-MORTEM lane 3 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 1.21
+17:04:22  LEARN plant value this level: PEA 1/plant
+17:04:22  SAYS "died on 1-35 after 42s. that's death #201. the brains were delicious, apparently."
+17:04:22  RESULT lvl 35 DIED (death #479)
+17:04:30  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
+17:04:30  level economy: collected ~0 sun/min
+17:04:31  DAVE: Me and my buddy...
+17:04:32  DAVE: I have appeared to have forgotten his name...
+17:04:34  DAVE: Well we used to break vases when we were bored.
+17:04:35  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:04:41  PLANT SQUASH r0c6  score 260  (packet: squash in the path of the nearest zombie (lane 0))
+17:04:44  OUTCOME SQUASH HIT_KILL target=NORM row 0 col 6 round 1 t=15.8 hp=60 age=2.7
+17:04:44  PLANT SQUASH r4c8  score 260  (packet: squash in the path of the nearest zombie (lane 4))
+17:04:45  PLANT SQUASH r1c5  score 260  (packet: squash ambush, lane 1: expected zombies in its vases x danger 1.01, P(FOOT|zombie)=0.00)
+17:04:47  OUTCOME SQUASH HIT_KILL target=NORM row 4 col 8 round 1 t=22.2 hp=100 age=2.6
+17:04:48  PLANT PEA r1c2  score 735  (lane 1 is losing (danger 3.1, lead at x=620))
+17:04:51  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:04:53  OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 5 round 1 t=33.5 hp=1310 kills=2 age=12.1
+17:04:53  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
+17:04:57  PLANT PEA r4c0  score 260  (vasebreaker: shooter for lane 4)
+17:05:01  PLANT SQUASH r3c6  score 664  (squash the norm (570 hp))
+17:05:02  DAVE: Man, you "REDACTED" those vases nice and good!
+17:05:04  DAVE: "REDACTED" 'em like the time I "REDACTED" my "REDACTED" through those "REDACTED"!
+17:05:05  DAVE: Here, I brought you some more vases.
+17:05:06  DAVE: Gotta be careful about "REDACTED" too fast, though.
+17:05:07  DAVE: You don't wanna end up with more zombies than you can handle, huh huh.
+17:05:08  OUTCOME SQUASH HIT_KILL target=NORM row 3 col 6 round 1 t=54.3 hp=570 age=2.6
+17:05:09  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:05:15  PLANT SNOW r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:05:18  PLANT SQUASH r1c8  score 260  (packet: squash in the path of the nearest zombie (lane 1))
+17:05:20  OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 8 round 2 t=89.2 hp=1370 age=2.6
+17:05:23  SAYS "armed row 1 with peas at 0 sun left. no further questions."
+17:05:23  PLANT PEA r1c2  score 607  (lane 1 is losing (danger 0.8, lead at x=472))
+17:05:24  PLANT SQUASH r1c5  score 260  (packet: squash in the path of the nearest zombie (lane 1))
+17:05:26  OUTCOME SQUASH HIT_KILL target=NORM row 1 col 5 round 2 t=100.5 hp=190 age=2.6
+17:05:26  PLANT SNOW r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:05:28  PLANT SNOW r3c0  score 260  (vasebreaker: shooter for lane 3)
+17:05:29  PLANT SQUASH r3c4  score 260  (packet: squash ambush, lane 3: expected zombies in its vases x danger 3.45, P(FOOT|zombie)=0.50)
+17:05:30  PLANT PEA r4c0  score 260  (vasebreaker: shooter for lane 4)
+17:05:30  PLANT PEA r0c1  score 260  (vasebreaker: shooter for lane 0)
+17:05:33  OUTCOME SQUASH HIT_KILL target=NORM row 3 col 4 round 2 t=114.7 hp=570 age=5.6
+17:05:35  PLANT SNOW r2c1  score 260  (vasebreaker: shooter for lane 2)
+17:05:45  ! lost PEA at r4c0
+17:05:45  LEARN POST-MORTEM lane 4 at wave 0/20: EMPTY LANE (no shooter) -> defend lanes sooner, urgency 1.33
+17:05:45  LEARN plant value this level: SNOW 11/plant  PEA 2/plant
+17:05:45  SAYS "died on 1-35 after 1m15s. that's death #202. i'll be back. literally, in 8 seconds."
+17:05:45  RESULT lvl 35 DIED (death #480)
+17:05:45  died 3x in a row on lvl 35 - the strategy brain will keep experimenting
+17:05:53  LEARN barely any sun fell from the sky this level (0.0/min vs usual 11.9) - more sunflowers next time it is like this
+17:05:53  level economy: collected ~0 sun/min
+17:05:54  DAVE: Me and my buddy...
+17:05:56  DAVE: I have appeared to have forgotten his name...
+17:05:57  DAVE: Well we used to break vases when we were bored.
+17:05:58  PLANT PEA r0c0  score 260  (vasebreaker: shooter for lane 0)
+17:06:04  PLANT PEA r0c2  score 407  (lane 0 is losing (danger 0.7, lead at x=580))
+17:06:06  SAYS "breaking news: row 1 peashooter installed, 13s into this mess. anyway."
+17:06:06  PLANT PEA r1c0  score 260  (vasebreaker: shooter for lane 1)
+17:06:07  PLANT SQUASH r0c6  score 260  (packet: squash in the path of the nearest zombie (lane 0))
+17:06:10  PLANT SQUASH r1c5  score 260  (packet: squash in the path of the nearest zombie (lane 1))
+17:06:13  OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 5 round 1 t=27.5 hp=1340 age=2.6
+17:06:13  PLANT SQUASH r4c8  score 260  (packet: squash in the path of the nearest zombie (lane 4))
+17:06:15  PLANT PEA r2c0  score 260  (vasebreaker: shooter for lane 2)
+17:06:16  OUTCOME SQUASH HIT_KILL target=NORM row 4 col 8 round 1 t=33.5 hp=270 age=2.6
+17:06:17  PLANT PEA r3c0  score 260  (vasebreaker: shooter for lane 3)
+17:06:26  PLANT SQUASH r3c4  score 260  (packet: squash in the path of the nearest zombie (lane 3))
+17:06:27  PLANT SQUASH r4c6  score 260  (packet: squash in the path of the nearest zombie (lane 4))
+17:06:28  OUTCOME SQUASH HIT_KILL target=NORM row 3 col 4 round 1 t=58.3 hp=110 age=2.7
+17:06:29  DAVE: Man, you "REDACTED" those vases nice and good!

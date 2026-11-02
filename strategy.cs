@@ -14,8 +14,14 @@ public class Strat {
   public bool SunSpread = false;  // spread sun makers evenly across lanes instead of packing the safest ones
   public int Runs; public double FitSum; public string Parent = "-", Hypothesis = "baseline", Env = "day";
   public double Avg { get { return Runs == 0 ? 0 : FitSum / Runs; } }
+  // Advantage = fitness minus the per-level baseline, rebuilt from strategy_runs.txt; PriorAdv/PriorN = weak prior from old raw scores.
+  public int AdvN; public double AdvSum, AdvSq, PriorAdv, PriorN;
+  public Dictionary<int, double[]> ByLevel = new Dictionary<int, double[]>();   // level -> {runs, advantage sum}
+  public double N { get { return AdvN + PriorN; } }
+  public double Adv { get { return N <= 0 ? 0 : (AdvSum + PriorAdv * PriorN) / N; } }
+  public int RunsOn(int level) { double[] b; return ByLevel.TryGetValue(level, out b) ? (int)b[0] : 0; }
 
-  public Strat Clone() { var s = (Strat)MemberwiseClone(); s.Runs = 0; s.FitSum = 0; return s; }
+  public Strat Clone() { var s = (Strat)MemberwiseClone(); s.Runs = 0; s.FitSum = 0; s.AdvN = 0; s.AdvSum = 0; s.AdvSq = 0; s.PriorAdv = 0; s.PriorN = 0; s.ByLevel = new Dictionary<int, double[]>(); return s; }
 
   public string Name {
     get {
@@ -55,31 +61,69 @@ public static class Strategy {
 
   // Called when a new level starts: weigh known strategies and decide what to play.
   public static readonly string[] EnvNames = { "day", "night", "pool", "fog", "roof", "boss" };
+  // ----- fair comparison: every run is scored against how hard ITS level is (per-level baseline B[level]) -----
+  const string RUNS = @"C:\cbot\strategy_runs.txt";   // one line per scored run (append only)
+  public static readonly Dictionary<int, double> Baseline = new Dictionary<int, double>();   // level -> EMA of fitness over all strategies
+  const double B_ALPHA = 0.2, UCB_C = 1.0;
+  static double sdPooled = 60;   // pooled sd of advantage within strategies (default until enough runs)
+  static int curLevel = -1;
+  // Scores one run: advantage vs the baseline BEFORE this run, then moves the baselines. Returns the advantage.
+  // The first run on a level only sets its baseline (advantage 0): another level's difficulty says nothing about this one.
+  static double ApplyRun(Strat t, int level, string env, double fit) {
+    double b; bool has = Baseline.TryGetValue(level, out b);
+    double adv = has ? fit - b : 0;
+    Baseline[level] = has ? b + B_ALPHA * (fit - b) : fit;
+    if (t != null) {
+      t.AdvN++; t.AdvSum += adv; t.AdvSq += adv * adv;
+      double[] bl; if (!t.ByLevel.TryGetValue(level, out bl)) t.ByLevel[level] = bl = new double[2];
+      bl[0]++; bl[1] += adv;
+    }
+    return adv;
+  }
+  static void RecalcSd() {
+    double ss = 0; int dof = 0;
+    foreach (var t in Tried) if (t.AdvN >= 2) { double m = t.AdvSum / t.AdvN; ss += Math.Max(0, t.AdvSq - t.AdvN * m * m); dof += t.AdvN - 1; }
+    sdPooled = dof >= 5 ? Math.Max(15, Math.Sqrt(ss / dof)) : 60;
+  }
+  // Expected advantage on this level: overall advantage, pulled toward its record on this very level once it has 2+ runs here.
+  static double Est(Strat t, int level) {
+    double[] bl; if (level >= 0 && t.ByLevel.TryGetValue(level, out bl) && bl[0] >= 2) return (bl[1] + 3 * t.Adv) / (bl[0] + 3);
+    return t.Adv;
+  }
+  static double Ucb(Strat t, int level) { return t.N <= 0 ? 1000 : Est(t, level) + UCB_C * sdPooled / Math.Sqrt(t.N); }
+  static double Lcb(Strat t, int level) { return t.N <= 0 ? -1000 : Est(t, level) - UCB_C * sdPooled / Math.Sqrt(t.N); }
+
   public static void ChooseForLevel(int level, int background) {
-    MowersLost = 0; PlantsLost = 0;
+    MowersLost = 0; PlantsLost = 0; curLevel = level;
     string env = background >= 0 && background < EnvNames.Length ? EnvNames[background] : "other";
-    if (Tried.Count == 0) { Cur = new Strat { Id = "S0", Env = env }; Tried.Add(Cur); Say("no experience yet -> starting with the baseline (" + Cur.Name + ")"); return; }
+    if (Tried.Count == 0) { Cur = new Strat { Id = "S0", Env = env }; Tried.Add(Cur); nextId = 1; Say("no experience yet -> starting with the baseline (" + Cur.Name + ")"); return; }
     var pool = Tried.Where(t => t.Env == env).ToList();
     if (pool.Count == 0) {
-      // New environment: transfer the best strategy from anywhere, then evolve a separate lineage here.
-      var src = Tried.Where(t => t.Runs > 0).OrderByDescending(t => t.Avg).FirstOrDefault() ?? Tried[0];
+      // New environment: transfer the most reliably good strategy from anywhere, then evolve a separate lineage here.
+      var src = Tried.Where(t => t.N > 0).OrderByDescending(t => Lcb(t, -1)).FirstOrDefault() ?? Tried[0];
       Cur = src.Clone(); Cur.Id = "S" + nextId++; Cur.Env = env; Cur.Parent = src.Id; Cur.Hypothesis = "first time in " + env + ": try my " + src.Env + " champion here";
       Tried.Add(Cur); Save();
       Say("new environment: " + env.ToUpper() + "! no experience here - transferring " + src.Id + " '" + src.Name + "' and starting a " + env + " lineage");
       return;
     }
-    var ranked = pool.Where(t => t.Runs > 0).OrderByDescending(t => t.Avg + 15.0 / Math.Sqrt(t.Runs)).ToList();
-    var best = pool.Where(t => t.Runs > 0).OrderByDescending(t => t.Avg).FirstOrDefault() ?? pool[0];
-    string field = string.Join(" | ", ranked.Take(3).Select(t => t.Id + " " + t.Name + " avg " + t.Avg.ToString("0") + " (" + t.Runs + " runs)"));
-    Say("weighing: " + (field.Length > 0 ? field : "nothing scored yet"));
+    var scored = pool.Where(t => t.N > 0).ToList();
+    // Best = highest LOWER bound on advantage (a one-run fluke cannot be champion). Exploit = highest UPPER bound,
+    // among strategies with 2+ runs on this level when there are any.
+    var best = scored.OrderByDescending(t => Lcb(t, level)).FirstOrDefault() ?? pool[0];
+    var here = scored.Where(t => t.RunsOn(level) >= 2).ToList();
+    var ranked = (here.Count > 0 ? here : scored).OrderByDescending(t => Ucb(t, level)).ToList();
+    double bl; string lvlBase = Baseline.TryGetValue(level, out bl) ? "level " + level + " baseline " + bl.ToString("0") + ", " : "new level " + level + ", ";
+    string field = string.Join(" | ", ranked.Take(3).Select(t => t.Id + " " + t.Name + " adv " + Est(t, level).ToString("+0;-0") + " +-" + (sdPooled / Math.Sqrt(Math.Max(1, t.N))).ToString("0") + " (" + t.AdvN + " runs, " + t.RunsOn(level) + " here)"));
+    Say("weighing (" + lvlBase + "sd " + sdPooled.ToString("0") + "): " + (field.Length > 0 ? field : "nothing scored yet"));
     double explore = Math.Max(0.15, 0.4 - 0.03 * pool.Sum(t => t.Runs));
-    // Give a strategy a fair trial (3 runs) before calling it bad, and only if it trails the best clearly.
-    bool lastWasBad = Cur.Env == env && Cur.Runs >= 3 && Cur.Avg < best.Avg - 30;
+    // Give a strategy a fair trial (3 runs), then call it bad only if even its optimistic advantage is below the champion's pessimistic one.
+    bool lastWasBad = Cur.Env == env && Cur.N >= 3 && pool.Contains(Cur) && Cur != best && Ucb(Cur, level) < Lcb(best, level);
     bool stillTrialing = Cur.Env == env && Cur.Runs > 0 && Cur.Runs < 3 && pool.Contains(Cur);
     if (stillTrialing) {
       Say("TRIAL: giving " + Cur.Id + " '" + Cur.Name + "' run " + (Cur.Runs + 1) + " of 3 before judging it (avg so far " + Cur.Avg.ToString("0") + ")");
       return;
     }
+    if (lastWasBad) Say(Cur.Id + " judged worse than " + best.Id + ": best case " + Ucb(Cur, level).ToString("0") + " < champion's worst case " + Lcb(best, level).ToString("0"));
     if (R.NextDouble() < explore || lastWasBad) {
       Cur = Mutate(best);
       Generation++;
@@ -87,7 +131,7 @@ public static class Strategy {
     } else {
       var pick = ranked.FirstOrDefault() ?? best;
       Cur = pick;
-      Say("EXPLOIT: sticking with " + Cur.Id + " '" + Cur.Name + "' (avg " + Cur.Avg.ToString("0") + " over " + Cur.Runs + " runs)");
+      Say("EXPLOIT: sticking with " + Cur.Id + " '" + Cur.Name + "' (advantage " + Est(Cur, level).ToString("+0;-0") + " over " + Cur.AdvN + " runs, " + Cur.RunsOn(level) + " on this level)");
     }
   }
 
@@ -126,9 +170,17 @@ public static class Strategy {
     double fit = won ? 100 - Math.Min(40, 10 * MowersLost + 0.5 * PlantsLost)
                      : -100 + 100.0 * wave / Math.Max(1, waves) - 10 * MowersLost;   // dying late is much better than dying early
     Cur.Runs++; Cur.FitSum += fit;
-    Say(Cur.Id + " '" + Cur.Name + "' scored " + fit.ToString("0") + " (" + (won ? "won" : "died") + ", " + MowersLost + " mowers, " + PlantsLost + " plants lost) -> avg " + Cur.Avg.ToString("0"));
-    var best = Tried.Where(t => t.Runs > 0 && t.Env == Cur.Env).OrderByDescending(t => t.Avg).First();
-    if (best == Cur && Cur.Parent != "-" && Cur.Runs == 1 && Cur.Avg > 50) Say("new champion! the hypothesis '" + Cur.Hypothesis + "' paid off");
+    int level = curLevel >= 0 ? curLevel : Learn.CurLevel;
+    double b; double baseBefore = Baseline.TryGetValue(level, out b) ? b : double.NaN;
+    var prevBest = Tried.Where(t => t.N > 0 && t.Env == Cur.Env).OrderByDescending(t => Lcb(t, level)).FirstOrDefault();
+    double adv = ApplyRun(Cur, level, LevelEnv, fit); RecalcSd();
+    if (!Bot.ProMode)
+      try { File.AppendAllText(RUNS, string.Join("|", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Cur.Id, level, LevelEnv, fit.ToString("0.##", CultureInfo.InvariantCulture),
+              won ? 1 : 0, wave, waves, MowersLost, PlantsLost) + Environment.NewLine); } catch { }
+    Say(Cur.Id + " '" + Cur.Name + "' scored " + fit.ToString("0") + " (" + (won ? "won" : "died") + ", " + MowersLost + " mowers, " + PlantsLost + " plants lost) on level " + level
+        + (double.IsNaN(baseBefore) ? " (first score here)" : ", baseline " + baseBefore.ToString("0") + " -> advantage " + adv.ToString("+0;-0")) + "; overall advantage " + Cur.Adv.ToString("+0;-0") + " over " + Cur.AdvN + " runs");
+    var best = Tried.Where(t => t.N > 0 && t.Env == Cur.Env).OrderByDescending(t => Lcb(t, level)).First();
+    if (best == Cur && prevBest != Cur && Cur.Parent != "-") Say("new champion! the hypothesis '" + Cur.Hypothesis + "' paid off");
     Save();
   }
 
@@ -162,7 +214,37 @@ public static class Strategy {
           InstantDanger = double.Parse(p[9], ic), ShooterCol = int.Parse(p[10]), SaveBias = double.Parse(p[11], ic), Hypothesis = p[12], Env = p.Length > 13 ? p[13] : "day", SunCol = p.Length > 14 ? int.Parse(p[14]) : 0, SunSpread = p.Length > 15 && p[15] == "1" });
       } catch { }
     }
-    nextId = Tried.Count + 1; Generation = Tried.Count(t => t.Parent != "-");
-    if (Tried.Count > 0) Cur = Tried.OrderByDescending(t => t.Avg).First();
+    // Per-run records (id, level, env, fit) - replayed in order to rebuild the baselines and every advantage.
+    var runs = new List<Tuple<string, int, string, double>>();
+    if (File.Exists(RUNS))
+      foreach (var l in File.ReadAllLines(RUNS)) {
+        var p = l.Split('|');
+        try { runs.Add(Tuple.Create(p[1], int.Parse(p[2]), p[3], double.Parse(p[4], ic))); } catch { }
+      }
+    // Runs older than the records only have a raw average, confounded by which level they met: kept as a weak prior
+    // (advantage vs the environment's mean, worth at most 2 runs).
+    var byId = new Dictionary<string, Strat>(); foreach (var t in Tried) byId[t.Id] = t;
+    var recN = new Dictionary<string, int>(); var recFit = new Dictionary<string, double>();
+    foreach (var r in runs) { int n; double f; recN.TryGetValue(r.Item1, out n); recFit.TryGetValue(r.Item1, out f); recN[r.Item1] = n + 1; recFit[r.Item1] = f + r.Item4; }
+    var envMean = new Dictionary<string, double[]>();   // env -> {legacy runs, legacy fit}
+    foreach (var t in Tried) {
+      int n; double f; recN.TryGetValue(t.Id, out n); recFit.TryGetValue(t.Id, out f);
+      int legacy = t.Runs - n; if (legacy <= 0) continue;
+      double[] em; if (!envMean.TryGetValue(t.Env, out em)) envMean[t.Env] = em = new double[2];
+      em[0] += legacy; em[1] += t.FitSum - f;
+    }
+    foreach (var t in Tried) {
+      int n; double f; recN.TryGetValue(t.Id, out n); recFit.TryGetValue(t.Id, out f);
+      int legacy = t.Runs - n; double[] em; if (legacy <= 0 || !envMean.TryGetValue(t.Env, out em) || em[0] <= 0) continue;
+      t.PriorAdv = (t.FitSum - f) / legacy - em[1] / em[0]; t.PriorN = Math.Min(2, legacy);
+    }
+    foreach (var r in runs) { Strat t; byId.TryGetValue(r.Item1, out t); ApplyRun(t, r.Item2, r.Item3, r.Item4); }
+    RecalcSd();
+    // nextId = max(Id)+1, so an unparsable line can never cause an Id collision.
+    int maxId = -1; foreach (var t in Tried) { int v; if (t.Id != null && t.Id.Length > 1 && int.TryParse(t.Id.Substring(1), out v)) maxId = Math.Max(maxId, v); }
+    nextId = maxId + 1; Generation = Tried.Count(t => t.Parent != "-");
+    // Current strategy: the most reliable one of the environment being played (day until the bot sees the board).
+    var inEnv = Tried.Where(t => t.Env == LevelEnv).ToList();
+    if (Tried.Count > 0) Cur = (inEnv.Count > 0 ? inEnv : Tried).OrderByDescending(t => Lcb(t, -1)).ThenByDescending(t => t.Avg).First();
   }
 }

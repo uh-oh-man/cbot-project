@@ -1,0 +1,181 @@
+# CBot Project — Architecture Review
+
+Significant redesign recommended
+
+My recommendation: Rebuild the bot's decision-making and learning architecture, but don't throw away the whole project.
+
+After inspecting the repository's design and source code, I see two different stories:
+
+- The engineering foundation has real value. You've got game-memory reading, mouse control, game-state tracking, automated recovery, experimental strategies, and a predictive simulator.
+- The intelligence is much less reliable than it appears. The learning system makes questionable assumptions about what caused an event, the simulator simplifies important mechanics, and the expert bot relies heavily on handcrafted decisions.
+
+The distinction matters. Rewriting everything would waste useful engineering. Continuing to bolt more rules onto the current decision systems would preserve their underlying problems.
+
+I would aim for CBot 2.0: new brains, proven components reused, old system retained for comparison.
+
+## 1. What the results actually tell us
+
+Adventure levels completed
+
+# 34
+
+Of 50 main levels
+
+Pro-mode deaths recorded
+
+# 474
+
+Across recorded attempts
+
+Deaths on 4-5
+
+# 360
+
+76% of Pro deaths
+
+Pro-mode deaths: level 4-5 versus all other recorded levels
+
+Counts calculated from the committed pro_record.txt snapshot.
+
+095190285380Other levelsLevel 4-5
+
+Repository snapshot: November 1, 2026, commit [2a2b0afd](https://github.com/uh-oh-man/cbot-project/commit/2a2b0afd6cf191aa5d121f32f6e42195c1717368?utm_source=chatgpt.com). Figures are calculated from the committed [Pro record](https://github.com/uh-oh-man/cbot-project/blob/main/pro_record.txt?utm_source=chatgpt.com), not a live VM.
+
+The 360 deaths don't automatically mean the architecture is broken. A particularly difficult randomized level can produce plenty of failures. But this is exactly where a good autonomous system should be able to distinguish failed strategies, investigate why they failed, and produce measurable improvements.
+
+Right now, much of that job is being accomplished through manually added rules and Claude modifying the program.
+
+That's not the same as the bot independently learning to solve the problem.
+
+## 2. Problems I found in the code
+
+| Severity | Finding                                                                                                                             | Why it matters                                                                                                                                                                                    |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Critical | [Stored plant classifications are incorrect](https://github.com/uh-oh-man/cbot-project/blob/main/roles.txt?utm_source=chatgpt.com)  | FUME, PUFF, and SCAREDY are labeled `WALL` despite being attacking plants. The runtime has a description-based safety check, but it depends on an external file being accessible.                 |
+| High     | [False summoner evidence](https://github.com/uh-oh-man/cbot-project/blob/main/knowledge.txt?utm_source=chatgpt.com)                 | The learner has 19 summoning signals for ordinary `NORM` zombies. Its observation method associates nearby appearances with summoning without establishing causation.                             |
+| High     | [Unreliable causal measurements](https://github.com/uh-oh-man/cbot-project/blob/main/learn.cs?utm_source=chatgpt.com#L226-L349)     | Zombie damage, disappearances, and plant behavior are inferred from snapshots. Other plants, movement, explosions, and missed frames can distort attribution.                                     |
+| High     | [Oversimplified prediction](https://github.com/uh-oh-man/cbot-project/blob/main/prosim.cs?utm_source=chatgpt.com#L41-L113)          | The 40-second simulator approximates damage and movement but omits important combat timing and future uncertainty.                                                                                |
+| High     | [Strategy evaluation is confounded](https://github.com/uh-oh-man/cbot-project/blob/main/strategy.cs?utm_source=chatgpt.com#L58-L92) | Strategies are compared primarily by environment rather than equivalent levels and initial conditions. A strategy that succeeds on an easy level can look better than one tested on a hard level. |
+| Medium   | [Watchdog progress detection](https://github.com/uh-oh-man/cbot-project/blob/main/watch.ps1?utm_source=chatgpt.com#L18-L38)         | Its progress signature includes the number of logged events. New events can reset the stuck timer without meaningful gameplay progress.                                                           |
+| Medium   | [Action verification](https://github.com/uh-oh-man/cbot-project/blob/main/bot.cs?utm_source=chatgpt.com#L660-L684)                  | A plant action is accepted when plant count increases or sun decreases, rather than always verifying the exact intended plant and position.                                                       |
+
+### The biggest problem is learning from coincidence
+
+Take the current summoner detection.
+
+When a zombie appears near another zombie, the bot can interpret the existing zombie as a summoner. After three such observations, it treats that as learned knowledge.
+
+The saved data already contains suspicious examples. And in [`bot.cs`](https://github.com/uh-oh-man/cbot-project/blob/main/bot.cs?utm_source=chatgpt.com#L701-L712), a zombie classified as a summoner can have its perceived threat multiplied by 2.5.
+
+That means a questionable observation can directly influence future decisions.
+
+The same underlying issue affects damage attribution and plant classification. The system often knows what happened, but not necessarily what caused it.
+
+I would redesign learning around evidence, uncertainty, and controlled comparisons rather than accumulating guesses and correcting them with plausibility thresholds.
+
+### The simulator is useful, but its predictions aren't yet trustworthy enough
+
+The current simulator calculates where zombies will move, how much damage plants deal, and whether a lane might break.
+
+That's a sensible idea. I would absolutely keep a simulator.
+
+But its predictions need to account for projectile travel, attack cooldowns, special zombie behavior, plant activation delays, and uncertainty about upcoming threats.
+
+It also needs automated comparison against what really happens. Otherwise, a numerical prediction can look precise while being substantially wrong.
+
+One other distinction: Pro mode is described as using only information visible to a player, yet the simulator consumes exact memory-derived zombie HP. The fog filter is a good effort toward fair visibility, but I would enforce that rule at the observation interface instead of relying on each decision function to interpret it correctly.
+
+## 3. How I'd rebuild the architecture
+
+## Proposed CBot 2.0
+
+Game interface
+
+Memory reader + screen observation + mouse control
+
+Validated state
+
+Visible objects, positions, health estimates, uncertainty
+
+Learning model
+
+Mechanics, evidence, confidence, previous outcomes
+
+Predictive planner
+
+Simulates moves, risks, and possible outcomes
+
+Action executor
+
+Perform action, verify result, recover if necessary
+
+Replay and evaluation
+
+Record results, measure prediction errors, improve future decisions
+
+Evaluation feeds new evidence back into learning and planning. The current Pro policy can remain as a baseline.
+
+The key difference is that the bot would have a much stricter separation between observing the game, understanding it, choosing an action, and determining whether that action worked.
+
+For example, during Vasebreaker, the planner should understand that the contents of an unopened vase are unknown. It should evaluate possible outcomes, maintain an estimate of what might remain, and decide whether revealing another vase is worth the risk.
+
+It should also know whether it can execute a precise squash placement quickly enough. A theoretically perfect move is worthless when the zombie has already passed the target by the time the mouse clicks.
+
+This is where replaying actual failed situations becomes especially valuable.
+
+## 4. What should stay and what should change?
+
+| Component                                 | Recommendation                                                        |
+| ----------------------------------------- | --------------------------------------------------------------------- |
+| PvZ memory reader                         | Keep, validate offsets and snapshot consistency                       |
+| Mouse input and post-message optimization | Keep, improve action verification                                     |
+| Overlay and statistics                    | Keep, separate presentation from decisions                            |
+| Learned knowledge files                   | Preserve and migrate with confidence labels; don't blindly trust them |
+| Plant-role discovery                      | Rebuild the inference, preserve useful descriptions                   |
+| Strategy evolution                        | Redesign evaluation and experiments                                   |
+| Pro rule engine                           | Retain as benchmark and fallback                                      |
+| Lane simulator                            | Keep the concept, substantially rebuild mechanics                     |
+| Vasebreaker logic                         | Build a specialized uncertainty-aware planner                         |
+| Watchdog                                  | Repair health checks and recovery behavior                            |
+| Discord integration                       | Keep separate from gameplay; audit the missing relay source           |
+| Buckshot bot                              | Treat as an independent, unfinished bot using the shared architecture |
+
+The Buckshot decision engine is currently a small ruleset with basic shell probabilities. It doesn't yet implement a complete autonomous game loop. Its fixed probability thresholds also ignore important health and turn-value considerations.
+
+That part would benefit from a proper expected-outcome planner, rather than more special-case conditions.
+
+## 5. How I'd make the transition safely
+
+| Phase          | Work                                                                 | Success condition                                             |
+| -------------- | -------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 0 — Preserve   | Archive the working bot, knowledge, saves, and logs                  | Existing bot remains recoverable                              |
+| 1 — Replay     | Build a tool that replays recorded states without launching the game | Decisions reproducible offline                                |
+| 2 — Perception | Validate game snapshots and what the policy is allowed to observe    | Hidden information cannot leak into decisions                 |
+| 3 — Learning   | Fix causal attribution, confidence, and mechanics measurement        | Known behavior passes regression tests                        |
+| 4 — Planning   | Implement the improved simulator and candidate planner               | Predictions match measured outcomes within defined tolerances |
+| 5 — Comparison | Run old and new policies against comparable scenarios                | New system performs at least as well before replacement       |
+| 6 — Expansion  | Add dedicated planners for Vasebreaker, minigames, and Buckshot      | Each mode has independently tested behavior                   |
+
+I would not jump straight to training a giant neural network or installing a new LLM as the bot's brain. With a GPU-less VM and real game attempts taking time, that could become an expensive exercise in learning very little.
+
+A hybrid system—measured mechanics, predictive planning, controlled experimentation, and a higher-level AI supervisor that analyzes failures—makes substantially more sense here.
+
+## 6. Important limitation of this review
+
+This was a source-level review of the committed GitHub snapshot, not a live test on the Windows VM. I inspected the main PvZ controller, learning and role systems, simulator, Pro logic, result files, watchdog, and available Buckshot and Discord code.
+
+I couldn't run the actual game or measure runtime decision accuracy. The repository also does not provide a complete reproducible test setup, and the current commit removes `discord/relay.ps1`. The live VM may still have components not present in this reference copy.
+
+So the code and recorded-data defects above are supported, but a claim that a replacement will achieve a specific win rate would be premature.
+
+## Final verdict
+
+CBot has outgrown its current learning and decision architecture.
+
+Its infrastructure is worth preserving. Its strategy intelligence needs a fairly serious redesign.
+
+The strongest next move is to build an offline replay and evaluation system before replacing the brain. That gives us a way to prove improvements instead of letting Claude repeatedly patch whatever caused the last death.
+
+And I'd keep the existing Pro bot running as a benchmark, not as the definition of what the new bot should become.
+
+The real target isn't simply a bot that eventually beats PvZ after hundreds of attempts. It's a bot that can explain through measurable evidence why its previous strategy failed, change its behavior intelligently, and demonstrate that the change actually helped.

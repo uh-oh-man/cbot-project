@@ -1,0 +1,24 @@
+V 2026-11-01_16:57:56 lvl=35 r=2 n=20 br=20 res=clear rl=1 z=NORM:4 s=SNOW:5,PEA:4,SQUASH:4 lk=q:4/10/1,l:0/0/0,k:0/0/0
+S 2026-11-01_16:58:01 lvl=35 r=3 n=25 gt=311.6
+V 2026-11-01_16:59:17 lvl=35 r=3 n=25 br=12 res=died rl=0 z=PAIL:1,NORM:1,DANCER:1 s=SNOW:4,PEA:2,HYPNO:3 lk=q:3/6/0,l:0/3/0,k:0/0/0
+S 2026-11-01_16:59:30 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:00:02 lvl=35 r=1 n=15 br=15 res=clear rl=1 z=NORM:1 s=PEA:4,SQUASH:2 lk=q:1/1/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:00:10 lvl=35 r=2 n=20 gt=80.8
+V 2026-11-01_17:01:08 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SQUASH:4,SNOW:5,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+V 2026-11-01_17:01:58 lvl=35 r=1 n=15 br=15 res=clear rl=1 z=PAIL:1,NORM:4 s=PEA:5,SQUASH:5 lk=q:5/9/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:02:08 lvl=35 r=2 n=20 gt=79.2
+V 2026-11-01_17:02:30 lvl=35 r=2 n=20 br=16 res=died rl=0 z=NORM:2,FOOT:1,PAIL:1 s=SNOW:4,SQUASH:4,PEA:4 lk=q:4/10/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:02:42 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:03:06 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:03:13 lvl=35 r=2 n=20 gt=61.2
+V 2026-11-01_17:03:32 lvl=35 r=2 n=20 br=16 res=died rl=1 z=NORM:3,FOOT:1 s=SNOW:3,PEA:3,SQUASH:1 lk=q:0/0/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:03:45 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:04:06 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:04:13 lvl=35 r=2 n=20 gt=57.0
+V 2026-11-01_17:04:22 lvl=35 r=2 n=20 br=11 res=died rl=0 z=FOOT:1,NORM:2,PAIL:1 s=SQUASH:2,SNOW:2,PEA:3 lk=q:4/5/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:04:35 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:05:01 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:05:08 lvl=35 r=2 n=20 gt=67.5
+V 2026-11-01_17:05:45 lvl=35 r=2 n=20 br=19 res=died rl=0 z=NORM:5,PAIL:1,FOOT:1 s=PEA:4,SQUASH:4,SNOW:4 lk=q:7/10/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:05:58 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:06:28 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0

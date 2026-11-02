@@ -99,11 +99,12 @@ public static partial class Bot {
     string result = "timeout"; int lastScene = -1, losses = 0, lastLevel = 0;
     var loopTimer = System.Diagnostics.Stopwatch.StartNew(); int loops = 0;
     while (DateTime.Now < end) {
-      if (File.Exists(@"C:\cbot\stop.flag")) { File.Delete(@"C:\cbot\stop.flag"); result = "hot reload"; break; }
+      if (File.Exists(@"C:\cbot\stop.flag")) { File.Delete(@"C:\cbot\stop.flag"); result = "hot reload"; try { Replay.Dump("RELOAD", -1, ""); } catch { } break; }
       if ((DateTime.Now - lastSpeedCheck).TotalSeconds > 0.5) { lastSpeedCheck = DateTime.Now; ApplySpeed(); }
       try {
         var sw = System.Diagnostics.Stopwatch.StartNew();
         var s = Mem.Get();
+        Seen.Frame(s);   // visible-only observation + sim calibration events (mower fire, game over, probes)
         Viz.ReadMs = sw.Elapsed.TotalMilliseconds; TRead = Ema(TRead, Viz.ReadMs);
         if (++loops % 20 == 0) { Viz.LoopHz = loops / loopTimer.Elapsed.TotalSeconds; loops = 0; loopTimer.Restart(); }
         if (s.Scene != lastScene) {
@@ -134,7 +135,11 @@ public static partial class Bot {
         int dave = Mem.DaveState();
         if (dave >= 3) {
           string said = Mem.DaveText();
-          if (said != lastDave && said.Length > 0) { Event("DAVE: " + said); lastDave = said; daveSince = DateTime.Now; if (said.Contains("last of")) { vaseFinalRound = true; VaseRound = 3; } else if (said.Contains("more vases")) VaseRound = 2; }
+          if (said != lastDave && said.Length > 0) {
+            Event("DAVE: " + said); Replay.Note("DAVE", said, -1); lastDave = said; daveSince = DateTime.Now;
+            if (said.Contains("last of")) { vaseFinalRound = true; VaseRound = 3; VasePlanner.HintRound(3, true); }
+            else if (said.Contains("more vases")) { VaseRound = 2; VasePlanner.HintRound(2, false); }
+          }
           if ((DateTime.Now - daveSince).TotalSeconds > 25) { Recover(s.Scene); daveSince = DateTime.Now; }   // he wants something we do not understand
           // "NO_CLICK" lines are his store chatter (Crazy Dave's Twiddydinkies): clicking him does nothing - leave via NEXT LEVEL.
           if (said.StartsWith("NO_CLICK")) {
@@ -159,14 +164,21 @@ public static partial class Bot {
         }
         if (s.Scene == 4) {                         // zombies won: count the death once, then keep trying "Try Again"
           if (lastMenuClick < sceneSince && inScene < 1 && lastScene0 != -1) {   // a game over already on screen at startup was counted before the reload
-            if (lastPlay != null && lastPlay.Zombies.Count > 0) BreachDiag(lastPlay, lastPlay.Zombies.OrderBy(z => z.X).First().Row);   // the lane that got through
-            // Super nemesis: remember which kind of zombie got through (the one closest to the house).
-            if (lastPlay != null && lastPlay.Zombies.Count > 0)
-              try { File.AppendAllText(@"C:\cbot\nemesis.txt", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + " " + (ProMode ? "pro" : "learn") + " lvl" + lastLevel + " " + Mem.ZomName(lastPlay.Zombies.OrderBy(z => z.X).First().Type) + Environment.NewLine); } catch { }
+            // The zombie that got through = the enemy closest to the house (a hypnotized one is on our side).
+            var killer = lastPlay == null ? null : lastPlay.Zombies.Where(z => !z.Charmed).OrderBy(z => z.X).FirstOrDefault();
+            if (killer != null) BreachDiag(lastPlay, killer.Row);   // the lane that got through
+            // Super nemesis: remember which kind of zombie got through.
+            if (killer != null)
+              try { File.AppendAllText(@"C:\cbot\nemesis.txt", DateTime.Now.ToString("yyyy-MM-dd HH:mm") + " " + (ProMode ? "pro" : "learn") + " lvl" + lastLevel + " " + Mem.ZomName(killer.Type) + Environment.NewLine); } catch { }
+            // Vase levels have no waves: record the round and vases left instead of a meaningless "wave 0/20".
+            bool vaseLvl = PrecisionLevel && lastLevel == precisionLvl;
+            string where = vaseLvl ? "round " + VaseRound + ", vases left " + lastVaseCount : "wave " + lastWave + "/" + lastWaves;
+            try { Replay.Dump("DIED", lastLevel, where.Replace(", ", " ") + (killer != null ? " killer=" + Mem.ZomName(killer.Type) : "")); } catch { }
+            if (vaseLvl) VasePlanner.EndRound("died");
             lastPlay = null;
             vaseFinalRound = false; VaseRound = 1; Learn.Died(); Viz.Losses++; mowerLostThisLevel = false; Viz.FaithOnDeath(); Quips.Died(lastLevel, Learn.Deaths); if (!ProMode) Strategy.LevelEnded(false, lastWave, lastWaves); stratChosen = false;
             Event("RESULT lvl " + lastLevel + " DIED (death #" + (ProMode ? ProDeaths + 1 : Learn.Deaths) + ")");
-            if (ProMode) ProRecord("PRO lvl " + lastLevel + " DIED wave " + lastWave + "/" + lastWaves);
+            if (ProMode) ProRecord("PRO lvl " + lastLevel + " DIED " + where);
             if (++losses >= 3) Event("died " + losses + "x in a row on lvl " + lastLevel + " - the strategy brain will keep experimenting");
             lastMenuClick = DateTime.Now;
           }
@@ -180,8 +192,10 @@ public static partial class Bot {
         }
         if (s.Scene == 5) {                         // award screen: Next Level
           if (inScene > 4 && (DateTime.Now - lastMenuClick).TotalSeconds > 4) {
-            if (!winCounted) {   // once per award screen, even if the watchdog resets timers
+            if (!winCounted && lastScene0 != -1) {   // once per award screen; an award screen already up at startup was counted before the reload
               winCounted = true;
+              try { Replay.Dump("WON", lastLevel, "vr=" + VaseRound); } catch { }
+              if (PrecisionLevel && lastLevel == precisionLvl) VasePlanner.EndRound("won");
               vaseFinalRound = false; VaseRound = 1; Diag.Won(); Learn.RoundWon(!mowerLostThisLevel); Viz.Wins++; losses = 0; Quips.Won(Learn.Streak, lastLevel); if (!ProMode) Strategy.LevelEnded(true, lastWave, lastWaves); stratChosen = false;
               Event("RESULT lvl " + lastLevel + " WON (streak " + Learn.Streak + ")");
               if (ProMode) ProRecord("PRO lvl " + lastLevel + " WON");
@@ -210,9 +224,14 @@ public static partial class Bot {
         }
         var tw = System.Diagnostics.Stopwatch.StartNew();
         Track(s);
+        VasePlanner.Observe(s, DateTime.Now.Ticks / 1e7);   // what came out of each broken vase (only what a player sees)
         TTrack = Ema(TTrack, tw.Elapsed.TotalMilliseconds);
 
-        if (s.Complete) { CollectAll(s); Thread.Sleep(150); continue; }
+        if (s.Complete) {
+          if (winNotedLvl != s.Level) { winNotedLvl = s.Level; Replay.Note("WIN", "level complete", s.GameTime); }
+          CollectAll(s); Thread.Sleep(150); continue;
+        }
+        winNotedLvl = -1;
         if (s.Paused) {
           // Returning to a level that was left mid-game asks "Continue game?": continue it (left button).
           if (Mem.OpenDialogs() > 0 && Mem.DialogText().ToLower().Contains("continue your current game")) {
@@ -223,53 +242,28 @@ public static partial class Bot {
         }
 
         tw.Restart(); CollectAll(s); TCollect = Ema(TCollect, tw.Elapsed.TotalMilliseconds);
-        // Vasebreaker: smash vases from the right (anything that pops out is far from the house), never while under threat.
-        // Vasebreaker: vases are where the weapons are, so under threat with no seed packet lying on the lawn, keep breaking.
-        bool weaponOnLawn = s.Suns.Any(c => c.IsPacket && c.Seed != 17);   // a squash held on purpose (waiting for a football) does not block breaking
+        // Vasebreaker: the planner (vaseplan.cs) picks which vase to open and when, from what has come out of vases so far
+        // (round contents it has seen before + what is left), the lane defences and the threats - not fixed hand rules.
         // Stays on for the whole level (vases vanish briefly between rounds), off once a different level is being played.
         if (s.Vases.Count > 0 && !PrecisionLevel) { PrecisionLevel = true; precisionLvl = s.Level; Event("PRECISION level (vases): capping speed at x2 so timing plays work"); }
         if (PrecisionLevel && s.Level != precisionLvl) { PrecisionLevel = false; Event("precision level over: back to the chosen speed"); }
-        // Pace it: breaking too fast floods the lawn (Dave warns about it). Under threat, one vase every 4 s;
-        // and break into lanes that already have shooters, so whatever comes out walks into fire.
-        // ...but if a zombie is already close and nothing to fight it with, dig for a weapon fast.
-        // Only when it is ONE problem (few zombies out) and that zombie is near the house in a lane with nothing to shoot it -
-        // otherwise rapid breaking just floods the lawn (seen: 15 vases in 16 s -> 10 zombies at once).
-        var onLawn = s.Zombies.Where(z => z.X < Bot.VISIBLE_X).ToList();
-        bool desperate = !weaponOnLawn && onLawn.Count <= 3 && onLawn.Any(z => z.X < 380 && !s.Plants.Any(p => p.Row == z.Row && p.Col * 80 + 40 < z.X));
-        // DARTH'S GAMBIT (round 2, from the mod author): once a football is out and no squash is in hand,
-        // break vases fast to find the squash - the football is stuck eating a pea/snow pea meanwhile.
-        bool footballHunt = s.Zombies.Any(z => z.X < Bot.VISIBLE_X && Mem.ZomName(z.Type) == "FOOT") && !s.Suns.Any(c => c.IsPacket && c.Seed == 17) && !s.Plants.Any(p => p.Type == 17);
-        if (footballHunt && !wasHunting) Event("DARTH'S GAMBIT: football out - breaking vases fast to find a squash");
-        wasHunting = footballHunt; lastVaseCount = s.Vases.Count;
-        // Round 1 (mod author): break everything right away - nothing in it is fast enough to punish that.
-        // (tried breaking all of round 1 at once: 3 of 4 tries then died in round 1 - the bot cannot place squashes as precisely as a human)
-        double vaseGap = footballHunt ? 0.5 : desperate ? 0.8 : UnderThreat ? 2.5 : 1.8;   // 1.0 flooded round 2 (10 vases in 9 s -> a football out before any defence)
-        // Plant what the last vase gave before opening another (a player would not leave a weapon lying around).
-        // Breaking the LAST vase ends the round and wipes our plants - but zombies on the lawn stay. Clear them first.
-        // ...except in the FINAL round (Dave says "the last of 'em"): nothing gets wiped then, and that vase may be the weapon we need.
-        // Owner's rule: if a zombie is walking down a completely empty lane (nothing can stop it anyway), just break the last vase.
-        bool hopeless = s.Zombies.Any(z => z.X < Bot.VISIBLE_X && !s.Plants.Any(p => p.Row == z.Row));
-        bool lastVaseWait = s.Vases.Count == 1 && !vaseFinalRound && !hopeless && s.Zombies.Any(z => z.X < Bot.VISIBLE_X);
-        if (s.Vases.Count > 0 && (weaponOnLawn || lastVaseWait) && (DateTime.Now - lastVaseWhy).TotalSeconds > 5) { lastVaseWhy = DateTime.Now; L("VASE wait: " + (weaponOnLawn ? "a dropped plant is still on the lawn" : "last vase - clearing zombies first") + " (cursor " + Mem.CursorType() + ")"); }
-        if (s.Vases.Count > 0 && (!weaponOnLawn || footballHunt) && !lastVaseWait && (DateTime.Now - lastVase).TotalSeconds > vaseGap && Mem.CursorType() == 0) {
-          // Order like a player: green (plant) vases first, then "?" vases into defended lanes / far right, skull vases last.
-          // "Armed" = a pea/snow-type shooter in that lane (mod author: one in every lane before its vases) - a parked squash does not count.
-          Func<int, int> armed = k => s.Plants.Count(p => p.Row == k / 10 && p.Col < k % 10 && ProIsShooter(p.Type));
-          // Green vases any time; "?" and skull vases only into lanes that already have a plant to fight, when such a vase exists.
-          var choices = s.Vases.Where(k => s.LeafVases.Contains(k) || armed(k) > 0).ToList();
-          // Already 3+ zombies out: only green (plant) vases until the shooters thin them - a new zombie would just pile on.
-          if (footballHunt) choices = s.Vases.ToList();   // any vase could hold the squash
-          else if (onLawn.Count >= 3 && !desperate) { choices = choices.Where(k => s.LeafVases.Contains(k)).ToList(); if (choices.Count == 0) { lastVase = DateTime.Now; goto vaseDone; } }
-          if (choices.Count == 0) choices = s.Vases.Where(k => !s.SkullVases.Contains(k)).ToList();
-          if (choices.Count == 0) choices = s.Vases.ToList();   // only skull vases left: still have to break them
-          if (choices.Count == 0) choices = s.Vases.ToList();
-          int v = choices.OrderByDescending(k => s.LeafVases.Contains(k)).ThenBy(k => s.SkullVases.Contains(k)).ThenByDescending(armed).ThenByDescending(k => k % 10).ThenBy(k => k / 10).First();
-          lastVase = DateTime.Now;
-          if (!vaseSeen) { vaseSeen = true; Event("VASEBREAKER: smashing vases right-to-left, only when the lawn is safe"); }
-          L("VASE break r" + v / 10 + "c" + v % 10 + (s.LeafVases.Contains(v) ? " (green)" : s.SkullVases.Contains(v) ? " (skull)" : "") + " threat=" + UnderThreat + " left=" + s.Vases.Count);
-          Pvz.FastClick(CellX(v % 10), CellY(v / 10));
+        if (PrecisionLevel) {
+          foreach (var ve in VasePlanner.DrainEvents()) { L(ve); Replay.Note("PLAN", ve, s.GameTime); }
+          if (VasePlanner.Hunting && !wasHunting) Event("DARTH'S GAMBIT: football out - breaking vases fast to find a squash");
+          wasHunting = VasePlanner.Hunting; lastVaseCount = s.Vases.Count;
+          if (VasePlanner.Round > 0 && VasePlanner.Round != VaseRound) { Replay.Note("ROUND", "vase round " + VasePlanner.Round, s.GameTime); VaseRound = VasePlanner.Round; }   // survives hot reload (inferred from the vases)
+          vaseFinalRound = vaseFinalRound || VasePlanner.FinalRound;
+          if (s.Vases.Count > 0 && Mem.CursorType() == 0) {
+            string vwhy; int v = VasePlanner.ChooseBreak(s, DateTime.Now.Ticks / 1e7, out vwhy);
+            if (v >= 0) {
+              lastVase = DateTime.Now;
+              if (!vaseSeen) { vaseSeen = true; Event("VASEBREAKER: risk planner - opening the vase with the best odds, only when the lawn can take it"); }
+              L("VASE break " + vwhy + " left=" + s.Vases.Count);
+              Replay.Note("VASE", "break " + vwhy + " left=" + s.Vases.Count, s.GameTime);
+              Pvz.FastClick(CellX(v % 10), CellY(v / 10));
+            } else if (!string.IsNullOrEmpty(vwhy) && (DateTime.Now - lastVaseWhy).TotalSeconds > 5) { lastVaseWhy = DateTime.Now; L("VASE wait: " + vwhy); }
+          }
         }
-        vaseDone: ;
         // Whack-a-Zombie: the cursor is a hammer, so hit the zombie closest to the house first.
         if (Mem.CursorType() == 7) {
           var whack = s.Zombies.Where(z => z.X < VISIBLE_X && z.X > -40).OrderBy(z => z.X).FirstOrDefault();
@@ -279,6 +273,7 @@ public static partial class Bot {
       } catch (Exception e) { L("err " + e.Message + " @ " + ((e.StackTrace ?? "").Split('\n').FirstOrDefault() ?? "").Trim()); Thread.Sleep(500); }
       Thread.Sleep(Speed >= 3 ? 5 : 20);   // faster game -> tighter loop
     }
+    try { Replay.Dump(result == "hot reload" ? "RELOAD" : "EXIT", -1, result); Outcomes.Flush(); SimCal.Flush(); } catch { }
     Learn.Save();
     L("bot end: " + result); Viz.Status = "stopped: " + result; Viz.AddEvent("bot stopped: " + result);
     log.Close();
@@ -452,6 +447,7 @@ public static partial class Bot {
   static bool winCounted;
   static int lastScene0 = -1;
   static bool whackSeen, vaseSeen;
+  static int winNotedLvl = -1, lastWipeVases;
   static DateTime lastVase = DateTime.MinValue, lastVaseWhy = DateTime.MinValue;
   static bool vaseFinalRound;   // set when Dave announces the final batch of vases; cleared when a level ends
   public static int VaseRound = 1; static bool wasHunting;   // 1 until Dave brings "more vases", then 2; 3 at "the last of 'em"
@@ -535,7 +531,7 @@ public static partial class Bot {
     Learn.Observe(s, new HashSet<int>(s.Plants.Select(p => p.Type).Where(IsShooter)), VISIBLE_X);
     Learn.TrackContribution(s, IsShooter, IsSun);
     Roles.Observe(s, Learn.LastLaneDmg, Learn.LastDt, Learn.LastVanished,
-                  row => s.Plants.Where(p => p.Row == row && IsShooter(p.Type) && !Roles.Unknown(p.Type)).Sum(p => Learn.Dps(p.Type)));
+                  (row, ex) => s.Plants.Where(p => p.Row == row && p.Type != ex && IsShooter(p.Type) && !Roles.Unknown(p.Type)).Sum(p => Learn.Dps(p.Type)));   // lane DPS without the plant being judged
     foreach (var c in s.Suns) if (!sunSeen.ContainsKey(c.Id)) sunSeen[c.Id] = now;
     int dmg = 0; var seen = new HashSet<uint>();
     foreach (var z in s.Zombies) {
@@ -543,28 +539,38 @@ public static partial class Bot {
       if (zHp.TryGetValue(z.Id, out prev) && prev > z.Total) dmg += prev - z.Total;
       zHp[z.Id] = z.Total;
     }
+    foreach (var z in s.FogZombies) seen.Add(z.Id);   // walked into fog: still alive, not a kill
     foreach (var id in zHp.Keys.Where(k => !seen.Contains(k)).ToList()) {
       zHp.Remove(id); Viz.Kills++; Quips.Kill();
     }
     Viz.AddDamage(dmg);
     lastPlay = s;
+    // v2 measurement: did each squash/bomb/mine/hypno actually do its job, and a rolling replay of the last ~100 s.
+    Outcomes.Frame(s, VaseRound);
+    foreach (var o in Outcomes.Take()) { Event(o); Replay.Note("OUTCOME", o.Length > 8 ? o.Substring(8) : o, s.GameTime); }
+    Replay.Snapshot(s, VaseRound, LaneDanger);
     var keys = new HashSet<int>(s.Plants.Select(p => p.Row * 10 + p.Col));
     // A mower firing means our defence in that lane failed: record it as a mistake.
     for (int r = 0; r < 6; r++) {
       if (lastMowers[r] == 1 && s.Mowers[r] == 2) {
         Viz.MowersLost++; mowerLostThisLevel = true; Learn.MowerLost(r); Quips.Mower(r); Strategy.MowersLost++;
-        var zs = s.Zombies.Where(z => z.Row == r && z.X < VISIBLE_X).ToList();
+        var zs = s.Zombies.Where(z => z.Row == r && z.X < VISIBLE_X && !z.Charmed).ToList();
         Event("!! MOWER FIRED lane " + r + " - defence failed (" + s.Plants.Count(p => p.Row == r && IsShooter(p.Type)) +
               " shooters vs " + zs.Count + " zombies, wave " + s.Wave + "/" + s.Waves + ")");
         BreachDiag(s, r);
       }
       lastMowers[r] = s.Mowers[r];
     }
-    if (!IsConveyor(s))   // bowled nuts leave their cell by design
+    // Vasebreaker round change wipes every plant at once (and the vases come back): that is the game, not a loss.
+    int goneNow = plantKeys.Count(k => !keys.Contains(k) && !justPlanted.Contains(k));
+    bool roundWipe = PrecisionLevel && goneNow >= 3 && (s.Vases.Count > lastWipeVases || keys.Count == 0);
+    lastWipeVases = s.Vases.Count;
+    if (!IsConveyor(s) && !roundWipe)   // bowled nuts leave their cell by design
       foreach (var k in plantKeys) if (!keys.Contains(k) && !justPlanted.Contains(k) && !(shoveled.ContainsKey(k) && (DateTime.Now - shoveled[k]).TotalSeconds < 3)) {
         int pt; lastPlantType.TryGetValue(k, out pt);
-        var eater = s.Zombies.Where(z => z.Row == k / 10 && Math.Abs(z.X + 40 - CellX(k % 10)) < 110).OrderBy(z => Math.Abs(z.X + 40 - CellX(k % 10))).FirstOrDefault();
-        bool consumedByDesign = IsMine(pt) || IsInstant(pt) || Roles.Is(pt, "GRAVE") || Roles.Is(pt, "HYPNO");   // used up by design
+        var eater = s.Zombies.Where(z => !z.Charmed && z.Row == k / 10 && Math.Abs(z.X + 40 - CellX(k % 10)) < 110).OrderBy(z => Math.Abs(z.X + 40 - CellX(k % 10))).FirstOrDefault();
+        // used up by design (a squash jumps; Outcomes judges whether it hit)
+        bool consumedByDesign = IsMine(pt) || IsInstant(pt) || Roles.Is(pt, "GRAVE") || Roles.Is(pt, "HYPNO") || Roles.Is(pt, "MELEE") || Mem.SeedName(pt) == "SQUASH";
         if (!consumedByDesign) Event("! lost " + Mem.SeedName(pt) + " at r" + (k / 10) + "c" + (k % 10));
         if (!consumedByDesign) Strategy.PlantsLost++;
         if (!consumedByDesign) Quips.PlantEaten(Mem.SeedName(pt), eater == null ? null : Learn.KeyOf(eater));   // mines vanish by exploding too
@@ -591,7 +597,7 @@ public static partial class Bot {
     var nut = s.Packets.Where(p => p.Active && p.Type >= 0 && p.CX < BELT_END_X).OrderBy(p => p.CX).FirstOrDefault();
     if (nut == null) return list;
     var rowTypes = Mem.RowTypes();
-    var live = s.Zombies.Where(z => z.X < VISIBLE_X).ToList();
+    var live = s.Zombies.Where(z => z.X < VISIBLE_X && !z.Charmed).ToList();
     for (int r = 0; r < 6; r++) {
       if (rowTypes[r] != 1) continue;
       var zs = live.Where(z => z.Row == r).ToList();
@@ -667,6 +673,7 @@ public static partial class Bot {
       Pvz.FastClick(CellX(act.Col), CellY(act.Row)); Thread.Sleep(120);
       Event("SHOVEL r" + act.Row + "c" + act.Col + " to make room (" + act.Why + ")");
       shoveled[act.Row * 10 + act.Col] = DateTime.Now; lastShovel = DateTime.Now;
+      Outcomes.Shoveled(act.Row, act.Col); Replay.Note("SHOVEL", "r" + act.Row + "c" + act.Col + " (" + act.Why + ")", s.GameTime);
       before = Mem.Get().Plants.Count;
     }
     var ta = System.Diagnostics.Stopwatch.StartNew();
@@ -677,9 +684,16 @@ public static partial class Bot {
     Thread.Sleep(Pvz.UsePost ? 25 : 80);
     TAct = Ema(TAct, ta.Elapsed.TotalMilliseconds);
     var s2 = Mem.Get();
-    bool ok = s2.Plants.Count > before || s2.Sun < s.Sun;
+    // Verify the exact result: the intended plant in the intended cell. (Counting plants / sun alone once
+    // accepted a plant that landed elsewhere, and blamed the wrong cell when it failed.)
+    bool exact = s2.Plants.Any(q => q.Row == act.Row && q.Col == act.Col && q.Type == p.Type);
+    bool wrongHere = !exact && s2.Plants.Any(q => q.Row == act.Row && q.Col == act.Col && !s.Plants.Any(o => o.Id == q.Id));
+    bool loose = s2.Plants.Count > before || s2.Sun < s.Sun;
+    bool ok = exact || (loose && !wrongHere);   // loose: an instant can already be gone by the time we look
+    string failWhy = ok ? "" : wrongHere ? "a different plant landed there" : s.Blocked.Contains(act.Row * 10 + act.Col) ? "cell blocked" : "nothing changed";
     if (ok) { justPlanted.Add(act.Row * 10 + act.Col); Viz.Planted++; Viz.Flash(act.Row, act.Col); Quips.Planted(Mem.SeedName(p.Type), act.Row); }
-    Event((ok ? "PLANT " : "fail ") + act.Label + "  score " + act.Score.ToString("0") + "  (" + act.Why + ")");
+    Event((ok ? "PLANT " : "fail ") + act.Label + "  score " + act.Score.ToString("0") + "  (" + act.Why + ")" + (ok && !exact ? " [unverified]" : "") + (ok ? "" : " - " + failWhy));
+    Replay.Note(ok ? "PLANT" : "FAIL", act.Label + " score " + act.Score.ToString("0") + " (" + act.Why + ")" + (ok ? "" : " - " + failWhy), s.GameTime);
     if (!ok) { Pvz.FastClick(400, 590, true); Bad.Add(act.Row * 10 + act.Col); }
   }
 
@@ -702,11 +716,13 @@ public static partial class Bot {
   // times its visible damage state (intact / damaged / nearly dead). Exact HP numbers are not used.
   static readonly Dictionary<uint, int> fullHp = new Dictionary<uint, int>();
   public static double Perceived(Zom z) {
+    Seen.Prune(fullHp);   // throttled inside (5 s); forgets zombies unseen for 30 s
+    if (z.Charmed) return 0;   // hypnotized: on our side
     int full;
     if (!fullHp.TryGetValue(z.Id, out full) || z.Total > full) { full = Math.Max(1, z.Total); fullHp[z.Id] = full; }
     double frac = (double)z.Total / full;
     double state = frac > 0.66 ? 1.0 : frac > 0.33 ? 0.66 : 0.33;
-    double summon = Learn.IsSummoner(Learn.KeyOf(z)) ? 2.5 : 1;   // a summoner is worth several zombies
+    double summon = 1 + 1.5 * Learn.SummonConfidence(Learn.KeyOf(z));   // learned summoner: up to 2.5x, scaled by how sure we are
     if (HealthVisible) return summon * Math.Max(1, z.Total);   // health bars are on screen: use what is shown
     return summon * Learn.Tough(Learn.KeyOf(z)) * state;   // otherwise: learned toughness of this kind x visible damage state
   }
@@ -740,7 +756,7 @@ public static partial class Bot {
     usable.AddRange(s.Suns.Where(c => c.IsPacket && c.Seed >= 0).Select(c => new Pkt { Type = c.Seed, Cost = 0, Active = true, FromCoin = true, CoinX = c.X, CoinY = c.Y, CoinId = c.Id, W = 50, H = 70 }));
 
     // Fair play: only zombies already visible on screen count.
-    var live = s.Zombies.Where(z => z.X < VISIBLE_X && rows.Contains(z.Row)).ToList();
+    var live = s.Zombies.Where(z => z.X < VISIBLE_X && rows.Contains(z.Row) && !z.Charmed).ToList();   // hypnotized zombies fight for us
     var danger = new Dictionary<int, double>(); var nearest = new Dictionary<int, float>(); var shooters = new Dictionary<int, int>();
     var speedOf = new Dictionary<int, double>();
     // Lane firepower in "peashooter equivalents": dps x reach, so a row of short-range free plants is not mistaken for a fortress.
