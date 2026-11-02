@@ -53,3 +53,13 @@ Reference for the bot's strategy and learning: how a strong human actually wins 
 
 - (darthspiker 17:40, 4-5) Every lane gets at least 2 pea plants, no more than 2 unless a dancer/backup dancer is in that lane.
 
+- (darthspiker 18:00) Never put a puff-shroom on a lily pad in the pool - sea-shrooms are cheaper (and recharge extra fast in the mod).
+
+
+## 4-7 (darthspiker 18:08)
+- Plant some (wall/tall) nuts in the POOL lanes (on lily pads) to stall the water zombies.
+
+- (darthspiker 18:09) On 4-7 tall-nuts are too expensive: use plain WALL-NUTS (in the pool on lily pads).
+
+- (darthspiker 18:10) There are NO dolphins in 4-7 (wall-nuts in the pool are safe from being jumped).
+

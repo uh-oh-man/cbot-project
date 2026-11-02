@@ -1,8 +1,8 @@
 ﻿# PvZ bot progress (fresh save "Claudebot")
 
-_Updated 2026-11-01 17:57_
+_Updated 2026-11-01 20:32_
 
-**Levels beaten:** 34   **Total deaths:** 709   **Now on:** 4-5
+**Levels beaten:** 43   **Total deaths:** 793   **Now on:** 5-4
 
 ## World 1 (Day) - 7 deaths
 
@@ -49,7 +49,7 @@ _Updated 2026-11-01 17:57_
 | 3-9 | 0 | beaten at 14:01:44 |
 | 3-10 | 19 | beaten at 14:23:56 |
 
-## World 4 (Fog) - 398 deaths
+## World 4 (Fog) - 421 deaths
 
 | Level | Deaths | Result |
 |---|---:|---|
@@ -57,7 +57,21 @@ _Updated 2026-11-01 17:57_
 | 4-2 | 2 | beaten at 14:30:36 |
 | 4-3 | 0 | beaten at 14:35:53 |
 | 4-4 | 0 | beaten at 14:37:47 |
-| 4-5 | 396 | in progress |
+| 4-5 | 396 | beaten at 17:57:58 |
+| 4-6 | 0 | beaten at 17:59:43 |
+| 4-7 | 5 | beaten at 18:12:32 |
+| 4-8 | 4 | beaten at 18:18:46 |
+| 4-9 | 12 | beaten at 18:41:34 |
+| 4-10 | 2 | beaten at 18:45:18 |
+
+## World 5 (Roof) - 61 deaths
+
+| Level | Deaths | Result |
+|---|---:|---|
+| 5-1 | 2 | beaten at 18:49:33 |
+| 5-2 | 18 | beaten at 19:21:30 |
+| 5-3 | 20 | beaten at 19:56:41 |
+| 5-4 | 21 | in progress |
 
 ## Potato mine observations
 
@@ -67,19 +81,19 @@ _Updated 2026-11-01 17:57_
 
 ## Sanity warnings
 
-- 2026-10-31 21:12:11 rangedesc:0 back in range, trusted again
-- 2026-10-31 21:49:56 SNOW was learned as WALL but its description says SHOOT (only 5 observations)
-- 2026-10-31 21:56:20 PEA measured range 127px but its description does not say short range
-- 2026-10-31 21:57:08 rangedesc:0 back in range, trusted again
-- 2026-10-31 22:01:51 PEA measured range 257px but its description does not say short range
-- 2026-10-31 22:01:59 rangedesc:0 back in range, trusted again
-- 2026-10-31 22:13:47 PEA measured range 154px but its description does not say short range
-- 2026-10-31 22:14:55 rangedesc:0 back in range, trusted again
-- 2026-10-31 22:19:21 SNOW measured range 229px but its description does not say short range
-- 2026-10-31 22:20:03 PEA measured range 374px but its description does not say short range
-- 2026-10-31 22:20:42 rangedesc:0 back in range, trusted again
-- 2026-10-31 22:20:45 PEA measured range 374px but its description does not say short range
-- 2026-10-31 22:21:27 rangedesc:0 back in range, trusted again
-- 2026-10-31 22:37:28 SNOW was learned as WALL but its description says SHOOT (only 4 observations)
-- 2026-11-01 17:27:26 HYPNO was learned as SHOOT but its description says HYPNO (only 4 observations)
+- 2026-11-01 19:46:33 POT was learned as SHOOT but its description says PAD (only 4 observations)
+- 2026-11-01 19:47:19 SUNF was learned as SHOOT but its description says SUN (only 4 observations)
+- 2026-11-01 19:50:11 POT was learned as SHOOT but its description says PAD (only 4 observations)
+- 2026-11-01 19:59:32 POT was learned as SHOOT but its description says PAD (only 4 observations)
+- 2026-11-01 20:04:57 TWINSUN was learned as SHOOT but its description says SUN (only 4 observations)
+- 2026-11-01 20:11:43 POT was learned as SHOOT but its description says PAD (only 4 observations)
+- 2026-11-01 20:11:46 SUNF was learned as SHOOT but its description says SUN (only 4 observations)
+- 2026-11-01 20:16:24 TWINSUN was learned as SHOOT but its description says SUN (only 5 observations)
+- 2026-11-01 20:20:46 POT was learned as SUN but its description says PAD (only 4 observations)
+- 2026-11-01 20:21:37 POT was learned as SHOOT but its description says PAD (only 4 observations)
+- 2026-11-01 20:24:35 TWINSUN was learned as SHOOT but its description says SUN (only 4 observations)
+- 2026-11-01 20:25:18 POT was learned as SHOOT but its description says PAD (only 4 observations)
+- 2026-11-01 20:25:26 KERNEL range (px) = 59.58 is outside the plausible range 60 to 900
+- 2026-11-01 20:25:39 range:34 back in range, trusted again
+- 2026-11-01 20:26:43 POT was learned as SHOOT but its description says PAD (only 4 observations)
 

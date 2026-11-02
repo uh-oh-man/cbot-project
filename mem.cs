@@ -9,6 +9,7 @@ using System.Text;
 public class Zom { public uint Id; public int Row, Type, Hp, MaxHp, Helm, Shield, Phase; public float X, Y; public int Total { get { return Hp + Helm + Shield; } }
   public bool Eating;    // Zombie::mIsEating (+0x51): visible as the chewing animation
   public bool Charmed;   // Zombie::mMindControlled (+0xBC): hypnotized, fights FOR us - never a threat or a target
+  public int Fly;        // Zombie::mFlyingHealth (+0xEC): > 0 while a balloon zombie still has its balloon (visible: the balloon is drawn)
 }
 public class Plt { public uint Id; public int Row, Col, Type, Hp, MaxHp; }
 // Sun.Motion: 0/1 fell from the sky, 2 popped out of a plant
@@ -63,16 +64,25 @@ public static class Mem {
 
   const uint RVA_gLawnApp = 0x474860, RVA_gPlantDefs = 0x467C60;
 
+  [DllImport("kernel32.dll")] static extern bool GetExitCodeProcess(IntPtr h, out uint code);
+  [DllImport("kernel32.dll")] static extern bool CloseHandle(IntPtr h);
+  static readonly object attachGate = new object();
+  // Cheap when attached: the open handle is checked for STILL_ACTIVE instead of scanning every process each call
+  // (one tick made ~8 scans). A restarted game closes the old handle and attaches to the new process.
   public static void Attach() {
-    var ps = Process.GetProcessesByName("LawnProject");
-    foreach (var p in ps) if (p.MainWindowHandle != IntPtr.Zero) {
-      if (p.Id == pid && hProc != IntPtr.Zero) return;
-      pid = p.Id; hProc = OpenProcess(0x0438, false, pid);   // query + read + write + vm operation
-      var mods = new IntPtr[1]; int need;
-      EnumProcessModulesEx(hProc, mods, IntPtr.Size, out need, 0x01 /*32-bit*/);
-      baseAddr = (uint)mods[0].ToInt64(); costCache.Clear(); return;
+    lock (attachGate) {
+      uint code;
+      if (hProc != IntPtr.Zero && GetExitCodeProcess(hProc, out code) && code == 259) return;   // STILL_ACTIVE
+      if (hProc != IntPtr.Zero) { CloseHandle(hProc); hProc = IntPtr.Zero; pid = -1; }
+      foreach (var p in Process.GetProcessesByName("LawnProject")) using (p) {
+        if (hProc != IntPtr.Zero || p.MainWindowHandle == IntPtr.Zero) continue;
+        pid = p.Id; hProc = OpenProcess(0x0438, false, pid);   // query + read + write + vm operation
+        var mods = new IntPtr[1]; int need;
+        EnumProcessModulesEx(hProc, mods, IntPtr.Size, out need, 0x01 /*32-bit*/);
+        baseAddr = (uint)mods[0].ToInt64(); costCache.Clear();
+      }
+      if (hProc == IntPtr.Zero) throw new Exception("game not running");
     }
-    throw new Exception("game not running");
   }
 
   static byte[] Read(uint addr, int n) {
@@ -113,7 +123,7 @@ public static class Mem {
       s.Zombies.Add(new Zom { Id = id, Row = BitConverter.ToInt32(it, 0x1C), Type = BitConverter.ToInt32(it, 0x24),
         X = BitConverter.ToSingle(it, 0x2C), Y = BitConverter.ToSingle(it, 0x30), Hp = BitConverter.ToInt32(it, 0xCC), MaxHp = BitConverter.ToInt32(it, 0xD0),
         Helm = BitConverter.ToInt32(it, 0xD4), Shield = BitConverter.ToInt32(it, 0xE4),
-        Phase = BitConverter.ToInt32(it, 0x28), Eating = it[0x51] != 0, Charmed = it[0xBC] != 0 });
+        Phase = BitConverter.ToInt32(it, 0x28), Eating = it[0x51] != 0, Charmed = it[0xBC] != 0, Fly = BitConverter.ToInt32(it, 0xEC) });
     });
     // Fog (fog levels): a zombie standing in dense fog is invisible to a player, so it is invisible to the bots too.
     // Board::mGridCelFog int[9][7] (column-major, density 0-255) at +0x4C0, slid right by mFogOffset (+0x5C8, grows when blown away).
@@ -208,6 +218,9 @@ public static class Mem {
 
   // Crazy Dave: LawnApp::mCrazyDaveState (0 off, 1 entering, 2 leaving, 3 idle, 4 talking, 5/6 handing) and his speech bubble text.
   public static int DaveState() { Attach(); return I32(U32(baseAddr + RVA_gLawnApp) + 0x7C8); }
+  // PlayerInfo (LawnApp+0x7B0): mCoins +0x24 (shown on screen x10 as money), mPurchases int[80] at +0x1BC (StoreItem ids: 21 seed slot, 22 pool cleaner, 23 roof cleaner).
+  public static int PlayerCoins() { Attach(); uint pi = U32(U32(baseAddr + RVA_gLawnApp) + 0x7B0); return pi == 0 ? -1 : I32(pi + 0x24); }
+  public static int Purchase(int item) { Attach(); uint pi = U32(U32(baseAddr + RVA_gLawnApp) + 0x7B0); return pi == 0 ? -1 : I32(pi + 0x1BC + (uint)item * 4); }
   public static string DaveText() {
     Attach(); uint a = U32(baseAddr + RVA_gLawnApp) + 0x7D8;
     var b = Read(a, 24); int len = BitConverter.ToInt32(b, 16), cap = BitConverter.ToInt32(b, 20);
@@ -259,6 +272,7 @@ public static class Mem {
   public static int[] RowTypes() {
     Attach();
     uint board = U32(U32(baseAddr + RVA_gLawnApp) + 0x6F0);
+    if (board == 0) return new int[6];   // board just went away (level end): no lanes, not a read error
     var b = Read(board + 0x5D0, 24); var r = new int[6];
     for (int i = 0; i < 6; i++) r[i] = BitConverter.ToInt32(b, i * 4);
     return r;

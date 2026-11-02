@@ -83,14 +83,21 @@ public static partial class Bot {
     Speed = want;
   }
   static Dictionary<int, int> lastPlantType = new Dictionary<int, int>();
+  [System.Runtime.InteropServices.DllImport("winmm.dll")] static extern uint timeBeginPeriod(uint ms);
+  [System.Runtime.InteropServices.DllImport("winmm.dll")] static extern uint timeEndPeriod(uint ms);
 
   public static string Run(int secs, string logPath) {
+    // Rotate at start-up once the log passes 20 MB (time stamps have no date; readers scan the whole file).
+    try { var fi = new FileInfo(logPath); if (fi.Exists && fi.Length > (20L << 20)) { File.Copy(logPath, logPath + ".1", true); File.Delete(logPath); } } catch { }
     log = new StreamWriter(logPath, true);
     Learn.Load(); Strategy.Load(); Roles.Load(); Diag.Load();
     // The game eats most of the CPU at high speed; make sure the bot is not starved.
     try { System.Diagnostics.Process.GetCurrentProcess().PriorityClass = System.Diagnostics.ProcessPriorityClass.AboveNormal; } catch { }
     Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
     Viz.Start();
+    try { timeBeginPeriod(1); } catch { }   // 1 ms timer: Sleep(2) otherwise takes 15.6 ms (every plant cost ~78 ms of sleeps)
+    lightStop = false;
+    var lightThread = new Thread(LightLoop); lightThread.IsBackground = true; lightThread.Priority = ThreadPriority.BelowNormal; lightThread.Start();
     L("bot start");
     try { ProMode = File.Exists(@"C:\cbot\mode.txt") && File.ReadAllText(@"C:\cbot\mode.txt").Trim().ToLower() == "pro"; } catch { ProMode = false; }
     if (ProMode) { ProTally(); Event("PRO MODE: expert brain playing - nothing is learned or saved to knowledge in this mode (pro record so far: " + ProWins + " wins, " + ProDeaths + " deaths)"); }
@@ -104,6 +111,20 @@ public static partial class Bot {
       try {
         var sw = System.Diagnostics.Stopwatch.StartNew();
         var s = Mem.Get();
+        // Blackout (mod author, 4-10: "when the screen is black make the bot unable to see"): sample the real screen over the
+        // lawn every 0.25 s; while it is black, every zombie is invisible to the bot exactly as to a player (kept as fog
+        // bookkeeping so they don't count as kills). Works on any level that goes dark.
+        if (s.Scene == 3 && s.HasBoard && !s.Paused) {
+          // The screen grabs run on LightLoop's own thread (3 CopyFromScreen calls stalled this loop 15-90 ms each time);
+          // here we only read the latest sample.
+          lightWanted = true; lightEveryMs = s.Level == 40 ? 250 : 500;   // 4-10 is the blackout level: look more often there
+          if (lightNow != lawnLight || (DateTime.Now - lastDarkCheck).TotalSeconds >= 0.25) {
+            lastDarkCheck = DateTime.Now; lawnLight = lightNow;
+            bool dark = lawnLight < DARK_LIGHT;
+            if (dark != ScreenDark) { ScreenDark = dark; Event(dark ? "BLACKOUT: the screen went black (light " + lawnLight + ") - the bot can't see zombies until it clears" : "light is back (" + lawnLight + ") - zombies visible again"); }
+          }
+          if (ScreenDark) { s.FogZombies.AddRange(s.Zombies); s.Zombies.Clear(); }
+        } else { if (lightWanted) { lightWanted = false; lightNow = 999; lawnLight = 999; } ScreenDark = false; }
         Seen.Frame(s);   // visible-only observation + sim calibration events (mower fire, game over, probes)
         Viz.ReadMs = sw.Elapsed.TotalMilliseconds; TRead = Ema(TRead, Viz.ReadMs);
         if (++loops % 20 == 0) { Viz.LoopHz = loops / loopTimer.Elapsed.TotalSeconds; loops = 0; loopTimer.Restart(); }
@@ -122,7 +143,7 @@ public static partial class Bot {
         double inScene = (DateTime.Now - sceneSince).TotalSeconds;
         if (s.Scene == 3 && (DateTime.Now - lastLog).TotalSeconds >= 5) {
           L(s.Text()); lastLog = DateTime.Now;
-          L(string.Format("perf: {0:0} Hz | read {1:0.0} track {2:0.0} collect {3:0.0} score {4:0.0} act {5:0.0} ms", Viz.LoopHz, TRead, TTrack, TCollect, TScore, TAct));
+          L(string.Format("perf: {0:0} Hz | light " + lawnLight + " | read {1:0.0} track {2:0.0} collect {3:0.0} score {4:0.0} act {5:0.0} ms", Viz.LoopHz, TRead, TTrack, TCollect, TScore, TAct));
         }
 
         // A Yes/No dialog outside the seed chooser (e.g. Dave's shop): read it and decide like a player.
@@ -143,7 +164,10 @@ public static partial class Bot {
           if ((DateTime.Now - daveSince).TotalSeconds > 25) { Recover(s.Scene); daveSince = DateTime.Now; }   // he wants something we do not understand
           // "NO_CLICK" lines are his store chatter (Crazy Dave's Twiddydinkies): clicking him does nothing - leave via NEXT LEVEL.
           if (said.StartsWith("NO_CLICK")) {
-            if ((DateTime.Now - lastStoreExit).TotalSeconds > 4) { Event("STORE: Dave's shop is open - pressing NEXT LEVEL to keep playing"); lastStoreExit = DateTime.Now; Pvz.Click(434, 554); }
+            if ((DateTime.Now - lastStoreExit).TotalSeconds > 4) {
+              // Store mapping (darthspiker wants roof cleaners bought): record what the shop looks like + the wallet, once per visit.
+              try { int co = Mem.PlayerCoins(); Event("STORE: Dave's shop is open - coins " + co + " ($" + (co * 10) + "), roof cleaner owned=" + Mem.Purchase(23) + ", pool cleaner=" + Mem.Purchase(22) + ", seed slots=" + Mem.Purchase(21) + " - pressing NEXT LEVEL (buying not automated yet)"); Pvz.Shot(@"C:\cbot\store_" + DateTime.Now.ToString("HHmmss") + ".png", 1.0); } catch { Event("STORE: Dave's shop is open - pressing NEXT LEVEL to keep playing"); }
+              lastStoreExit = DateTime.Now; Pvz.Click(434, 554); }
             Thread.Sleep(900); continue;
           }
           Pvz.Click(400, 300); Thread.Sleep(900); continue;
@@ -159,13 +183,17 @@ public static partial class Bot {
           }
           Thread.Sleep(200); continue;
         }
+        if (s.Scene == 0 && inScene > 4 && (DateTime.Now - lastMenuClick).TotalSeconds > 4 && Mem.OpenDialogs() == 0) {   // title screen: "CLICK TO START!" (stuck_183108.png)
+          Event("MENU title screen -> click to start"); Pvz.Click(400, 555); lastMenuClick = DateTime.Now; Thread.Sleep(500); continue;
+        }
         if (s.Scene == 1 && inScene > 3 && (DateTime.Now - lastMenuClick).TotalSeconds > 5 && Mem.OpenDialogs() == 0) {   // main menu: go play Adventure
           Event("MENU main menu -> Adventure"); Pvz.Click(560, 130); lastMenuClick = DateTime.Now; Thread.Sleep(500); continue;
         }
         if (s.Scene == 4) {                         // zombies won: count the death once, then keep trying "Try Again"
           if (lastMenuClick < sceneSince && inScene < 1 && lastScene0 != -1) {   // a game over already on screen at startup was counted before the reload
             // The zombie that got through = the enemy closest to the house (a hypnotized one is on our side).
-            var killer = lastPlay == null ? null : lastPlay.Zombies.Where(z => !z.Charmed).OrderBy(z => z.X).FirstOrDefault();
+            // Record only (no play decision): fog/blackout-hidden zombies count too, or a death in the dark names no killer.
+            var killer = lastPlay == null ? null : lastPlay.Zombies.Concat(lastPlay.FogZombies).Where(z => !z.Charmed && z.X < VISIBLE_X).OrderBy(z => z.X).FirstOrDefault();
             if (killer != null) BreachDiag(lastPlay, killer.Row);   // the lane that got through
             // Super nemesis: remember which kind of zombie got through.
             if (killer != null)
@@ -274,6 +302,8 @@ public static partial class Bot {
       } catch (Exception e) { L("err " + e.Message + " @ " + ((e.StackTrace ?? "").Split('\n').FirstOrDefault() ?? "").Trim()); Thread.Sleep(500); }
       Thread.Sleep(Speed >= 3 ? 5 : 20);   // faster game -> tighter loop
     }
+    lightStop = true; lightWanted = false;
+    try { timeEndPeriod(1); } catch { }
     try { Replay.Dump(result == "hot reload" ? "RELOAD" : "EXIT", -1, result); Outcomes.Flush(); SimCal.Flush(); } catch { }
     Learn.Save();
     L("bot end: " + result); Viz.Status = "stopped: " + result; Viz.AddEvent("bot stopped: " + result);
@@ -449,6 +479,20 @@ public static partial class Bot {
   static int lastScene0 = -1;
   static bool whackSeen, vaseSeen;
   static int winNotedLvl = -1, lastWipeVases;
+  public static bool ScreenDark; static int lawnLight = 999; static DateTime lastDarkCheck = DateTime.MinValue;
+  // Background screen-light sampler (blackout detection). Only touches Pvz screen reads; publishes one int.
+  static volatile int lightNow = 999; static volatile bool lightWanted; static volatile int lightEveryMs = 500;
+  static void LightLoop() {
+    while (true) {
+      try {
+        if (lightWanted) { int v = (Pvz.RegionBrightness(150, 150, 60, 40) + Pvz.RegionBrightness(400, 300, 60, 40) + Pvz.RegionBrightness(620, 450, 60, 40)) / 3; if (lightWanted) lightNow = v; }
+      } catch { lightNow = 999; }
+      if (lightStop) return;
+      Thread.Sleep(lightWanted ? lightEveryMs : 300);
+    }
+  }
+  static volatile bool lightStop;
+  const int DARK_LIGHT = 45;   // mean R+G+B over 3 lawn patches; normal night/fog lawns read well above this, a blackout near 0
   static DateTime lastVase = DateTime.MinValue, lastVaseWhy = DateTime.MinValue;
   static bool vaseFinalRound;   // set when Dave announces the final batch of vases; cleared when a level ends
   public static int VaseRound = 1; static bool wasHunting;   // 1 until Dave brings "more vases", then 2; 3 at "the last of 'em"
@@ -556,7 +600,7 @@ public static partial class Bot {
     for (int r = 0; r < 6; r++) {
       if (lastMowers[r] == 1 && s.Mowers[r] == 2) {
         Viz.MowersLost++; mowerLostThisLevel = true; Learn.MowerLost(r); Quips.Mower(r); Strategy.MowersLost++;
-        var zs = s.Zombies.Where(z => z.Row == r && z.X < VISIBLE_X && !z.Charmed).ToList();
+        var zs = s.Zombies.Concat(s.FogZombies).Where(z => z.Row == r && z.X < VISIBLE_X && !z.Charmed).ToList();   // log only: hidden ones count
         Event("!! MOWER FIRED lane " + r + " - defence failed (" + s.Plants.Count(p => p.Row == r && IsShooter(p.Type)) +
               " shooters vs " + zs.Count + " zombies, wave " + s.Wave + "/" + s.Waves + ")");
         BreachDiag(s, r);
@@ -572,12 +616,14 @@ public static partial class Bot {
         int pt; lastPlantType.TryGetValue(k, out pt);
         var eater = s.Zombies.Where(z => !z.Charmed && z.Row == k / 10 && Math.Abs(z.X + 40 - CellX(k % 10)) < 110).OrderBy(z => Math.Abs(z.X + 40 - CellX(k % 10))).FirstOrDefault();
         // used up by design (a squash jumps; Outcomes judges whether it hit)
-        bool consumedByDesign = IsMine(pt) || IsInstant(pt) || Roles.Is(pt, "GRAVE") || Roles.Is(pt, "HYPNO") || Roles.Is(pt, "MELEE") || Mem.SeedName(pt) == "SQUASH";
+        bool consumedByDesign = IsMine(pt) || IsInstant(pt) || Roles.Is(pt, "GRAVE") || Roles.Is(pt, "HYPNO") || Roles.Is(pt, "MELEE") || Mem.SeedName(pt) == "SQUASH"
+                                || pt == BLOVER || Roles.Is(pt, "BLOW");   // a blover blows away after one gust, like an instant
         if (!consumedByDesign) Event("! lost " + Mem.SeedName(pt) + " at r" + (k / 10) + "c" + (k % 10));
         if (!consumedByDesign) Strategy.PlantsLost++;
         if (!consumedByDesign) Quips.PlantEaten(Mem.SeedName(pt), eater == null ? null : Learn.KeyOf(eater));   // mines vanish by exploding too
       }
-    lastPlantType = s.Plants.GroupBy(p => p.Row * 10 + p.Col).ToDictionary(g => g.Key, g => g.First().Type);
+    // The plant a cell is "about" is the one on top, not the pot / lily pad / pumpkin listed first.
+    lastPlantType = s.Plants.GroupBy(p => p.Row * 10 + p.Col).ToDictionary(g => g.Key, g => g.OrderBy(p => ProIsPad(p.Type) || p.Type == PUMPKIN ? 1 : 0).First().Type);
     Quips.Hoard(s.Sun); Quips.Wave = s.Wave;
     plantKeys = keys; justPlanted.Clear();
     Viz.Publish(s);
@@ -685,14 +731,16 @@ public static partial class Bot {
     Thread.Sleep(Pvz.UsePost ? 15 : 60);
     Pvz.FastClick(CellX(act.Col), CellY(act.Row));
     Viz.Clicks += 2;
-    Thread.Sleep(Pvz.UsePost ? 25 : 80);
+    Thread.Sleep(Pvz.UsePost ? 30 : 80);   // (1 ms timer now: 30 keeps roughly the old real wait before verifying)
     TAct = Ema(TAct, ta.Elapsed.TotalMilliseconds);
     var s2 = Mem.Get();
     // Verify the exact result: the intended plant in the intended cell. (Counting plants / sun alone once
     // accepted a plant that landed elsewhere, and blamed the wrong cell when it failed.)
     bool exact = s2.Plants.Any(q => q.Row == act.Row && q.Col == act.Col && q.Type == p.Type);
     bool wrongHere = !exact && s2.Plants.Any(q => q.Row == act.Row && q.Col == act.Col && !s.Plants.Any(o => o.Id == q.Id));
-    bool loose = s2.Plants.Count > before || s2.Sun < s.Sun;
+    // A bank packet that started recharging was used: a free plant (0 sun) killed in the same frame otherwise looked like a failure.
+    bool spent = !p.FromCoin && !IsConveyor(s) && p.Cd == 0 && s2.Packets.Any(q => q.Slot == p.Slot && q.Type == p.Type && q.Cd > 0);
+    bool loose = s2.Plants.Count > before || s2.Sun < s.Sun || spent;
     bool ok = exact || (loose && !wrongHere);   // loose: an instant can already be gone by the time we look
     string failWhy = ok ? "" : wrongHere ? "a different plant landed there" : s.Blocked.Contains(act.Row * 10 + act.Col) ? "cell blocked" : "nothing changed";
     if (ok) { justPlanted.Add(act.Row * 10 + act.Col); Viz.Planted++; Viz.Flash(act.Row, act.Col); Quips.Planted(Mem.SeedName(p.Type), act.Row); }

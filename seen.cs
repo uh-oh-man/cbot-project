@@ -88,7 +88,7 @@ public static class Seen {
     hpCache.Clear();
     // Game over: the lane that got through is the one whose zombie was nearest the house in the last in-play frame.
     if (s.Scene == 4 && lastScene == 3 && lastBoard != null) {
-      var lz = lastBoard.Zombies.Where(z => !z.Charmed).OrderBy(z => z.X).FirstOrDefault();
+      var lz = lastBoard.Zombies.Concat(lastBoard.FogZombies).Where(z => !z.Charmed && z.X < Bot.VISIBLE_X).OrderBy(z => z.X).FirstOrDefault();   // calibration record only: hidden ones count
       SimCal.Actual(lastBoard, lz == null ? -1 : lz.Row, "OVER", lz == null ? "-" : Mem.ZomName(lz.Type) + "@" + lz.X.ToString("0", CultureInfo.InvariantCulture));
       lastBoard = null;
     }

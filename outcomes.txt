@@ -315,3 +315,332 @@
 2026-11-01 17:57:35 lvl35 OUTCOME HYPNO CHARMED target=NORM row 1 col 2 round 3 t=127.0 age=22.2
 2026-11-01 17:57:42 lvl35 OUTCOME HYPNO CHARMED target=PAIL row 4 col 3 round 3 t=141.4 age=3.0
 2026-11-01 17:57:45 lvl35 OUTCOME HYPNO CHARMED target=PAIL row 2 col 3 round 3 t=147.5 age=0.3
+2026-11-01 17:58:54 lvl36 OUTCOME JALAPENO HIT_KILL target=PFOOD row 1 col 0 round 1 t=143.6 hp=740 kills=2 age=0.9
+2026-11-01 18:02:35 lvl37 OUTCOME CHERRY HIT_KILL target=PFOOD row 0 col 0 round 1 t=123.8 hp=950 age=1.0
+2026-11-01 18:03:49 lvl37 OUTCOME CHERRY HIT_KILL target=PFOOD row 5 col 1 round 1 t=127.8 hp=1250 age=0.7
+2026-11-01 18:03:51 lvl37 OUTCOME JALAPENO HIT_KILL target=PFOOD row 1 col 2 round 1 t=137.6 hp=870 age=1.1
+2026-11-01 18:05:59 lvl37 OUTCOME SQUASH HIT_KILL target=DIGGER row 5 col 0 round 1 t=338.2 hp=400 age=220.4
+2026-11-01 18:07:22 lvl37 OUTCOME JALAPENO HIT_KILL target=PFOOD row 0 col 0 round 1 t=114.6 hp=190 age=0.9
+2026-11-01 18:07:59 lvl37 OUTCOME JALAPENO HIT_DMG target=CARNI row 4 col 1 round 1 t=299.9 dmg=1800 age=0.8
+2026-11-01 18:08:50 lvl37 OUTCOME JALAPENO HIT_KILL target=PFOOD row 1 col 0 round 1 t=123.2 hp=970 age=0.7
+2026-11-01 18:08:53 lvl37 OUTCOME CHERRY HIT_KILL target=PFOOD row 4 col 0 round 1 t=138.5 hp=1050 age=0.7
+2026-11-01 18:09:26 lvl37 OUTCOME CHERRY HIT_DMG target=CARNI row 5 col 2 round 1 t=301.2 dmg=1900 age=0.7
+2026-11-01 18:13:19 lvl38 OUTCOME JALAPENO HIT_KILL target=PFOOD row 4 col 0 round 1 t=151.4 hp=890 age=0.8
+2026-11-01 18:14:36 lvl38 OUTCOME CHERRY HIT_KILL target=PFOOD row 5 col 0 round 1 t=150.3 hp=550 kills=2 age=0.7
+2026-11-01 18:14:36 lvl38 OUTCOME JALAPENO HIT_KILL target=POGO row 5 col 0 round 1 t=151.6 hp=500 age=0.7
+2026-11-01 18:22:37 lvl39 OUTCOME JALAPENO HIT_KILL target=NORM row 4 col 0 round 1 t=80.6 hp=370 age=1.1
+2026-11-01 18:24:37 lvl39 OUTCOME CHERRY HIT_KILL target=PFOOD row 5 col 0 round 1 t=112.5 hp=1250 age=0.8
+2026-11-01 18:33:18 lvl39 OUTCOME JALAPENO HIT_KILL target=NORM row 1 col 0 round 1 t=128.5 hp=270 age=1.7
+2026-11-01 18:37:19 lvl39 OUTCOME CHERRY HIT_KILL target=PFOOD row 5 col 0 round 1 t=138.6 hp=980 age=0.8
+2026-11-01 18:39:12 lvl39 OUTCOME SQUASH HIT_KILL target=FLAG row 4 col 0 round 1 t=287.7 hp=610 age=117.3
+2026-11-01 18:44:16 lvl40 OUTCOME SQUASH HIT_KILL target=NORM row 5 col 4 round 1 t=141.2 hp=210 age=33.7
+2026-11-01 18:45:11 lvl40 OUTCOME JALAPENO HIT_KILL target=CARNI row 5 col 6 round 1 t=417.8 hp=363 age=1.3
+2026-11-01 18:45:51 lvl41 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 4 round 1 t=77.1 hp=570 age=5.0
+2026-11-01 18:45:59 lvl41 OUTCOME JALAPENO HIT_KILL target=PFOOD row 2 col 3 round 1 t=118.7 hp=1670 age=0.8
+2026-11-01 18:46:17 lvl41 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 0 round 1 t=208.5 hp=640 age=2.6
+2026-11-01 18:46:30 lvl41 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 2 round 1 t=272.8 hp=1400 kills=2 age=0.9
+2026-11-01 18:46:31 lvl41 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 4 round 1 t=278.4 hp=390 age=172.0
+2026-11-01 18:47:11 lvl41 OUTCOME SQUASH HIT_KILL target=PFOOD row 1 col 4 round 1 t=75.5 hp=1200 age=2.5
+2026-11-01 18:47:19 lvl41 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 4 round 1 t=113.0 hp=550 age=2.4
+2026-11-01 18:47:27 lvl41 OUTCOME SQUASH HIT_KILL target=NORM row 1 col 2 round 1 t=153.8 hp=270 age=2.5
+2026-11-01 18:47:43 lvl41 OUTCOME JALAPENO HIT_KILL target=FLAG row 1 col 2 round 1 t=235.6 hp=640 kills=5 age=0.8
+2026-11-01 18:47:44 lvl41 OUTCOME CHERRY HIT_KILL target=DIRTY row 0 col 2 round 1 t=240.2 hp=570 kills=2 age=0.8
+2026-11-01 18:47:54 lvl41 OUTCOME CHERRY HIT_KILL target=PAIL row 2 col 2 round 1 t=285.8 hp=1390 kills=3 age=0.7
+2026-11-01 18:48:43 lvl41 OUTCOME JALAPENO HIT_KILL target=PFOOD row 2 col 2 round 1 t=82.9 hp=2470 age=0.8
+2026-11-01 18:48:44 lvl41 OUTCOME JALAPENO HIT_KILL target=PFOOD row 1 col 2 round 1 t=84.3 hp=2770 age=0.8
+2026-11-01 18:48:50 lvl41 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 4 round 1 t=118.3 hp=640 age=45.4
+2026-11-01 18:49:10 lvl41 OUTCOME CHERRY HIT_KILL target=PAIL row 1 col 4 round 1 t=215.7 hp=1230 kills=2 age=1.2
+2026-11-01 18:49:20 lvl41 OUTCOME JALAPENO HIT_KILL target=PAIL row 2 col 3 round 1 t=265.8 hp=1370 kills=4 age=0.7
+2026-11-01 18:49:28 lvl41 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 1 round 1 t=306.0 hp=1310 age=2.6
+2026-11-01 18:50:13 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 3 round 1 t=78.6 hp=270 age=3.8
+2026-11-01 18:50:19 lvl42 OUTCOME CHERRY HIT_KILL target=PFOOD row 2 col 3 round 1 t=108.8 hp=77 age=0.8
+2026-11-01 18:50:23 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 3 round 1 t=126.1 hp=480 age=3.8
+2026-11-01 18:50:52 lvl42 OUTCOME CHERRY HIT_KILL target=DOOR row 4 col 4 round 1 t=272.7 hp=2460 kills=2 age=1.3
+2026-11-01 18:51:10 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 1 round 1 t=359.5 hp=270 age=2.4
+2026-11-01 18:51:44 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 3 round 1 t=53.2 hp=530 age=3.6
+2026-11-01 18:52:41 lvl42 OUTCOME SQUASH HIT_KILL target=PFOOD row 4 col 3 round 1 t=89.5 hp=1040 age=4.6
+2026-11-01 18:53:10 lvl42 OUTCOME CHERRY HIT_KILL target=FLAG row 4 col 5 round 1 t=233.4 hp=1330 kills=3 age=1.3
+2026-11-01 18:53:19 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 3 round 1 t=279.6 hp=400 age=2.5
+2026-11-01 18:53:22 lvl42 OUTCOME JALAPENO HIT_KILL target=PAIL row 3 col 2 round 1 t=297.1 hp=820 kills=4 age=0.9
+2026-11-01 18:53:25 lvl42 OUTCOME CHERRY HIT_KILL target=NORM row 3 col 2 round 1 t=310.9 hp=300 kills=3 age=0.7
+2026-11-01 18:53:31 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 3 round 1 t=339.0 hp=570 age=2.4
+2026-11-01 18:53:39 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 1 round 1 t=380.0 hp=110 age=2.6
+2026-11-01 18:54:03 lvl42 OUTCOME SQUASH HIT_KILL target=PAIL row 2 col 1 round 1 t=500.4 hp=1370 kills=2 age=2.6
+2026-11-01 18:54:56 lvl42 OUTCOME SQUASH HIT_KILL target=PFOOD row 4 col 3 round 1 t=113.3 hp=1230 age=3.7
+2026-11-01 18:55:17 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 1 round 1 t=217.4 hp=150 age=2.5
+2026-11-01 18:55:27 lvl42 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 6 round 1 t=268.4 hp=1670 kills=5 age=0.8
+2026-11-01 18:55:39 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 0 col 4 round 1 t=326.8 hp=450 age=47.7
+2026-11-01 18:55:41 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 3 round 1 t=338.5 hp=300 kills=2 age=2.4
+2026-11-01 18:55:52 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 3 round 1 t=393.3 hp=400 age=2.5
+2026-11-01 18:56:01 lvl42 OUTCOME CHERRY HIT_KILL target=NORM row 3 col 3 round 1 t=438.7 hp=570 kills=2 age=0.7
+2026-11-01 18:56:24 lvl42 OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 1 round 1 t=553.0 hp=970 kills=2 age=2.5
+2026-11-01 18:57:19 lvl42 OUTCOME SQUASH HIT_KILL target=PFOOD row 0 col 4 round 1 t=153.5 hp=1840 age=2.5
+2026-11-01 18:57:19 lvl42 OUTCOME JALAPENO HIT_KILL target=PFOOD row 3 col 0 round 1 t=154.9 hp=950 kills=2 age=0.7
+2026-11-01 18:57:42 lvl42 OUTCOME JALAPENO HIT_KILL target=CONE row 4 col 5 round 1 t=268.7 hp=220 age=1.0
+2026-11-01 18:58:21 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 1 round 1 t=72.1 hp=130 age=2.5
+2026-11-01 18:58:34 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 2 round 1 t=137.4 hp=190 age=2.5
+2026-11-01 18:58:42 lvl42 OUTCOME JALAPENO MISS target=- row 4 col 4 round 1 t=175.7 age=0.7
+2026-11-01 19:00:11 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 5 round 1 t=313.9 hp=570 kills=2 age=2.5
+2026-11-01 19:00:55 lvl42 OUTCOME SQUASH HIT_KILL target=PFOOD row 4 col 2 round 1 t=81.2 hp=1230 age=3.3
+2026-11-01 19:01:01 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 3 round 1 t=112.4 hp=270 age=2.6
+2026-11-01 19:01:09 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 2 round 1 t=152.7 hp=240 age=2.4
+2026-11-01 19:01:33 lvl42 OUTCOME SQUASH HIT_KILL target=DOOR row 0 col 5 round 1 t=272.2 hp=2120 age=2.5
+2026-11-01 19:01:36 lvl42 OUTCOME CHERRY HIT_KILL target=DOOR row 0 col 5 round 1 t=287.8 hp=1390 kills=5 age=0.8
+2026-11-01 19:01:38 lvl42 OUTCOME JALAPENO HIT_KILL target=NORM row 2 col 2 round 1 t=296.6 hp=570 kills=3 age=0.8
+2026-11-01 19:01:52 lvl42 OUTCOME SQUASH HIT_KILL target=POLE row 3 col 1 round 1 t=364.8 hp=440 kills=2 age=2.5
+2026-11-01 19:02:03 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 1 round 1 t=418.8 hp=250 age=2.6
+2026-11-01 19:02:11 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 2 round 1 t=459.5 hp=580 age=2.6
+2026-11-01 19:02:21 lvl42 OUTCOME SQUASH HIT_KILL target=PAIL row 2 col 2 round 1 t=513.1 hp=1400 age=2.9
+2026-11-01 19:03:06 lvl42 OUTCOME SQUASH HIT_KILL target=PFOOD row 2 col 3 round 1 t=80.6 hp=410 age=4.6
+2026-11-01 19:03:15 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 4 round 1 t=129.6 hp=530 age=2.5
+2026-11-01 19:03:47 lvl42 OUTCOME CHERRY HIT_KILL target=NORM row 4 col 7 round 1 t=290.0 hp=450 kills=4 age=0.9
+2026-11-01 19:04:04 lvl42 OUTCOME JALAPENO HIT_KILL target=NORM row 0 col 2 round 1 t=372.5 hp=270 kills=3 age=0.8
+2026-11-01 19:04:11 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 2 round 1 t=408.0 hp=280 age=2.5
+2026-11-01 19:05:07 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 2 round 1 t=156.7 hp=440 age=2.4
+2026-11-01 19:05:27 lvl42 OUTCOME JALAPENO HIT_KILL target=BUNGEE row 4 col 6 round 1 t=255.3 hp=450 age=1.2
+2026-11-01 19:05:33 lvl42 OUTCOME SQUASH HIT_KILL target=DOOR row 4 col 4 round 1 t=283.3 hp=1950 kills=2 age=2.4
+2026-11-01 19:05:40 lvl42 OUTCOME JALAPENO HIT_KILL target=CONE row 3 col 2 round 1 t=319.2 hp=670 kills=4 age=1.3
+2026-11-01 19:06:16 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 3 round 1 t=52.4 hp=170 age=2.5
+2026-11-01 19:06:39 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 3 round 1 t=167.9 hp=450 age=2.4
+2026-11-01 19:06:57 lvl42 OUTCOME CHERRY HIT_KILL target=CONE row 4 col 6 round 1 t=260.9 hp=640 kills=7 age=0.9
+2026-11-01 19:07:03 lvl42 OUTCOME JALAPENO HIT_KILL target=FLAG row 1 col 4 round 1 t=289.3 hp=1370 kills=2 age=0.9
+2026-11-01 19:07:08 lvl42 OUTCOME CHERRY HIT_KILL target=PFOOD row 4 col 7 round 1 t=312.0 hp=1370 kills=3 age=0.7
+2026-11-01 19:07:10 lvl42 OUTCOME CHERRY HIT_KILL target=NORM row 3 col 2 round 1 t=321.8 hp=570 kills=2 age=1.3
+2026-11-01 19:07:24 lvl42 OUTCOME CHERRY HIT_KILL target=PAIL row 4 col 5 round 1 t=392.6 hp=930 kills=4 age=0.7
+2026-11-01 19:07:35 lvl42 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 4 round 1 t=449.6 hp=930 age=0.8
+2026-11-01 19:07:48 lvl42 OUTCOME SQUASH HIT_KILL target=PAIL row 2 col 3 round 1 t=513.0 hp=1230 age=2.9
+2026-11-01 19:08:37 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 0 round 1 t=90.6 hp=130 age=2.5
+2026-11-01 19:08:41 lvl42 OUTCOME JALAPENO HIT_KILL target=NORM row 2 col 0 round 1 t=110.5 hp=570 age=0.7
+2026-11-01 19:08:50 lvl42 OUTCOME SQUASH HIT_KILL target=PFOOD row 3 col 0 round 1 t=159.1 hp=470 age=2.6
+2026-11-01 19:08:52 lvl42 OUTCOME JALAPENO HIT_KILL target=NORM row 4 col 2 round 1 t=169.2 hp=170 age=0.8
+2026-11-01 19:09:07 lvl42 OUTCOME CHERRY HIT_KILL target=PAIL row 2 col 2 round 1 t=243.6 hp=1470 kills=2 age=0.9
+2026-11-01 19:09:51 lvl42 OUTCOME JALAPENO HIT_KILL target=PFOOD row 4 col 1 round 1 t=63.9 hp=2470 age=0.9
+2026-11-01 19:10:31 lvl42 OUTCOME CHERRY HIT_KILL target=NORM row 4 col 6 round 1 t=259.7 hp=570 kills=3 age=1.1
+2026-11-01 19:10:38 lvl42 OUTCOME JALAPENO HIT_KILL target=PAIL row 2 col 3 round 1 t=296.9 hp=1340 kills=2 age=0.7
+2026-11-01 19:10:41 lvl42 OUTCOME SQUASH HIT_KILL target=PAIL row 3 col 2 round 1 t=314.5 hp=830 age=2.4
+2026-11-01 19:10:57 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 1 round 1 t=394.1 hp=250 kills=2 age=2.4
+2026-11-01 19:10:59 lvl42 OUTCOME JALAPENO HIT_KILL target=POLE row 4 col 1 round 1 t=404.3 hp=380 kills=2 age=0.8
+2026-11-01 19:11:02 lvl42 OUTCOME CHERRY HIT_KILL target=CONE row 4 col 1 round 1 t=416.0 hp=640 kills=2 age=0.9
+2026-11-01 19:11:14 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 1 round 1 t=478.3 hp=270 age=2.5
+2026-11-01 19:11:19 lvl42 OUTCOME JALAPENO HIT_KILL target=PAIL row 4 col 1 round 1 t=499.6 hp=1400 kills=2 age=0.8
+2026-11-01 19:11:24 lvl42 OUTCOME SQUASH HIT_KILL target=DOOR row 4 col 1 round 1 t=526.3 hp=1370 age=2.7
+2026-11-01 19:12:02 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 3 round 1 t=48.2 hp=470 age=3.3
+2026-11-01 19:12:14 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 1 round 1 t=108.5 hp=170 age=2.5
+2026-11-01 19:12:50 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 0 round 1 t=286.8 hp=570 kills=2 age=2.5
+2026-11-01 19:13:33 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 0 round 1 t=83.9 hp=90 age=2.5
+2026-11-01 19:13:51 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 0 round 1 t=172.5 hp=450 age=2.5
+2026-11-01 19:14:52 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 1 round 1 t=166.4 hp=190 age=2.4
+2026-11-01 19:15:56 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 1 round 1 t=59.4 hp=150 age=4.0
+2026-11-01 19:16:02 lvl42 OUTCOME JALAPENO HIT_KILL target=PFOOD row 2 col 1 round 1 t=85.2 hp=1670 age=0.8
+2026-11-01 19:16:06 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 3 round 1 t=108.6 hp=250 age=2.5
+2026-11-01 19:16:15 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 1 col 2 round 1 t=152.2 hp=270 age=2.6
+2026-11-01 19:16:27 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 3 round 1 t=211.4 hp=500 age=2.5
+2026-11-01 19:16:43 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 6 round 1 t=291.5 hp=350 age=9.3
+2026-11-01 19:16:44 lvl42 OUTCOME CHERRY HIT_KILL target=NORM row 4 col 6 round 1 t=299.6 hp=270 age=0.8
+2026-11-01 19:17:21 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 3 round 1 t=54.9 hp=230 age=2.5
+2026-11-01 19:17:27 lvl42 OUTCOME SQUASH HIT_KILL target=PFOOD row 2 col 2 round 1 t=85.0 hp=1330 age=2.5
+2026-11-01 19:17:37 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 1 col 5 round 1 t=136.2 hp=270 age=2.5
+2026-11-01 19:17:58 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 1 col 5 round 1 t=241.8 hp=190 age=2.6
+2026-11-01 19:18:00 lvl42 OUTCOME CHERRY HIT_KILL target=PAIL row 4 col 4 round 1 t=249.2 hp=1370 kills=3 age=0.9
+2026-11-01 19:18:07 lvl42 OUTCOME JALAPENO HIT_KILL target=POLE row 0 col 0 round 1 t=284.7 hp=500 kills=2 age=1.0
+2026-11-01 19:18:12 lvl42 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 6 round 1 t=312.5 hp=1350 age=2.6
+2026-11-01 19:18:42 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 2 round 1 t=461.8 hp=250 kills=2 age=2.5
+2026-11-01 19:18:47 lvl42 OUTCOME JALAPENO HIT_KILL target=PAIL row 3 col 1 round 1 t=487.9 hp=1400 age=0.9
+2026-11-01 19:18:50 lvl42 OUTCOME SQUASH HIT_KILL target=POLE row 1 col 3 round 1 t=499.5 hp=320 kills=2 age=2.6
+2026-11-01 19:19:39 lvl42 OUTCOME SQUASH HIT_KILL target=NORM row 1 col 3 round 1 t=54.6 hp=180 age=4.6
+2026-11-01 19:19:50 lvl42 OUTCOME SQUASH HIT_KILL target=PFOOD row 4 col 4 round 1 t=112.4 hp=1100 age=2.6
+2026-11-01 19:19:50 lvl42 OUTCOME JALAPENO HIT_KILL target=PFOOD row 0 col 3 round 1 t=112.5 hp=1740 age=0.8
+2026-11-01 19:20:16 lvl42 OUTCOME CHERRY HIT_KILL target=NORM row 4 col 6 round 1 t=239.6 hp=430 age=0.8
+2026-11-01 19:20:17 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 0 col 5 round 1 t=248.3 hp=920 age=2.5
+2026-11-01 19:20:26 lvl42 OUTCOME CHERRY HIT_KILL target=PAIL row 3 col 3 round 1 t=292.8 hp=770 kills=4 age=0.9
+2026-11-01 19:20:37 lvl42 OUTCOME JALAPENO HIT_KILL target=FLAG row 2 col 3 round 1 t=347.0 hp=1570 kills=4 age=0.8
+2026-11-01 19:20:46 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 3 round 1 t=390.9 hp=120 age=2.5
+2026-11-01 19:20:52 lvl42 OUTCOME CHERRY HIT_KILL target=PAIL row 0 col 7 round 1 t=419.6 hp=1370 kills=3 age=0.8
+2026-11-01 19:21:08 lvl42 OUTCOME CHERRY HIT_KILL target=NORM row 1 col 7 round 1 t=500.1 hp=280 kills=3 age=0.8
+2026-11-01 19:21:08 lvl42 OUTCOME JALAPENO HIT_KILL target=DOOR row 3 col 3 round 1 t=502.0 hp=1770 kills=5 age=0.9
+2026-11-01 19:21:10 lvl42 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 3 round 1 t=509.5 hp=140 age=2.5
+2026-11-01 19:21:19 lvl42 OUTCOME JALAPENO HIT_KILL target=NORM row 2 col 3 round 1 t=556.9 hp=430 age=0.8
+2026-11-01 19:21:20 lvl42 OUTCOME CHERRY HIT_KILL target=PAIL row 4 col 7 round 1 t=563.2 hp=830 kills=3 age=0.8
+2026-11-01 19:22:12 lvl43 OUTCOME SQUASH HIT_KILL target=PFOOD row 3 col 3 round 1 t=132.4 hp=1410 age=2.5
+2026-11-01 19:22:14 lvl43 OUTCOME JALAPENO HIT_KILL target=NORM row 2 col 1 round 1 t=142.3 hp=110 age=0.8
+2026-11-01 19:22:34 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 6 round 1 t=241.5 hp=1020 age=2.5
+2026-11-01 19:22:39 lvl43 OUTCOME JALAPENO MISS target=- row 1 col 4 round 1 t=263.4 age=0.9
+2026-11-01 19:22:39 lvl43 OUTCOME CHERRY HIT_KILL target=BUNGEE row 1 col 4 round 1 t=264.6 hp=450 age=0.8
+2026-11-01 19:23:57 lvl43 OUTCOME CHERRY MISS target=- row 4 col 4 round 1 t=242.2 age=0.9
+2026-11-01 19:24:01 lvl43 OUTCOME JALAPENO HIT_KILL target=NORM row 3 col 3 round 1 t=263.3 hp=570 kills=3 age=0.9
+2026-11-01 19:24:10 lvl43 OUTCOME SQUASH HIT_KILL target=DOOR row 2 col 3 round 1 t=307.3 hp=2460 age=2.5
+2026-11-01 19:25:26 lvl43 OUTCOME JALAPENO MISS target=- row 4 col 4 round 1 t=246.8 age=0.8
+2026-11-01 19:25:28 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 3 round 1 t=257.6 hp=620 age=2.5
+2026-11-01 19:25:32 lvl43 OUTCOME CHERRY HIT_KILL target=LADDER row 0 col 6 round 1 t=278.8 hp=1000 kills=5 age=0.8
+2026-11-01 19:25:37 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 4 col 5 round 1 t=301.8 hp=1310 kills=4 age=0.8
+2026-11-01 19:25:37 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 3 round 1 t=305.3 hp=110 age=2.5
+2026-11-01 19:25:56 lvl43 OUTCOME CHERRY HIT_KILL target=PAIL row 4 col 7 round 1 t=400.1 hp=1240 kills=2 age=0.8
+2026-11-01 19:26:02 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 6 round 1 t=428.4 hp=1370 kills=2 age=0.8
+2026-11-01 19:26:03 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 2 round 1 t=435.2 hp=890 kills=3 age=2.6
+2026-11-01 19:26:06 lvl43 OUTCOME CHERRY HIT_KILL target=CONE row 1 col 6 round 1 t=450.2 hp=640 kills=3 age=0.8
+2026-11-01 19:26:16 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 6 round 1 t=497.1 hp=1370 kills=4 age=0.9
+2026-11-01 19:26:16 lvl43 OUTCOME SQUASH HIT_KILL target=BUNGEE row 0 col 6 round 1 t=497.2 hp=450 age=3.6
+2026-11-01 19:26:22 lvl43 OUTCOME SQUASH HIT_KILL target=FLAG row 3 col 0 round 1 t=529.9 hp=1360 kills=2 age=2.6
+2026-11-01 19:26:28 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 0 round 1 t=560.0 hp=1220 kills=5 age=2.5
+2026-11-01 19:27:21 lvl43 OUTCOME JALAPENO HIT_KILL target=PFOOD row 1 col 2 round 1 t=95.6 hp=2770 age=0.8
+2026-11-01 19:27:50 lvl43 OUTCOME CHERRY MISS target=- row 4 col 6 round 1 t=242.0 age=0.8
+2026-11-01 19:27:50 lvl43 OUTCOME JALAPENO HIT_KILL target=BUNGEE row 4 col 6 round 1 t=243.1 hp=450 kills=2 age=0.8
+2026-11-01 19:27:52 lvl43 OUTCOME SQUASH HIT_KILL target=DIRTY row 4 col 6 round 1 t=251.4 hp=100 kills=2 age=2.5
+2026-11-01 19:27:59 lvl43 OUTCOME SQUASH HIT_KILL target=FLAG row 2 col 3 round 1 t=287.2 hp=110 age=2.5
+2026-11-01 19:28:03 lvl43 OUTCOME JALAPENO HIT_KILL target=DOOR row 3 col 1 round 1 t=304.3 hp=1300 kills=3 age=0.8
+2026-11-01 19:28:11 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 5 round 1 t=347.0 hp=1200 kills=2 age=2.5
+2026-11-01 19:28:19 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 2 col 1 round 1 t=385.6 hp=1120 age=2.6
+2026-11-01 19:28:32 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 1 round 1 t=448.4 hp=420 age=2.5
+2026-11-01 19:29:24 lvl43 OUTCOME SQUASH HIT_KILL target=PFOOD row 0 col 0 round 1 t=138.4 hp=350 age=2.5
+2026-11-01 19:29:25 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 0 round 1 t=143.7 hp=270 age=2.5
+2026-11-01 19:29:47 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 3 col 2 round 1 t=252.4 hp=730 age=2.6
+2026-11-01 19:29:55 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 0 col 4 round 1 t=289.9 hp=1370 kills=3 age=0.8
+2026-11-01 19:29:58 lvl43 OUTCOME SQUASH HIT_KILL target=LADDER row 3 col 2 round 1 t=309.0 hp=1000 age=2.6
+2026-11-01 19:30:48 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 1 round 1 t=135.6 hp=130 age=2.6
+2026-11-01 19:31:36 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 2 round 1 t=87.5 hp=220 age=4.6
+2026-11-01 19:31:51 lvl43 OUTCOME CHERRY HIT_KILL target=NORM row 0 col 0 round 1 t=163.4 hp=310 age=0.8
+2026-11-01 19:32:00 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 1 col 4 round 1 t=211.2 hp=180 age=2.5
+2026-11-01 19:33:25 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 3 round 1 t=229.0 hp=270 kills=2 age=2.5
+2026-11-01 19:33:29 lvl43 OUTCOME CHERRY HIT_KILL target=PAIL row 2 col 3 round 1 t=250.4 hp=1210 kills=3 age=0.8
+2026-11-01 19:33:39 lvl43 OUTCOME SQUASH HIT_KILL target=DOOR row 4 col 2 round 1 t=295.9 hp=2010 kills=3 age=2.5
+2026-11-01 19:34:38 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 5 round 1 t=184.4 hp=280 age=2.5
+2026-11-01 19:36:32 lvl43 OUTCOME SQUASH HIT_KILL target=PFOOD row 0 col 3 round 1 t=112.2 hp=2170 age=3.3
+2026-11-01 19:36:52 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 0 round 1 t=211.3 hp=350 age=2.5
+2026-11-01 19:37:44 lvl43 OUTCOME SQUASH HIT_KILL target=PFOOD row 0 col 0 round 1 t=117.6 hp=440 age=2.6
+2026-11-01 19:40:44 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 1 round 1 t=210.3 hp=100 age=2.5
+2026-11-01 19:40:52 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 0 round 1 t=248.3 hp=250 age=2.6
+2026-11-01 19:40:59 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 3 round 1 t=283.8 hp=1310 age=2.5
+2026-11-01 19:41:07 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 0 round 1 t=323.1 hp=1370 kills=2 age=2.6
+2026-11-01 19:42:07 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 3 round 1 t=175.3 hp=380 age=2.6
+2026-11-01 19:42:20 lvl43 OUTCOME SQUASH HIT_KILL target=DIRTY row 3 col 3 round 1 t=242.1 hp=550 age=2.4
+2026-11-01 19:42:23 lvl43 OUTCOME CHERRY HIT_KILL target=PAIL row 1 col 6 round 1 t=254.7 hp=1370 kills=6 age=0.8
+2026-11-01 19:42:25 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 2 col 2 round 1 t=268.5 hp=1310 age=0.8
+2026-11-01 19:42:47 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 2 round 1 t=373.6 hp=270 age=2.6
+2026-11-01 19:42:53 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 3 round 1 t=404.3 hp=350 kills=2 age=0.8
+2026-11-01 19:42:57 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 4 round 1 t=427.8 hp=1370 age=6.7
+2026-11-01 19:43:04 lvl43 OUTCOME CHERRY HIT_KILL target=NORM row 1 col 5 round 1 t=463.0 hp=570 kills=2 age=0.8
+2026-11-01 19:43:08 lvl43 OUTCOME SQUASH HIT_KILL target=LADDER row 4 col 4 round 1 t=481.5 hp=1000 age=2.8
+2026-11-01 19:43:14 lvl43 OUTCOME SQUASH HIT_KILL target=DIRTY row 4 col 2 round 1 t=508.8 hp=270 age=2.5
+2026-11-01 19:43:51 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 1 col 1 round 1 t=70.3 hp=130 age=2.6
+2026-11-01 19:44:04 lvl43 OUTCOME SQUASH HIT_KILL target=PFOOD row 2 col 2 round 1 t=132.8 hp=1460 age=2.5
+2026-11-01 19:44:45 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 2 col 0 round 1 t=340.2 hp=1200 kills=3 age=0.8
+2026-11-01 19:44:59 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 2 col 3 round 1 t=409.1 hp=910 age=2.5
+2026-11-01 19:45:10 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 4 col 2 round 1 t=464.5 hp=670 kills=3 age=0.8
+2026-11-01 19:45:17 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 0 col 4 round 1 t=498.4 hp=570 age=2.5
+2026-11-01 19:46:14 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 5 round 1 t=153.7 hp=640 kills=2 age=2.5
+2026-11-01 19:46:37 lvl43 OUTCOME CHERRY HIT_KILL target=PAIL row 0 col 4 round 1 t=266.7 hp=390 kills=4 age=0.9
+2026-11-01 19:46:42 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 3 col 3 round 1 t=289.9 hp=850 age=2.6
+2026-11-01 19:46:53 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 4 round 1 t=345.0 hp=360 age=4.6
+2026-11-01 19:46:58 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 2 col 2 round 1 t=369.6 hp=1370 kills=2 age=0.8
+2026-11-01 19:47:12 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 3 col 3 round 1 t=442.6 hp=650 age=2.6
+2026-11-01 19:48:15 lvl43 OUTCOME SQUASH HIT_KILL target=PFOOD row 1 col 4 round 1 t=151.1 hp=300 kills=2 age=2.6
+2026-11-01 19:48:39 lvl43 OUTCOME JALAPENO HIT_KILL target=DOOR row 1 col 4 round 1 t=272.8 hp=2470 kills=6 age=0.8
+2026-11-01 19:48:40 lvl43 OUTCOME SQUASH HIT_KILL target=FLAG row 4 col 6 round 1 t=276.2 hp=240 age=2.8
+2026-11-01 19:49:39 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 0 col 0 round 1 t=119.4 hp=180 age=2.5
+2026-11-01 19:50:09 lvl43 OUTCOME SQUASH HIT_KILL target=DOOR row 0 col 4 round 1 t=266.8 hp=2370 kills=2 age=2.5
+2026-11-01 19:50:11 lvl43 OUTCOME JALAPENO HIT_KILL target=NORM row 4 col 5 round 1 t=279.1 hp=570 age=0.8
+2026-11-01 19:50:16 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 3 col 0 round 1 t=305.5 hp=930 kills=2 age=2.5
+2026-11-01 19:50:30 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 0 col 3 round 1 t=373.5 hp=940 age=4.2
+2026-11-01 19:50:35 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 3 col 2 round 1 t=399.6 hp=1370 kills=2 age=0.9
+2026-11-01 19:50:39 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 1 col 1 round 1 t=418.8 hp=130 age=2.6
+2026-11-01 19:50:46 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 0 col 2 round 1 t=454.7 hp=390 age=2.6
+2026-11-01 19:51:47 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 2 col 0 round 1 t=165.8 hp=290 age=2.6
+2026-11-01 19:52:00 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 1 col 5 round 1 t=230.1 hp=840 age=2.6
+2026-11-01 19:52:08 lvl43 OUTCOME JALAPENO HIT_KILL target=PFOOD row 2 col 2 round 1 t=270.4 hp=640 kills=3 age=0.7
+2026-11-01 19:52:08 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 1 round 1 t=273.2 hp=230 age=2.6
+2026-11-01 19:52:13 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 1 round 1 t=295.1 hp=570 age=4.6
+2026-11-01 19:52:21 lvl43 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 1 round 1 t=335.4 hp=1200 kills=4 age=0.8
+2026-11-01 19:52:30 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 2 round 1 t=382.4 hp=640 age=2.5
+2026-11-01 19:52:37 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 0 round 1 t=418.8 hp=1370 age=2.5
+2026-11-01 19:53:42 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 3 round 1 t=199.1 hp=400 age=2.5
+2026-11-01 19:53:52 lvl43 OUTCOME CHERRY HIT_KILL target=CONE row 0 col 5 round 1 t=249.4 hp=300 age=0.8
+2026-11-01 19:53:54 lvl43 OUTCOME JALAPENO HIT_KILL target=NORM row 1 col 3 round 1 t=261.1 hp=570 kills=4 age=0.8
+2026-11-01 19:54:00 lvl43 OUTCOME JALAPENO HIT_KILL target=DIRTY row 2 col 1 round 1 t=289.7 hp=430 kills=2 age=0.8
+2026-11-01 19:54:22 lvl43 OUTCOME SQUASH HIT_KILL target=CONE row 4 col 0 round 1 t=397.2 hp=940 kills=2 age=2.5
+2026-11-01 19:54:26 lvl43 OUTCOME JALAPENO HIT_KILL target=LADDER row 2 col 3 round 1 t=417.0 hp=820 age=0.8
+2026-11-01 19:55:09 lvl43 OUTCOME SQUASH HIT_KILL target=PFOOD row 0 col 3 round 1 t=101.1 hp=390 age=4.2
+2026-11-01 19:55:40 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 0 col 5 round 1 t=254.4 hp=1610 age=2.7
+2026-11-01 19:55:42 lvl43 OUTCOME CHERRY HIT_KILL target=CONE row 0 col 5 round 1 t=265.8 hp=670 kills=4 age=0.8
+2026-11-01 19:55:48 lvl43 OUTCOME SQUASH HIT_KILL target=DOOR row 2 col 0 round 1 t=291.9 hp=1670 kills=4 age=2.6
+2026-11-01 19:56:08 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 4 col 4 round 1 t=393.7 hp=310 kills=2 age=2.5
+2026-11-01 19:56:10 lvl43 OUTCOME CHERRY HIT_KILL target=PAIL row 1 col 7 round 1 t=403.4 hp=1400 kills=4 age=0.8
+2026-11-01 19:56:17 lvl43 OUTCOME SQUASH HIT_KILL target=PAIL row 4 col 6 round 1 t=441.0 hp=980 age=2.6
+2026-11-01 19:56:21 lvl43 OUTCOME CHERRY HIT_KILL target=LADDER row 4 col 6 round 1 t=459.3 hp=970 kills=2 age=0.9
+2026-11-01 19:56:24 lvl43 OUTCOME JALAPENO HIT_KILL target=LADDER row 4 col 6 round 1 t=472.0 hp=1000 age=0.9
+2026-11-01 19:56:27 lvl43 OUTCOME SQUASH HIT_KILL target=DOOR row 0 col 6 round 1 t=490.8 hp=2470 kills=4 age=2.5
+2026-11-01 19:56:34 lvl43 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 2 round 1 t=521.6 hp=270 kills=2 age=2.5
+2026-11-01 19:56:36 lvl43 OUTCOME JALAPENO HIT_KILL target=CONE row 1 col 3 round 1 t=533.8 hp=440 kills=3 age=0.8
+2026-11-01 19:57:41 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 3 col 3 round 1 t=224.3 hp=1110 kills=2 age=0.9
+2026-11-01 19:57:51 lvl44 OUTCOME JALAPENO HIT_KILL target=CONE row 0 col 0 round 1 t=270.8 hp=640 kills=6 age=0.9
+2026-11-01 19:57:55 lvl44 OUTCOME SQUASH HIT_KILL target=CONE row 3 col 2 round 1 t=291.9 hp=460 kills=2 age=2.5
+2026-11-01 19:57:59 lvl44 OUTCOME CHERRY HIT_KILL target=NORM row 2 col 0 round 1 t=313.0 hp=280 age=0.8
+2026-11-01 19:58:17 lvl44 OUTCOME CHERRY HIT_KILL target=CONE row 1 col 1 round 1 t=404.4 hp=590 kills=2 age=0.8
+2026-11-01 19:59:14 lvl44 OUTCOME JALAPENO HIT_KILL target=PFOOD row 2 col 0 round 1 t=135.1 hp=180 age=0.9
+2026-11-01 19:59:32 lvl44 OUTCOME JALAPENO HIT_KILL target=CONE row 3 col 0 round 1 t=226.4 hp=500 age=0.8
+2026-11-01 20:02:38 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 1 col 5 round 1 t=306.3 hp=1380 kills=3 age=0.8
+2026-11-01 20:02:54 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 3 col 2 round 1 t=382.2 hp=1270 age=0.8
+2026-11-01 20:03:12 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 6 round 1 t=471.8 hp=1670 kills=3 age=0.9
+2026-11-01 20:03:26 lvl44 OUTCOME JALAPENO HIT_KILL target=DOOR row 2 col 2 round 1 t=544.0 hp=1670 kills=4 age=0.8
+2026-11-01 20:04:51 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 4 col 5 round 1 t=263.1 hp=1670 kills=4 age=0.9
+2026-11-01 20:05:02 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 1 round 1 t=315.3 hp=1370 kills=2 age=0.8
+2026-11-01 20:06:54 lvl44 OUTCOME JALAPENO HIT_KILL target=FLAG row 1 col 2 round 1 t=268.9 hp=1710 age=0.8
+2026-11-01 20:07:41 lvl44 OUTCOME JALAPENO HIT_KILL target=PFOOD row 2 col 2 round 1 t=97.7 hp=2470 age=0.9
+2026-11-01 20:07:50 lvl44 OUTCOME SQUASH HIT_KILL target=NORM row 3 col 2 round 1 t=140.3 hp=140 age=2.5
+2026-11-01 20:08:10 lvl44 OUTCOME CHERRY MISS target=- row 1 col 4 round 1 t=242.4 age=0.8
+2026-11-01 20:08:14 lvl44 OUTCOME JALAPENO HIT_KILL target=BUNGEE row 0 col 2 round 1 t=259.2 hp=450 kills=4 age=0.8
+2026-11-01 20:09:50 lvl44 OUTCOME JALAPENO HIT_KILL target=FLAG row 2 col 3 round 1 t=258.2 hp=1670 kills=2 age=0.8
+2026-11-01 20:09:52 lvl44 OUTCOME CHERRY HIT_KILL target=DOOR row 2 col 3 round 1 t=270.5 hp=1159 kills=2 age=0.8
+2026-11-01 20:10:03 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 5 round 1 t=322.7 hp=1670 kills=2 age=0.8
+2026-11-01 20:10:18 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 4 col 6 round 1 t=398.9 hp=1400 kills=3 age=0.8
+2026-11-01 20:10:39 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 4 col 4 round 1 t=505.5 hp=1670 kills=4 age=0.8
+2026-11-01 20:11:39 lvl44 OUTCOME JALAPENO HIT_KILL target=CONE row 1 col 1 round 1 t=156.4 hp=520 kills=2 age=0.8
+2026-11-01 20:12:00 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 3 col 0 round 1 t=258.8 hp=1670 kills=5 age=0.9
+2026-11-01 20:12:16 lvl44 OUTCOME JALAPENO HIT_KILL target=CONE row 1 col 1 round 1 t=339.2 hp=460 kills=3 age=0.8
+2026-11-01 20:13:47 lvl44 OUTCOME CHERRY MISS target=- row 0 col 6 round 1 t=268.4 age=0.8
+2026-11-01 20:13:47 lvl44 OUTCOME JALAPENO HIT_KILL target=BUNGEE row 0 col 6 round 1 t=269.6 hp=450 age=0.9
+2026-11-01 20:13:58 lvl44 OUTCOME JALAPENO HIT_KILL target=DOOR row 1 col 2 round 1 t=325.7 hp=2040 kills=2 age=0.8
+2026-11-01 20:14:01 lvl44 OUTCOME SQUASH HIT_KILL target=PAIL row 3 col 0 round 1 t=340.7 hp=460 kills=2 age=2.5
+2026-11-01 20:14:08 lvl44 OUTCOME JALAPENO HIT_KILL target=FLAG row 3 col 0 round 1 t=376.9 hp=1370 kills=3 age=0.8
+2026-11-01 20:14:13 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 0 col 6 round 1 t=402.2 hp=1040 kills=3 age=0.8
+2026-11-01 20:14:33 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 1 col 5 round 1 t=501.4 hp=1330 kills=2 age=0.9
+2026-11-01 20:16:21 lvl44 OUTCOME CHERRY HIT_KILL target=CONE row 2 col 1 round 1 t=258.5 hp=310 age=0.8
+2026-11-01 20:18:59 lvl44 OUTCOME JALAPENO HIT_KILL target=NORM row 0 col 0 round 1 t=120.9 hp=470 kills=2 age=0.8
+2026-11-01 20:19:25 lvl44 OUTCOME JALAPENO HIT_KILL target=CONE row 4 col 4 round 1 t=250.7 hp=940 kills=4 age=0.9
+2026-11-01 20:19:40 lvl44 OUTCOME JALAPENO HIT_KILL target=FLAG row 3 col 0 round 1 t=325.7 hp=1400 kills=3 age=0.8
+2026-11-01 20:21:36 lvl44 OUTCOME JALAPENO HIT_KILL target=DOOR row 3 col 0 round 1 t=300.5 hp=1290 kills=3 age=1.6
+2026-11-01 20:21:52 lvl44 OUTCOME SQUASH HIT_KILL target=NORM row 2 col 1 round 1 t=378.2 hp=550 age=2.5
+2026-11-01 20:23:02 lvl44 OUTCOME CHERRY HIT_KILL target=CONE row 1 col 2 round 1 t=251.9 hp=640 kills=2 age=0.7
+2026-11-01 20:23:09 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 2 col 0 round 1 t=326.6 hp=1330 kills=3 age=0.6
+2026-11-01 20:24:02 lvl44 OUTCOME JALAPENO HIT_KILL target=PFOOD row 2 col 3 round 1 t=137.8 hp=720 age=0.8
+2026-11-01 20:24:27 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 4 col 4 round 1 t=260.1 hp=1370 kills=4 age=0.8
+2026-11-01 20:24:37 lvl44 OUTCOME JALAPENO HIT_KILL target=PFOOD row 1 col 5 round 1 t=312.6 hp=1370 kills=5 age=0.9
+2026-11-01 20:24:38 lvl44 OUTCOME CHERRY HIT_KILL target=PFOOD row 4 col 4 round 1 t=313.7 hp=1370 kills=2 age=0.8
+2026-11-01 20:24:38 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 0 col 3 round 1 t=314.3 hp=850 kills=4 age=0.9
+2026-11-01 20:24:39 lvl44 OUTCOME CHERRY HIT_KILL target=LADDER row 1 col 5 round 1 t=321.2 hp=1000 kills=2 age=0.8
+2026-11-01 20:24:54 lvl44 OUTCOME CHERRY HIT_KILL target=CONE row 0 col 5 round 1 t=396.9 hp=640 age=0.8
+2026-11-01 20:25:05 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 2 col 3 round 1 t=449.4 hp=1110 kills=2 age=1.1
+2026-11-01 20:25:16 lvl44 OUTCOME JALAPENO HIT_KILL target=DIRTY row 2 col 1 round 1 t=504.4 hp=570 kills=3 age=0.8
+2026-11-01 20:25:16 lvl44 OUTCOME CHERRY HIT_KILL target=FOOT row 2 col 1 round 1 t=508.0 hp=1590 age=0.8
+2026-11-01 20:25:28 lvl44 OUTCOME JALAPENO HIT_KILL target=LADDER row 4 col 2 round 1 t=565.4 hp=1000 kills=3 age=0.9
+2026-11-01 20:25:30 lvl44 OUTCOME CHERRY HIT_KILL target=PFOOD row 2 col 1 round 1 t=576.1 hp=1370 kills=4 age=0.9
+2026-11-01 20:25:31 lvl44 OUTCOME SQUASH HIT_KILL target=LADDER row 3 col 2 round 1 t=583.0 hp=1000 age=3.3
+2026-11-01 20:25:33 lvl44 OUTCOME CHERRY HIT_KILL target=NORM row 3 col 2 round 1 t=592.0 hp=270 age=0.8
+2026-11-01 20:25:41 lvl44 OUTCOME CHERRY MISS target=- row 2 col 2 round 1 t=636.7 age=0.7
+2026-11-01 20:25:47 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 2 col 0 round 1 t=701.4 hp=1110 kills=4 age=0.5
+2026-11-01 20:26:36 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 4 col 6 round 1 t=251.5 hp=1330 kills=2 age=0.6
+2026-11-01 20:26:41 lvl44 OUTCOME JALAPENO HIT_KILL target=PFOOD row 2 col 0 round 1 t=293.3 hp=1570 kills=5 age=0.8
+2026-11-01 20:26:42 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 1 col 2 round 1 t=309.9 hp=970 kills=3 age=0.6
+2026-11-01 20:26:47 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 4 col 5 round 1 t=357.9 hp=1370 kills=2 age=0.6
+2026-11-01 20:26:55 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 1 col 5 round 1 t=432.8 hp=1080 kills=3 age=0.5
+2026-11-01 20:26:57 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 3 col 0 round 1 t=454.4 hp=1000 kills=2 age=0.6
+2026-11-01 20:27:04 lvl44 OUTCOME JALAPENO HIT_KILL target=BUNGEE row 0 col 6 round 1 t=526.5 hp=450 kills=2 age=0.6
+2026-11-01 20:28:44 lvl44 OUTCOME JALAPENO HIT_KILL target=CONE row 1 col 4 round 1 t=193.1 hp=940 kills=2 age=0.7
+2026-11-01 20:28:51 lvl44 OUTCOME CHERRY HIT_KILL target=CONE row 3 col 1 round 1 t=267.6 hp=670 kills=2 age=0.9
+2026-11-01 20:28:56 lvl44 OUTCOME JALAPENO HIT_KILL target=PAIL row 3 col 3 round 1 t=309.3 hp=810 kills=2 age=0.8
+2026-11-01 20:30:01 lvl44 OUTCOME JALAPENO HIT_KILL target=BUNGEE row 4 col 5 round 1 t=265.0 hp=450 kills=2 age=0.6
+2026-11-01 20:30:05 lvl44 OUTCOME CHERRY HIT_KILL target=DOOR row 1 col 2 round 1 t=296.6 hp=1370 age=0.7
+2026-11-01 20:30:55 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 0 col 1 round 1 t=278.3 hp=790 age=0.7
+2026-11-01 20:31:38 lvl44 OUTCOME CHERRY HIT_KILL target=PFOOD row 3 col 0 round 1 t=148.5 hp=1230 kills=2 age=0.5
+2026-11-01 20:31:53 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 4 col 5 round 1 t=303.5 hp=1370 kills=2 age=0.5
+2026-11-01 20:31:54 lvl44 OUTCOME JALAPENO HIT_KILL target=DOOR row 1 col 1 round 1 t=312.0 hp=2040 kills=4 age=0.7
+2026-11-01 20:32:02 lvl44 OUTCOME CHERRY HIT_KILL target=PAIL row 2 col 3 round 1 t=385.4 hp=1670 kills=3 age=0.6

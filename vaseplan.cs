@@ -736,4 +736,19 @@ public static class VasePlanner {
     }
     return -1;
   }
+
+  // Panel (guess.cs, main thread): the planner's odds for each unopened vase, cell -> {P(zombie), P(plant), look 0 ? / 1 leaf / 2 skull},
+  // plus key -1 -> {zombies left, plants left, footballs left, squashes left} (notebook estimate). Read-only: leaves the
+  // planner's Estimate cache exactly as it found it.
+  public static Dictionary<int, double[]> VaseOdds(State s) {
+    var d = new Dictionary<int, double[]>();
+    if (s == null || s.Vases.Count == 0) return d;
+    State f0 = estFor; Est e0 = est;
+    try {
+      var e = Estimate(s);
+      foreach (int k in s.Vases) { int l = LookIdx(s, k); d[k] = new double[] { e.Pz(l), e.Pp(l), l }; }
+      d[-1] = new double[] { e.RemZt, e.RemSt, e.RemFoot, e.RemSquash };
+    } finally { estFor = f0; est = e0; }
+    return d;
+  }
 }

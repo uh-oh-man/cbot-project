@@ -1,26 +1,40 @@
-SIM CALIBRATION REPORT 2026-11-01 17:58:25  (25831 log lines, 50 level segments)
+SIM CALIBRATION REPORT 2026-11-01 20:31:31  (227027 log lines, 161 level segments)
 Report only: Pro is non-learning and never reads this file.
 
 ZOMBIE MOTION at +5 s, per kind (speed bias = real px moved / sim px moved; >1 means the sim is too slow)
 kind          n    sim px   real px    bias   |x err|    simDead   simAlive  bothGone
-NORM       1789      54.5      51.7    0.95      11.7        192        101       676
-BDANCE     1122      37.9      28.5    0.75      22.0         52          1        49
-PAIL        718      39.5      41.7    1.06      11.8         22         30        82
-DANCER      217      65.2      24.7    0.38      47.1          4          1        14
-FOOT         19      48.3     104.7    2.17      94.7          3         41         4
-JACK          0       0.0       0.0       -       0.0          0          8         0
+NORM      20317      54.7      51.1    0.93      11.5       1307       1026      2421
+CONE      10568      46.2      42.3    0.92      11.4        419        421       625
+PAIL       8015      37.6      35.3    0.94      10.6         65        396       265
+PFOOD      2233      47.0      43.9    0.93      10.1         35        149        98
+DIRTY      1773      51.0      45.8    0.90      14.0         89        152       183
+BDANCE     1260      38.5      29.5    0.77      21.7         52         16        49
+FLAG       1115      52.1      56.5    1.08      26.0         27        103        50
+DOOR        940      41.3      36.1    0.87      13.5          8         90        33
+LADDER      467      69.4      75.0    1.08      25.9          1         48        20
+POLE        458      79.1      56.4    0.71      25.8         49         19        42
+CARNI       251      87.7      -4.6   -0.05     117.3          1          6         1
+DANCER      226      66.1      25.3    0.38      47.1          4          4        14
+DIGGER      126     107.7      16.0    0.15     127.8          0          4        10
+FOOT         45      31.2      70.0    2.24      61.4          3         46         5
+SNORK        42      65.0      52.5    0.81      22.0          0         14         9
+POGO         27     134.3     207.2    1.54      73.7          0         22         5
+BUNGEE       26      30.0       0.0    0.00      30.0          3        669        18
+BALLOON      15      95.5     152.5    1.60      57.0          0          6         0
+JACK          0       0.0       0.0       -       0.0          0         11         4
   simDead = sim killed it within 5 s but it was alive; simAlive = sim kept it but it was gone (killed, mowed, or bombed).
 
 LANE BREACH TIME (actual = mower fired / game over in that lane; err = actual - predicted, s; confounded = a plant went into the lane first)
 lane  preds brkPred   hits  mean err mean|err|   conf  averted  falseAl   miss missConf  holdOk
-0      1936      56      1       1.9       1.9     20       22       13      0       12    1868
-1      1951      98     46       1.7       3.4      0       21       31      2        2    1849
-2      2080     196    121       8.4      10.0     12       21       42     30       13    1841
-3      2134     233    145       3.7       5.3     31       46       11      6       37    1858
-4      2108     239    161       5.5       6.4     10       48       20     14       13    1842
+0     16421    1220    304      -2.0       3.8    292      490      134     53       79   15069
+1     16747    1598    718       0.3       4.2    270      469      141     81      127   14941
+2     16876    1908    528       2.2       4.7    369      906      105     63       64   14841
+3     16887    1761    551       1.2       4.2    340      807       63     51       76   14999
+4     16564    1300    415       0.8       5.0    293      467      125     46      165   15053
+5      4059     411     74      -4.3       4.7    191      113       33     26      114    3508
 
 BREACH ERROR BY HORIZON (clean hits only)
-<10 s    n   231  mean err     6.1  mean|err|     6.3
-10-20 s  n   115  mean err     5.5  mean|err|     6.9
-20-40 s  n   128  mean err     3.7  mean|err|     7.2
+<10 s    n  1021  mean err     1.3  mean|err|     3.7
+10-20 s  n   767  mean err    -0.1  mean|err|     4.4
+20-40 s  n   802  mean err     0.3  mean|err|     5.3
   Predictions repeat every 2 s per lane, so counts are correlated; averted = sim said breach, a plant went in, no breach followed.

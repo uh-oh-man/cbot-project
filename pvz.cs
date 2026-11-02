@@ -16,11 +16,22 @@ public static class Pvz {
   [DllImport("user32.dll")] static extern void mouse_event(uint f, int x, int y, uint d, UIntPtr e);
   [DllImport("user32.dll")] static extern void keybd_event(byte vk, byte sc, uint f, UIntPtr e);
 
-  static IntPtr Hwnd() {
-    SetProcessDPIAware();
+  [DllImport("user32.dll")] static extern bool IsWindow(IntPtr h);
+  [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr h, out uint pid);
+  // The window handle is cached: a process scan on every click / screen sample cost several ms each.
+  // Re-validated on every use (still a window, still owned by the same game process), rescanned otherwise.
+  static IntPtr hwndCache = IntPtr.Zero; static uint hwndPid; static bool dpiSet;
+  static readonly object hwndGate = new object();   // main loop and the light sampler both look the window up
+  static IntPtr Hwnd() { lock (hwndGate) return HwndLocked(); }
+  static IntPtr HwndLocked() {
+    IntPtr h = hwndCache; uint wp;
+    if (h != IntPtr.Zero && IsWindow(h) && GetWindowThreadProcessId(h, out wp) != 0 && wp == hwndPid) return h;
+    if (!dpiSet) { SetProcessDPIAware(); dpiSet = true; }
+    hwndCache = IntPtr.Zero;
     foreach (var p in Process.GetProcessesByName("LawnProject"))
-      if (p.MainWindowHandle != IntPtr.Zero) return p.MainWindowHandle;
-    throw new Exception("game window not found");
+      using (p) if (hwndCache == IntPtr.Zero && p.MainWindowHandle != IntPtr.Zero) { hwndPid = (uint)p.Id; hwndCache = p.MainWindowHandle; }
+    if (hwndCache == IntPtr.Zero) throw new Exception("game window not found");
+    return hwndCache;
   }
 
   static POINT Origin(IntPtr h) { var o = new POINT(); ClientToScreen(h, ref o); return o; }

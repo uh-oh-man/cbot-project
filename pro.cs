@@ -35,7 +35,6 @@ public static partial class Bot {
       (q.Type == JALA && q.Row == z.Row) ||
       q.Type == DOOM);
   }
-  static bool SquashFree(State s) { return VasePlanner.SquashReserve(s) == 0; }   // vasebreaker: the planner knows whether a football can still come
   public static string ProStatus = "";
   static double ProBreachT = 9999;
 
@@ -55,6 +54,7 @@ public static partial class Bot {
   static readonly HashSet<int> ProLobbed = new HashSet<int> { CABBAGE, KERNEL, MELON, WMELON };
   static readonly HashSet<int> ProWall = new HashSet<int> { WALLNUT, TALL };
   // Damage per second against the lane (a pea = 20 damage, ~1.4 s between shots).
+  static bool proRoof;   // set at the top of ProScore: on the roof the cabbage-pult does ~7 dps (measured), not 28
   static double ProDps(int t) {
     switch (t) {
       case PEA: case SNOW: case PUFF: case SCAREDY: case FUME: case SEASH: case CACTUS: case 50: return 14;
@@ -65,10 +65,10 @@ public static partial class Bot {
       case GATLING: return 56;
       case GLOOM: return 40;
       case CATTAIL: return 28;
-      case CABBAGE: return 28;
-      case KERNEL: return 18;
-      case MELON: return 56;
-      case WMELON: return 56;
+      case CABBAGE: return proRoof ? 7 : 28;   // lvl 42 replays: 1 cabbage 7-8 dps, 2 = 14, 3 = 20, 4 = 26 (linear)
+      case KERNEL: return proRoof ? 5 : 18;   // roof: lobbers measured ~1/4 of the table (cabbage 28 -> 7); kernel unmeasured, scaled the same
+      case MELON: return proRoof ? 14 : 56;
+      case WMELON: return proRoof ? 14 : 56;
       default: return 0;
     }
   }
@@ -87,6 +87,20 @@ public static partial class Bot {
       default: return 17;
     }
   }
+  // A balloon zombie still under its balloon (drawn on screen): flies over every plant, and straight shots, puffs, fumes,
+  // squash, kelp and mines cannot touch it - only blover, cactus/cattail spikes and explosions do (lvl 39: three deaths
+  // where the sim said "PUFF here holds it" against a balloon). Its flying health is the balloon itself; until one
+  // balloon has shown a non-zero value the field is not trusted and every balloon that is not chewing counts as flying.
+  static bool flyFieldOk;
+  static bool ProFlying(Zom z) {
+    if (Mem.ZomName(z.Type) != "BALLOON") return false;
+    if (z.Fly > 0 && z.Fly < 5000) flyFieldOk = true;
+    if (z.Eating) return false;
+    return flyFieldOk ? z.Fly > 0 : true;
+  }
+  // Level preview from the plant chooser (on screen at seed selection) and the last balloon seen this attempt.
+  static HashSet<string> ProPreview = new HashSet<string>();
+  static int proBalloonLvl = -1; static double proBalloonGT = -1;
   static readonly HashSet<string> Metal = new HashSet<string> { "PAIL", "DOOR", "FOOT", "JACK", "POGO", "LADDER", "DIGGER" };
   static readonly HashSet<string> Jumpers = new HashSet<string> { "POLE", "POGO", "DOLPH" };
   static readonly HashSet<string> Water = new HashSet<string> { "DUCK", "SNORK", "DOLPH" };
@@ -113,14 +127,15 @@ public static partial class Bot {
     var rt = Mem.RowTypes();
     bool water = rt.Any(t => t == 2), roof = bg == 4 || bg == 5, night = bg == 1 || bg == 3 || bg == 5;
     var preview = new HashSet<string>(s.Zombies.Select(z => Mem.ZomName(z.Type)));
+    ProPreview = new HashSet<string>(preview);
     bool graves = s.Graves.Count > 0;
     // Area playbooks: plants in the order a strong player would take them.
     int[] plan;
-    if (roof) plan = new[] { POT, SUNF, CABBAGE, KERNEL, MELON, CHERRY, JALA, UMBRELLA, SQUASH, WALLNUT, PUMPKIN, ICE, COFFEE, TALL };
+    if (roof) plan = new[] { POT, SUNF, CABBAGE, KERNEL, TWINSUN, MELON, CHERRY, JALA, UMBRELLA, SQUASH, WALLNUT, PUMPKIN, ICE, COFFEE, TALL };
     else if (bg == 3) plan = new[] { SUNSH, PUFF, LILY, SEASH, FUME, BLOVER, LANTERN, KELP, CHERRY, ICE, DOOM, SCAREDY, SQUASH, JALA, TALL, MAGNET, SUNF };
-    else if (water) plan = new[] { SUNF, LILY, PEA, REPEAT, TORCH, CHERRY, KELP, THREE, TALL, WALLNUT, SQUASH, JALA, PMINE, SPIKE, SNOW };
+    else if (water) plan = new[] { SUNF, LILY, PEA, REPEAT, TWINSUN, GATLING, TORCH, CHERRY, KELP, THREE, TALL, WALLNUT, SQUASH, JALA, PMINE, SPIKE, SNOW };
     else if (night) plan = new[] { SUNSH, PUFF, FUME, GRAVEB, CHERRY, SCAREDY, ICE, DOOM, WALLNUT, SQUASH, HYPNO, MAGNET, JALA, SUNF, PEA, PMINE };
-    else plan = new[] { SUNF, PEA, REPEAT, TORCH, CHERRY, WALLNUT, PMINE, SQUASH, THREE, JALA, CHOMP, TALL, SNOW, SPIKE, SPLIT };
+    else plan = new[] { SUNF, PEA, REPEAT, TWINSUN, GATLING, TORCH, CHERRY, WALLNUT, PMINE, SQUASH, THREE, JALA, CHOMP, TALL, SNOW, SPIKE, SPLIT };
     var score = new Dictionary<int, double>();
     for (int i = 0; i < plan.Length; i++) if (have.Contains(plan[i]) && !score.ContainsKey(plan[i])) score[plan[i]] = 100 - 4 * i;
     Action<int, double> bump = (sd, v) => { if (have.Contains(sd)) { double o; score.TryGetValue(sd, out o); score[sd] = o + v; } };
@@ -145,8 +160,14 @@ public static partial class Bot {
     if (s.Zombies.Count >= 8) { bump(CHERRY, 20); bump(JALA, 10); bump(ICE, 10); bump(DOOM, 10); }
     // In this mod torchwoods STACK (1 orange, 2 blue, 3 white, a 4th burns) - per the mod author. Fire also cancels snow.
     if (!night && !roof) { bump(TORCH, 60); bump(SNOW, -40); }
+    // Fog + pool (world 4), mod author: wall-nuts (not tall-nuts) on lily pads in the pool. Lvl 39 (8 deaths): the 125-sun
+    // tall-nut was planted once in eight games - the bot laid lily pads "for TALL" that sat empty and were eaten, while a
+    // DIRTY ambusher one-shot the sea-shrooms behind them. A 50-sun wall-nut is affordable on the fog economy.
+    if (bg == 3 && water && have.Contains(WALLNUT)) { bump(WALLNUT, 70); if (score.ContainsKey(TALL)) score[TALL] = -100; }
     // Mushrooms sleep in daylight (no coffee bean plan by day).
     if (!night) foreach (var k in score.Keys.ToList()) if (ProNight.Contains(k)) score[k] -= 200;
+    // Roof: the slope blocks straight shots (lvl 41 18:46: a SNOW from the bucket/football bump was planted there and did nothing).
+    if (roof) foreach (var k in score.Keys.ToList()) if (ProIsShooter(k) && !ProLobbed.Contains(k) && k != CATTAIL) score[k] -= 200;
     // Must-haves: income, a pad where the lawn needs one, and real damage.
     var picks = new List<int>();
     Action<IEnumerable<int>> must = opts => { foreach (int o in opts) if (have.Contains(o) && score.ContainsKey(o) && score[o] > -50) { if (!picks.Contains(o)) picks.Add(o); return; } };
@@ -163,7 +184,9 @@ public static partial class Bot {
     if (preview.Contains("BALLOON")) must(new[] { BLOVER, CACTUS, CATTAIL });   // balloons fly over everything else   // zombonis crush plants: bring what kills them
     foreach (var kv in score.OrderByDescending(kv => kv.Value)) { if (picks.Count >= slots) break; if (kv.Value > -50 && !picks.Contains(kv.Key)) picks.Add(kv.Key); }
     // Fill any leftover slots with whatever is unlocked, cheapest first (more options is never worse).
-    foreach (var sd in available.Where(a => !picks.Contains(a) && !(ProNight.Contains(a) && !night) && a != 54 && a != 53 && !(a == PEA && have.Contains(REPEAT))).OrderBy(a => Mem.Cost(a))) { if (picks.Count >= slots) break; picks.Add(sd); }
+    foreach (var sd in available.Where(a => !picks.Contains(a) && !(ProNight.Contains(a) && !night) && a != 54 && a != 53 && !(a == PEA && have.Contains(REPEAT)))
+                                // the bank must be full to start, so roof straight shooters are only the last filler
+                                .OrderBy(a => roof && ProIsShooter(a) && !ProLobbed.Contains(a) && a != CATTAIL ? 1 : 0).ThenBy(a => Mem.Cost(a))) { if (picks.Count >= slots) break; picks.Add(sd); }
     return picks.Take(slots).ToList();
   }
 
@@ -176,6 +199,7 @@ public static partial class Bot {
     if (rows.Count == 0) return list;
     int bg = s.Background;
     bool roof = bg == 4 || bg == 5, night = bg == 1 || bg == 3 || bg == 5;
+    proRoof = roof;
     double now = s.GameTime;
     bool belt = IsConveyor(s);
     var usable = belt ? s.Packets.Where(p => p.Active && p.Type >= 0 && p.CX < BELT_END_X).GroupBy(p => p.Type).Select(g => g.OrderBy(p => p.CX).First()).ToList()
@@ -194,13 +218,15 @@ public static partial class Bot {
       bool w = isWater(r, c);
       if (sd == LILY) return w && !s.Plants.Any(p => p.Row == r && p.Col == c);
       if (sd == POT) return !w && !s.Plants.Any(p => p.Row == r && p.Col == c);
+      // Mod author: never a puff-shroom on a lily pad - a sea-shroom does the same job in water, cheaper (and recharges extra fast in the mod).
+      if (sd == PUFF && w && s.Packets.Any(pk => pk.Type == SEASH)) return false;
       if (sd == KELP || sd == SEASH) return w && !s.Plants.Any(p => p.Row == r && p.Col == c);
       if (sd == TWINSUN) return s.Plants.Any(p => p.Row == r && p.Col == c && p.Type == SUNF);
       if (sd == GATLING) return s.Plants.Any(p => p.Row == r && p.Col == c && p.Type == REPEAT);
       if (sd == GLOOM) return s.Plants.Any(p => p.Row == r && p.Col == c && p.Type == FUME);
       if (sd == WMELON) return s.Plants.Any(p => p.Row == r && p.Col == c && p.Type == MELON);
       if (sd == CATTAIL) return w && padAt(r, c) && top(r, c) == null;
-      if (sd == PUMPKIN) return top(r, c) != null && !s.Plants.Any(p => p.Row == r && p.Col == c && p.Type == PUMPKIN);
+      if (sd == PUMPKIN) return top(r, c) != null && (!w || padAt(r, c)) && !s.Plants.Any(p => p.Row == r && p.Col == c && p.Type == PUMPKIN);
       if (top(r, c) != null) return false;
       if (w || roof) return padAt(r, c);
       return true;
@@ -229,7 +255,7 @@ public static partial class Bot {
       var lead = zs.OrderBy(z => z.X).First();
       double secs = Math.Max(1, (lead.X - 60) / spd[lead.Id]);
       // With no shooter yet, judge against what one peashooter planted now would manage before it arrives.
-      danger[r] = dps[r] > 0 ? hp / (dps[r] * secs + 1) : hp / (14 * secs + 1) * 0.8;
+      danger[r] = dps[r] > 0 ? hp / (dps[r] * secs + 1) : hp / ((roof ? 7 : 14) * secs + 1) * 0.8;   // roof: one cabbage is 7 dps
       if (s.Mowers[r] != 1 && s.Mowers[r] != 0) danger[r] *= 1.4;   // no mower behind: no second chance
     }
     UnderThreat = rows.Any(r => danger[r] > 1 || nearest[r] < 300);
@@ -243,11 +269,19 @@ public static partial class Bot {
     // Target firepower per lane in dps: about one peashooter early, three by the end, more before flags.
     // Sized to what the waves bring: a flag wave lane holds ~2500-4000 hp that crosses the lawn in ~45 s, so ~70 dps by the first flag.
     // No mower/cleaner behind a lane (pool cleaners do not appear in this mod yet): that lane is a last line, build it harder.
-    Func<int, double> target = r => 14 * (1 + 4.5 * progress) + (flagSoon || finalSoon ? 28 : 0) + (s.Mowers[r] != 1 && s.Mowers[r] != 0 ? 28 : 0);
+    // Roof: real cabbage dps (7 each): ~1.4 cabbages at the start, ~5 before the wave-10 flag, ~7 at the end; no cleaners, so no per-lane bonus.
+    Func<int, double> target = r => roof ? 7 * (1 + 4.5 * progress) + (flagSoon || finalSoon ? 14 : 0)
+                                         : 14 * (1 + 4.5 * progress) + (flagSoon || finalSoon ? 28 : 0) + (s.Mowers[r] != 1 && s.Mowers[r] != 0 ? 28 : 0);
     var landRows = rows.Where(r => rowTypes[r] != 2).ToList();
     int sunCount = s.Plants.Count(p => ProSun.Contains(p.Type));
     int sunTarget = night ? landRows.Count + (progress < 0.5 ? landRows.Count / 2 : 0) : (int)Math.Round(2.5 * landRows.Count);
-    int bombsInBank = s.Packets.Count(p => p.Type == CHERRY || p.Type == JALA || p.Type == DOOM || p.Type == ICE);
+    // Fog: no sky sun, and every answer here costs sun (blover 100, wall + pad 75, fume + pad 100). Lvl 39: sun sat at 0-70
+    // for whole games with 6 shrooms, so the blover was never affordable when the balloons came. Two columns of sun-shrooms.
+    if (bg == 3 && progress < 0.6) sunTarget = 2 * landRows.Count;
+    // Balloons: remember one seen this attempt (game time only grows within one attempt).
+    if (proBalloonGT > now + 1) proBalloonGT = -1;   // game clock went back: a new attempt
+    if (live.Any(z => ProFlying(z))) { proBalloonLvl = s.Level; proBalloonGT = now; }
+    bool balloonNow = proBalloonLvl == s.Level && proBalloonGT >= 0 && proBalloonGT <= now + 0.01;
 
     // Dropped packets: how far along the fade clock (disappear counter, 1500 = gone). Two packets of one kind: use the older first.
     Func<Pkt, int> pktDis = u => { if (!u.FromCoin) return -1; var cn = s.Suns.FirstOrDefault(x => x.Id == u.CoinId); return cn != null ? cn.Disappear : -1; };
@@ -257,6 +291,7 @@ public static partial class Bot {
       if (!canPlace(p.Type, r, c)) {
         // Needs a pad/pot first: propose the pad for this spot instead, at nearly the same importance.
         if (needsBase(r, c) && !ProIsPad(p.Type)) {
+          bool roofLane = bg == 4 || bg == 5;
           var pad = usable.FirstOrDefault(u => (isWater(r, c) ? u.Type == LILY : u.Type == POT));
           // Only worth full priority if we can follow up with the plant itself; otherwise the pad is just a cheap distraction.
           // Pad + plant is one purchase: full priority, but only "affordable" once both can be paid, so the saving logic
@@ -264,12 +299,15 @@ public static partial class Bot {
           // A pad may go down on its own if none is already waiting empty in this lane (no spam), so water lanes are not
           // starved by land lanes that grab every 100 sun first; the plant then follows onto it with a bonus.
           bool waiting = Enumerable.Range(0, 9).Any(cc => padAt(r, cc) && top(r, cc) == null);
-          bool both = pad != null && (belt || p.FromCoin || pad.FromCoin || s.Sun >= pad.Cost + p.Cost || (!waiting && pad.Cost <= s.Sun));
+          // ...except for an expensive plant (tall-nut 125): lvl 39 laid three pads in a row "for TALL" at 0-40 sun, the TALL
+          // never came and each pad was eaten - 25 sun gone each time on a starved economy. Those wait until both are paid.
+          bool both = pad != null && (belt || p.FromCoin || pad.FromCoin || s.Sun >= pad.Cost + p.Cost || (!waiting && pad.Cost <= s.Sun && (p.Cost < 100 || (roofLane && !s.Plants.Any(q => q.Row == r && ProIsShooter(q.Type))))));   // roof: a lane with no shooter always gets its pot now (lvl 43: 100 sun, cabbage 100 + pot 25 -> nothing planted, lane 1 empty, lost)
           if (pad != null && canPlace(pad.Type, r, c)) list.Add(new Cand { P = pad, Row = r, Col = c, Score = sc * 0.97, Affordable = both, Why = (isWater(r, c) ? "lily pad" : "flower pot") + " first, for: " + why });
         }
         return;
       }
-      bool onPad = (isWater(r, c) || roof) && padAt(r, c) && !ProIsPad(p.Type);
+      // Bonus only for filling an empty pad/pot that is waiting (not a pumpkin or upgrade over a plant already there).
+      bool onPad = (isWater(r, c) || roof) && padAt(r, c) && !ProIsPad(p.Type) && p.Type != PUMPKIN && top(r, c) == null;
       if (onPad) { sc += 120; why += " (pad already down)"; }
       list.Add(new Cand { P = p, Row = r, Col = c, Score = sc, Affordable = belt || p.FromCoin || p.Cost <= s.Sun, Why = why });
     };
@@ -294,7 +332,7 @@ public static partial class Bot {
       }
       if (t == TWINSUN && progress < 0.7) {
         var f = s.Plants.FirstOrDefault(q => q.Type == SUNF);
-        if (f != null) add(p, f.Row, f.Col, 300, "upgrade a sunflower to twin");
+        if (f != null) add(p, f.Row, f.Col, progress < 0.5 ? 860 : 650, "upgrade a sunflower to twin (double sun for the long waves)");   // was 300: always outbid, twins almost never planted (5-4: 1 twin by wave 21, lanes starved)
       }
       // --- Firepower ---
       if (ProIsShooter(t) && !(ProNight.Contains(t) && !night)) {
@@ -306,10 +344,21 @@ public static partial class Bot {
           double prox = nearest[r] < 350 ? 1.3 : nearest[r] < 500 ? 1.0 : 0.7;
           if (danger[r] > 0.6) { sc = prox * (450 + 200 * Math.Min(3, danger[r])); why = "lane " + r + " is losing (danger " + danger[r].ToString("0.0") + ", lead at x=" + nearest[r].ToString("0") + ")"; }
           else if (shooters[r] == 0 && nearest[r] < VISIBLE_X) { sc = Math.Min(900, 300 + (VISIBLE_X - nearest[r])); why = "first shooter for the zombie in lane " + r + " (x=" + nearest[r].ToString("0") + ")"; }
+          // Fog: a zombie only shows at x~320, ~15 s from the house - too late to start a lane from nothing (lvl 39, 18:31: four
+          // mowers lost by wave 9 to single zombies in lanes with no shooter). Every lane gets a free shooter once waves start;
+          // a puff/sea-shroom placed forward shoots into the fog.
+          else if (bg == 3 && shooters[r] == 0 && s.Wave >= 1 && p.Cost == 0 && (t == PUFF || t == SEASH)) { sc = 760; why = "cover lane " + r + " before the fog hides its first zombie"; }
           else if (need > 0 && sunCount >= landRows.Count) { sc = 250 + 10 * need + (flagSoon || finalSoon ? 120 : 0); why = "build lane " + r + " to " + (target(r) / 14).ToString("0.0") + " peas" + (flagSoon ? " before the FLAG wave" : finalSoon ? " before the FINAL wave" : ""); }
+          // Roof (no roof cleaners in this mod: mow=------ in every lvl 42 replay): one leak ends the game, and a lone cabbage
+          // (7 dps) needs ~40 s for a 270 hp NORM. So every lane gets its first cabbage before, or as soon as, its first zombie shows.
+          if (roof && ProLobbed.Contains(t) && shooters[r] == 0) {
+            double rs = nearest[r] < VISIBLE_X ? 950 : (s.Wave >= 1 && sunCount >= landRows.Count ? 600 : 0);
+            if (rs > sc) { sc = rs; why = "roof, no cleaner: first cabbage for lane " + r + (nearest[r] < VISIBLE_X ? " (zombie at x=" + nearest[r].ToString("0") + ")" : " before its first zombie"); }
+          }
           if (sc <= 0) continue;
           // Best shooter for the job: cheap now, strong later.
           double val = ProDps(t) / 14.0;
+          if (roof && ProLobbed.Contains(t)) val = Math.Max(1, val);   // roof: lobbers are the only shooters, so no penalty for the cabbage's low dps
           if (t == THREE) val = Math.Min(3, rows.Count(rr => Math.Abs(rr - r) <= 1 && target(rr) - dps[rr] > 0)) * 0.9;
           if (t == SNOW && live.Any(z => z.Row == r && Seen.Hp(z) > 600)) val += 0.6;
           if (t == SNOW && shooters[r] >= 2 && !s.Plants.Any(q => q.Row == r && q.Type == SNOW)) val += 1.5;   // slowing the lane ~doubles every shooter's damage
@@ -388,6 +437,7 @@ public static partial class Bot {
       }
       if (t == SQUASH || t == KELP || t == CHOMP || (t == HYPNO && !PrecisionLevel)) foreach (var z in order) {
         string n = Mem.ZomName(z.Type);
+        if (ProFlying(z)) continue;   // out of reach up there
         if ((t == SQUASH || t == KELP || t == CHOMP) && Covered(s, z)) continue;   // a squash/bomb already waiting on it: don't stack a second
         // A hypno already waiting in front of this zombie means it is handled - do not stack a second one.
         if (t == HYPNO && s.Plants.Any(q => q.Row == z.Row && q.Type == HYPNO && CellX(q.Col) < z.X + 30)) continue;
@@ -411,7 +461,7 @@ public static partial class Bot {
         if (!(near && (tough || danger[z.Row] > 1))) continue;
         if (t == SQUASH && PrecisionLevel && !VasePlanner.SpendSquashOn(s, z, false)) continue;   // vasebreaker: the planner keeps squashes for footballs
         int c = Math.Max(0, ColOf(z.X) - (t == SQUASH ? 0 : 1));
-        if (t == HYPNO && !(n == "FOOT" || n == "REGEN" || n == "GARG" || n == "PAIL" || n == "DANCER")) continue;
+        if (t == HYPNO) continue;   // every hypno target is placed by the priority rule above; the rest are not worth one
         if (t == CHOMP && n == "GARG") continue;
         // A squash on a zombie that is eating: its own cell holds the plant being eaten, so also try the cell right in front of it
         // (both football kills in outcomes.txt were col 1 vs a football eating the col-0 shooter; col 0 / col -1 never fit).
@@ -448,12 +498,19 @@ public static partial class Bot {
         list.Add(new Cand { P = p, Row = gr, Col = gc2, Score = 280 + 20 * s.Graves.Count + (finalSoon ? 150 : 0), Affordable = belt || p.FromCoin || p.Cost <= s.Sun, Why = "bust grave r" + gr + "c" + gc2 + " (graves spawn zombies)" });
         break;
       }
-      if (t == BLOVER && (live.Any(z => Mem.ZomName(z.Type) == "BALLOON" && z.X < 600) || (bg == 3 && finalSoon && s.Wave == s.Waves))) {
-        int r = rows.First(); int c = Enumerable.Range(0, 9).Where(cc => canPlace(t, r, cc)).Select(cc => (int?)cc).FirstOrDefault() ?? -1;
-        if (c >= 0) add(p, r, c, 950, "blover: blow away balloons/fog");
+      if (t == BLOVER) {
+        var flyers = live.Where(z => ProFlying(z) && z.X < 600).ToList();
+        if (flyers.Count > 0 || (bg == 3 && finalSoon && s.Wave == s.Waves)) {
+          // Any free land cell (the blower works from anywhere); rows in order, pads not needed.
+          int br0 = -1, bc0 = -1;
+          foreach (var r in rows) { int c = Enumerable.Range(0, 9).Where(cc => canPlace(t, r, cc)).Select(cc => (int?)cc).FirstOrDefault() ?? -1; if (c >= 0) { br0 = r; bc0 = c; break; } }
+          // A visible balloon is ~12 s from the house in the fog and nothing else on this bank touches it: above every other move.
+          if (br0 >= 0) add(p, br0, bc0, flyers.Count > 0 ? 3000 + 100 * flyers.Count : 950,
+                            flyers.Count > 0 ? "BALLOON: blover blows away " + flyers.Count + " balloon zombie(s) (lead x=" + flyers.Min(z => z.X).ToString("0") + ")" : "blover: blow away the fog");
+        }
       }
-      if ((t == CACTUS || t == CATTAIL) && live.Any(z => Mem.ZomName(z.Type) == "BALLOON")) {
-        var bz = live.First(z => Mem.ZomName(z.Type) == "BALLOON");
+      if ((t == CACTUS || t == CATTAIL) && live.Any(z => ProFlying(z))) {
+        var bz = live.Where(z => ProFlying(z)).OrderBy(z => z.X).First();
         foreach (int c in new[] { 2, 3, 1 }) if (canPlace(t, bz.Row, c)) { add(p, bz.Row, c, 600, "pop the balloon in lane " + bz.Row); break; }
       }
       if (t == MAGNET && night && live.Any(z => Metal.Contains(Mem.ZomName(z.Type)) && z.X < 700) && s.Plants.Count(q => q.Type == MAGNET) < 2) {
@@ -513,13 +570,17 @@ public static partial class Bot {
       var needy = rows.Where(r => shooters[r] < 2 && (live.Any(z => z.Row == r) || s.Vases.Any(k => k / 10 == r))
                                   && Enumerable.Range(0, 5).Any(cc => canPlace(PEA, r, cc))).ToList();
       if (needy.Count > 0) {
-        int dropped = list.RemoveAll(cd => ProIsShooter(cd.P.Type) && rows.Contains(cd.Row) && shooters[cd.Row] >= 2 && !dancerIn(cd.Row));
+        // ...except a simulator breach fix ("SIM ... holds it") while no needy lane has a zombie in it right now.
+        bool needyLive = needy.Any(nr => live.Any(z => z.Row == nr));
+        int dropped = list.RemoveAll(cd => ProIsShooter(cd.P.Type) && rows.Contains(cd.Row) && shooters[cd.Row] >= 2 && !dancerIn(cd.Row)
+            && !(!needyLive && baseOut[cd.Row].Breach && cd.Why != null && cd.Why.StartsWith("SIM") && cd.Why.Contains("holds it")));
         if (dropped > 0) ProStatus += " | 2-per-lane: lane " + string.Join(",", needy.Select(r => r.ToString()).ToArray()) + " first";
       }
     }
     var breaking = rows.Where(r => baseOut[r].Breach).ToList();
     ProStatus += breaking.Count == 0 ? " | sim: all lanes hold 40s" : " | sim: lane " + string.Join(",", breaking.Select(r => r + "@" + baseOut[r].BreachT.ToString("0") + "s")) + " breaking";
     ProBreachT = breaking.Count == 0 ? 9999 : breaking.Min(r => baseOut[r].BreachT);
+    Guess.SetSim(baseOut);   // panel: exact per-lane sim verdicts (copies numbers only, never throws)
     // Conveyor levels: you play what the belt gives you. A backed-up belt stops new plants arriving, so use what is waiting.
     // Same for dropped packets (vases, rewards): they fade, so every one gets a sensible spot instead of disappearing.
     if ((belt && usable.Count(u => !u.FromCoin) >= 5) || usable.Any(u => u.FromCoin)) {
@@ -535,7 +596,7 @@ public static partial class Bot {
         } else if (t == SPIKE) {   // where zombies will walk over it
           var r2 = rows.Where(r => !isWater(r, 0)).OrderByDescending(r => live.Count(z => z.Row == r)).ThenBy(r => s.Plants.Count(q => q.Row == r && q.Type == SPIKE)).FirstOrDefault();
           br = r2; bc = new[] { 6, 5, 7, 4 }.FirstOrDefault(cc => canPlace(SPIKE, r2, cc)); why = "belt: spikeweed under the zombies' path in lane " + br;
-        } else if (ProIsShooter(t)) {
+        } else if (ProIsShooter(t) && !(roof && !ProLobbed.Contains(t) && t != CATTAIL)) {
           // Vasebreaker (no sun makers): shooters at the far left for the longest firing time; one per lane first, and
           // extra shooters only where a tougher-than-normal zombie is (tips from the mod author).
           bool vb = s.Vases.Count > 0;
@@ -613,6 +674,7 @@ public static partial class Bot {
           }
           else if (t == HYPNO) { var hp2 = live.Where(zz => { var nm = Mem.ZomName(zz.Type); return nm == "DANCER" || nm == "BDANCE" || nm == "PAIL" || nm == "FOOT" || nm == "REGEN"; }).ToList(); if (hp2.Count > 0) pool = hp2.OrderByDescending(zz => Mem.ZomName(zz.Type) == "DANCER" ? 3 : Mem.ZomName(zz.Type) == "BDANCE" ? 2 : 1).ThenBy(zz => zz.X).Take(1).ToList(); }
           if (t == SQUASH || t == CHERRY || t == JALA || t == DOOM || t == CHOMP || t == KELP) { pool = pool.Where(zz => !Covered(s, zz)).ToList(); if (pool.Count == 0) continue; }   // one killer per zombie
+          if (t == SQUASH || t == CHOMP || t == KELP || t == HYPNO || t == PMINE) { pool = pool.Where(zz => !ProFlying(zz)).ToList(); if (pool.Count == 0) continue; }   // cannot reach a balloon
           var z = pool.OrderBy(zz => zz.X).First();   // the most pressing zombie: drop it in its path
           // A squash misses fast zombies on the move: hold it until the target stops to eat, unless the packet is about to fade.
           string zn = Mem.ZomName(z.Type);
@@ -659,6 +721,21 @@ public static partial class Bot {
     int bombCost = s.Packets.Where(p => (p.Type == CHERRY || p.Type == JALA || p.Type == DOOM) && p.Cd == 0).Select(p => p.Cost).DefaultIfEmpty(0).Min();
     if (bombCost > 0 && ((toFlag >= 1 && toFlag <= 2) || (s.Waves > 0 && s.Waves - s.Wave <= 2)))
       foreach (var cd in list) if (cd.P.Cost > 0 && cd.Score < 600 && s.Sun - cd.P.Cost < bombCost && cd.P.Type != CHERRY && cd.P.Type != JALA && cd.P.Type != DOOM) cd.Score *= 0.3;
+    // Blover reserve (lvl 39: 3 of 6 deaths at waves 17-20 were a balloon crossing a lane with no mower while the blover sat
+    // recharged and sun stayed under 100 - the bot spent every 75 on another fume). Fog shows a balloon only ~12 s before
+    // the house, which is not enough income to raise 100 from zero. On a balloon level, from 3/4 of the progress bar or once
+    // a balloon has shown up this attempt, nothing but a real "holds it" emergency spends the last blover's worth of sun.
+    var blov = s.Packets.FirstOrDefault(p => p.Type == BLOVER && !p.FromCoin);
+    bool balloonLvl = ProPreview.Contains("BALLOON") || proBalloonLvl == s.Level;
+    if (!belt && blov != null && balloonLvl && (progress >= 0.75 || balloonNow)) {
+      int held = 0;
+      foreach (var cd in list) {
+        if (cd.P.Type == BLOVER || cd.P.FromCoin || cd.P.Cost <= 0 || !cd.Affordable || s.Sun - cd.P.Cost >= blov.Cost) continue;
+        if (cd.Score >= 1500 && cd.Why != null && cd.Why.Contains("SIM") && cd.Why.Contains("holds it")) continue;
+        cd.Affordable = false; held++;
+      }
+      if (held > 0) ProStatus += " | blover reserve " + blov.Cost + " (balloon level)";
+    }
     return list.OrderByDescending(c => c.Score).ToList();
   }
 
@@ -669,6 +746,11 @@ public static partial class Bot {
     var ready = cands.FirstOrDefault(c => c.Affordable);
     if (best == null) return null;
     if (best.Affordable) return best;
+    // A balloon is on screen and the blover is the only answer: every sun goes to it; only free plants meanwhile.
+    if (best.P.Type == BLOVER && best.Why != null && best.Why.StartsWith("BALLOON")) {
+      saving = "saving for the blover (" + best.P.Cost + " sun, need " + Math.Max(0, best.P.Cost - s.Sun) + " more) - balloon on screen";
+      return cands.FirstOrDefault(c => c.Affordable && c.P.Cost == 0 && c.P.Type != BLOVER);
+    }
     // The simulator says a lane breaks: take a ready move that holds it; otherwise save for the fix if income gets there in time.
     if (best.Why != null && best.Why.StartsWith("SIM")) {
       var readyFix = cands.FirstOrDefault(c => c.Affordable && c.Why != null && c.Why.StartsWith("SIM") && c.Why.Contains("holds it"));
@@ -694,18 +776,26 @@ public static partial class Bot {
   public static string SuperNemesis() { RefreshProKnow(); return nemesisTop; }
   public static List<string> ProKnowledge() { RefreshProKnow(); return proKnow; }
   public static int lastVaseCount;
+  // Panel thread reads these files while the main thread appends results: share the file so the append never fails.
+  static string[] ReadShared(string path) {
+    if (!File.Exists(path)) return new string[0];
+    var res = new List<string>();
+    using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+    using (var sr = new StreamReader(fs)) { string l; while ((l = sr.ReadLine()) != null) res.Add(l); }
+    return res.ToArray();
+  }
   static void RefreshProKnow() {
     if ((DateTime.Now - proKnowAt).TotalSeconds < 5) return;
     proKnowAt = DateTime.Now;
     var lines = new List<string>();
     try {
-      var rec = File.Exists(@"C:\cbot\pro_record.txt") ? File.ReadAllLines(@"C:\cbot\pro_record.txt") : new string[0];
+      var rec = ReadShared(@"C:\cbot\pro_record.txt");
       var byLvl = rec.Select(l => System.Text.RegularExpressions.Regex.Match(l, @"PRO lvl (\d+) (WON|DIED)")).Where(m => m.Success)
                      .GroupBy(m => int.Parse(m.Groups[1].Value)).OrderBy(g => g.Key).ToList();
       Func<int, string> ln = id => ((id - 1) / 10 + 1) + "-" + ((id - 1) % 10 + 1);
       lines.Add("record: " + ProWins + " wins, " + ProDeaths + " deaths");
       lines.Add("deaths per level: " + string.Join("  ", byLvl.Select(g => ln(g.Key) + ":" + g.Count(m => m.Groups[2].Value == "DIED") + (g.Any(m => m.Groups[2].Value == "WON") ? "W" : ""))));
-      var nem = File.Exists(@"C:\cbot\nemesis.txt") ? File.ReadAllLines(@"C:\cbot\nemesis.txt").Select(l => l.Split(' ').Last()).GroupBy(x => x).OrderByDescending(g => g.Count()).Take(5).ToList() : null;
+      var nem = File.Exists(@"C:\cbot\nemesis.txt") ? ReadShared(@"C:\cbot\nemesis.txt").Select(l => l.Split(' ').Last()).GroupBy(x => x).OrderByDescending(g => g.Count()).Take(5).ToList() : null;
       if (nem != null && nem.Count > 0) { nemesisTop = nem[0].Key + " (x" + nem[0].Count() + ")"; lines.Add("super nemesis: " + string.Join("  ", nem.Select(g => g.Key + " x" + g.Count()))); }
       if (PrecisionLevel) { lines.Add(VasePlanner.Status()); lines.Add(Outcomes.Summary("SQUASH")); }
       lines.Add("plays from: zombie hp/speed tables, counters, area playbooks, 40s lane simulator - nothing is learned or saved");
@@ -717,7 +807,7 @@ public static partial class Bot {
   // Pro keeps its own tally (learned stats are deliberately not saved in pro mode, so Learn.Deaths resets on every restart).
   public static int ProDeaths = -1, ProWins = -1;
   public static void ProTally() {
-    try { var lines = File.Exists(@"C:\cbot\pro_record.txt") ? File.ReadAllLines(@"C:\cbot\pro_record.txt") : new string[0];
+    try { var lines = ReadShared(@"C:\cbot\pro_record.txt");
           ProDeaths = lines.Count(l => l.Contains(" DIED")); ProWins = lines.Count(l => l.Contains(" WON")); } catch { }
   }
   static void ProRecord(string line) {

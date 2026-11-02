@@ -7,7 +7,7 @@ using System.Linq;
 
 public static partial class Bot {
   public class SimOut { public double Cost, BreachT = 9999, HpLeft, Lost; public bool Breach { get { return BreachT < 9000; } } }
-  class SZ { public uint Id; public double X, Hp, Spd, Hp0; public bool Slow, Eating; public string N; }
+  class SZ { public uint Id; public double X, Hp, Spd, Hp0; public bool Slow, Eating, Fly; public string N; }   // Fly: balloon still up (only spikes / blasts reach it, it eats nothing)
   // Mine: a potato mine (eaten while unarmed, blows up once armed); Trap: a waiting squash / tangle kelp (one shot); Busy: chomper chewing until.
   class SP { public int Col, Type; public double Hp, Cost, ArmAt = -1, Busy; public bool Mine, Trap; }
 
@@ -51,7 +51,7 @@ public static partial class Bot {
     foreach (var z in s.Zombies) {
       if (z.Row != r || z.X >= VISIBLE_X) continue;
       double hp = m.ZHp(z);
-      var q = new SZ { Id = z.Id, X = z.X, Hp = hp, Hp0 = hp, Spd = Math.Max(4, m.ZSpeed(z)), Eating = z.Eating, N = m.ZombieLore ? Mem.ZomName(z.Type) : "" };
+      var q = new SZ { Id = z.Id, X = z.X, Hp = hp, Hp0 = hp, Spd = Math.Max(4, m.ZSpeed(z)), Eating = z.Eating, N = m.ZombieLore ? Mem.ZomName(z.Type) : "", Fly = m.ZombieLore && ProFlying(z) };
       if (z.Charmed) allies.Add(q); else zs.Add(q);
     }
     var o = new SimOut();
@@ -69,6 +69,7 @@ public static partial class Bot {
     }
     // Bombs already on the lawn (just planted, fuse burning) go off too - otherwise the sim would plant a second one.
     bool night = s.Background == 1 || s.Background == 3 || s.Background == 5;
+    bool roofSim = m.ZombieLore && (s.Background == 4 || s.Background == 5);   // the roof slope stops straight shots (pro.cs knows this too)
     var bombs = m.ZombieLore ? s.Plants.Where(p => (p.Type == CHERRY && Math.Abs(p.Row - r) <= 1) || (p.Type == JALA && p.Row == r) || (p.Type == DOOM && night && Math.Abs(p.Row - r) <= 2)).ToList() : null;
     string eff = addType >= 0 ? m.Effect(addType) : "";
     bool instant = eff == "AREA" || eff == "LANE" || eff == "SINGLE";
@@ -90,22 +91,25 @@ public static partial class Bot {
         if (p.Type < 0) continue;
         double d = m.Dps(p.Type);
         if (d <= 0) continue;
+        if (roofSim && !m.Lob(p.Type) && p.Type != CATTAIL) continue;
         double px = CellX(p.Col), rng = m.Range(p.Type);
         // Snorkel zombies swim under straight shots until they surface to eat; lobbed shots still land.
         bool lob = m.Lob(p.Type);
-        var ahead = zs.Where(z => z.X + 30 > px - 20 && z.X < 780 && (rng <= 0 || z.X + 30 - px <= rng) && (lob || z.N != "SNORK" || z.Eating)).OrderBy(z => z.X).ToList();
+        bool spikes = p.Type == CACTUS || p.Type == CATTAIL;   // the only shots that pop a balloon
+        var ahead = zs.Where(z => z.X + 30 > px - 20 && z.X < 780 && (rng <= 0 || z.X + 30 - px <= rng) && (lob || z.N != "SNORK" || z.Eating) && (!z.Fly || spikes)).OrderBy(z => z.X).ToList();
         if (ahead.Count == 0) continue;
         if (m.ZombieLore && (p.Type == FUME || p.Type == GLOOM)) foreach (var z in ahead) z.Hp -= d * SIM_DT;
         else {
           // Stacked torchwoods (this mod): each one a pea passes through raises its damage (x2, x3, x4).
           int torches = m.ZombieLore && (p.Type == PEA || p.Type == REPEAT || p.Type == GATLING) ? Math.Min(3, ps.Count(q => q.Type == TORCH && q.Col > p.Col && CellX(q.Col) < ahead[0].X + 30)) : 0;
+          if (ahead[0].Fly) { ahead[0].Fly = false; continue; }   // a spike pops the balloon: from here it walks (and eats) like a normal zombie
           ahead[0].Hp -= d * SIM_DT * (1 + torches);
           if (m.ZombieLore && p.Type == SNOW) ahead[0].Slow = true;
         }
       }
       // Spikeweed: hurts whatever walks over it; a zomboni driving onto it is destroyed (and so is the spike).
       if (m.ZombieLore) foreach (var sp in ps.Where(q => q.Type == SPIKE || q.Type == SPIKEROCK).ToList())
-        foreach (var z in zs.Where(z => Math.Abs(z.X + 30 - CellX(sp.Col)) < 40)) {
+        foreach (var z in zs.Where(z => !z.Fly && Math.Abs(z.X + 30 - CellX(sp.Col)) < 40)) {
           if (z.N == "ZAMB") { z.Hp = 0; if (sp.Type == SPIKE) sp.Hp = 0; } else z.Hp -= 20 * SIM_DT;
         }
       // Hypnotized zombies walk right and brawl with the first enemy they meet.
@@ -119,16 +123,16 @@ public static partial class Bot {
         if (p.Hp <= 0 || p.Hp >= 1e8) continue;
         double px = CellX(p.Col);
         if (p.Mine && t >= p.ArmAt) {
-          if (zs.Any(z => Math.Abs(z.X + 30 - px) < 40)) { zs.RemoveAll(z => Math.Abs(z.X + 30 - px) < 40); p.Hp = 0; }
+          if (zs.Any(z => !z.Fly && Math.Abs(z.X + 30 - px) < 40)) { zs.RemoveAll(z => !z.Fly && Math.Abs(z.X + 30 - px) < 40); p.Hp = 0; }
         } else if (p.Trap) {
-          var tg = zs.Where(z => z.X + 30 - px > -50 && z.X + 30 - px < 90).OrderBy(z => z.X).FirstOrDefault();
+          var tg = zs.Where(z => !z.Fly && z.X + 30 - px > -50 && z.X + 30 - px < 90).OrderBy(z => z.X).FirstOrDefault();
           if (tg == null) continue;
           // Mod author: a fast zombie on the move dodges a squash (it lands behind); one stopped to eat does not.
           bool dodge = p.Type == SQUASH && (ProSpeedOf(tg.N) >= 25 || tg.N == "REGEN") && !tg.Eating;
           if (!dodge) zs.Remove(tg);
           p.Hp = 0;
         } else if (m.ZombieLore && p.Type == CHOMP && t >= p.Busy) {
-          var tg = zs.Where(z => z.X + 30 - px > -30 && z.X + 30 - px < 90 && z.N != "GARG" && z.N != "ZAMB").OrderBy(z => z.X).FirstOrDefault();
+          var tg = zs.Where(z => !z.Fly && z.X + 30 - px > -30 && z.X + 30 - px < 90 && z.N != "GARG" && z.N != "ZAMB").OrderBy(z => z.X).FirstOrDefault();
           if (tg != null) { zs.Remove(tg); p.Busy = t + Seen.CHOMP_BUSY; }
         }
       }
@@ -137,7 +141,8 @@ public static partial class Bot {
         double slow = z.Slow ? 0.5 : 1;
         bool crush = z.N == "GARG" || z.N == "ZAMB";
         var ally = allies.FirstOrDefault(a => a.Hp > 0 && Math.Abs(a.X - z.X) < 40);
-        var block = ally != null ? null : ps.Where(p => p.Hp > 0 && p.Hp < 1e8 && p.Type >= 0 && !(p.Mine && t >= p.ArmAt) && !p.Trap && p.Type != SPIKE && p.Type != SPIKEROCK && Math.Abs(z.X + 30 - CellX(p.Col)) < 35).OrderByDescending(p => p.Col).FirstOrDefault();
+        if (z.Fly) ally = null;   // floats over plants and allies alike
+        var block = ally != null || z.Fly ? null : ps.Where(p => p.Hp > 0 && p.Hp < 1e8 && p.Type >= 0 && !(p.Mine && t >= p.ArmAt) && !p.Trap && p.Type != SPIKE && p.Type != SPIKEROCK && Math.Abs(z.X + 30 - CellX(p.Col)) < 35).OrderByDescending(p => p.Col).FirstOrDefault();
         z.Eating = ally != null || block != null;
         if (ally != null) ally.Hp -= (crush ? 4000 : 100) * SIM_DT * slow;
         else if (block != null) {
@@ -170,7 +175,7 @@ public static partial class Bot {
   static void SimBlast(List<SZ> zs, string eff, bool wide, double cx) {
     if (eff == "LANE") zs.Clear();
     else if (eff == "AREA") zs.RemoveAll(z => Math.Abs(z.X + 30 - cx) <= (wide ? 250 : 115));
-    else if (eff == "SINGLE") { var tgt = zs.Where(z => Math.Abs(z.X + 30 - cx) <= 100).OrderBy(z => z.X).FirstOrDefault(); if (tgt != null) zs.Remove(tgt); }
+    else if (eff == "SINGLE") { var tgt = zs.Where(z => !z.Fly && Math.Abs(z.X + 30 - cx) <= 100).OrderBy(z => z.X).FirstOrDefault(); if (tgt != null) zs.Remove(tgt); }   // squash / kelp cannot reach a balloon
   }
   static double ProPlantHp(int t) { return t == WALLNUT ? 4000 : t == TALL ? 8000 : t == PUMPKIN ? 4000 : 300; }
 
@@ -182,14 +187,19 @@ public static partial class Bot {
     // Opening: until there is one sun maker per land lane, only a breach that is close in time is worth reacting to.
     var rtypes = Mem.RowTypes();
     bool opening = s.Plants.Count(q => ProSun.Contains(q.Type)) < rows.Count(rr => rtypes[rr] != 2);
+    bool roofLvl = s.Background == 4 || s.Background == 5;
     foreach (var r in rows) {
       var b = baseOut[r];
       if (!b.Breach && b.HpLeft < 300) continue;   // this lane holds by itself
       if (opening && (!b.Breach || b.BreachT > 20)) continue;
+      // Pruning (the sim ran up to 45 cells x every defender each tick, 7.5 ms avg): the zombies the sim sees in this lane.
+      var laneX = s.Zombies.Where(z => z.Row == r && z.X < VISIBLE_X && !z.Charmed).Select(z => (double)z.X).ToList();
+      double leadX = laneX.Count == 0 ? 9999 : laneX.Min();
       var tried = new HashSet<int>();
       // Of two dropped packets of one kind, try the one nearer to fading (its disappear counter) so the younger one is kept.
       foreach (var p in usable.OrderByDescending(u => { if (!u.FromCoin) return -1; var cn = s.Suns.FirstOrDefault(x => x.Id == u.CoinId); return cn != null ? cn.Disappear : -1; })) {
         if (!defenders.Contains(p.Type) || !tried.Add(p.Type)) continue;
+        if (roofLvl && ProIsShooter(p.Type) && !ProLobbed.Contains(p.Type) && p.Type != CATTAIL) continue;   // straight shots hit the roof slope
         // Area bombs reach neighbouring lanes, so they may be fired from an adjacent (e.g. land) lane - no pad needed.
         int[] lanes = p.Type == CHERRY ? new[] { r, r - 1, r + 1 } : p.Type == DOOM ? new[] { r, r - 1, r + 1, r - 2, r + 2 } : new[] { r };
         bool isBomb = p.Type == CHERRY || p.Type == JALA || p.Type == SQUASH || p.Type == DOOM;
@@ -207,11 +217,18 @@ public static partial class Bot {
         double bestGain = 0; int bestRow = -1, bestCol = -1; SimOut bestO = null;
         foreach (int pr in lanes) {
           if (!rows.Contains(pr)) continue;
+          bool laneBomb = p.Type == JALA;   // clears the whole lane: every column gives the same result
+          double reachB = p.Type == DOOM ? 250 : p.Type == CHERRY ? 115 : 100;
           for (int c = 0; c < 9; c++) {
             if (!canPlace(p.Type, pr, c) && (isBomb || !needsBase(pr, c))) continue;   // a bomb never waits for a pad
+            // A plant behind the lead zombie (it already walked past) cannot stop it; a blast with no zombie in reach changes nothing.
+            bool blastLike = isBomb || p.Type == KELP;   // kelp goes off like a squash in the sim (SINGLE)
+            if (!blastLike && CellX(c) > leadX + 30) continue;
+            if (blastLike && !laneBomb) { int cx = CellX(c); if (!laneX.Any(zx => Math.Abs(zx + 30 - cx) <= reachB + 30)) continue; }
             var o = SimLane(r, s, spd, p.Type, c);
             double gain = b.Cost - o.Cost;
             if (gain > bestGain + 1) { bestGain = gain; bestRow = pr; bestCol = c; bestO = o; }
+            if (laneBomb) break;
           }
         }
         if (bestO == null || bestGain < 50) continue;

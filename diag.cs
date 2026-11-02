@@ -37,7 +37,8 @@ public static class Diag {
     f.Urgency = settle(f.Urgency); f.BombEager = settle(f.BombEager); f.Spend = settle(f.Spend); f.Econ = settle(f.Econ);
     Save();
   }
-  public static string Summary() { var f = Cur; return "urgency " + f.Urgency.ToString("0.00") + " bombs " + f.BombEager.ToString("0.00") + " spend " + f.Spend.ToString("0.00") + " econ " + f.Econ.ToString("0.00") + " (" + f.Breaches + " breaches studied)"; }
+  // Called from the panel thread: read-only lookup (Cur/For would insert into the dictionary the main thread writes).
+  public static string Summary() { Fix f; if (!fixes.TryGetValue(Strategy.LevelEnv ?? "", out f) || f == null) f = new Fix(); return "urgency " + f.Urgency.ToString("0.00") + " bombs " + f.BombEager.ToString("0.00") + " spend " + f.Spend.ToString("0.00") + " econ " + f.Econ.ToString("0.00") + " (" + f.Breaches + " breaches studied)"; }
 
   public static void Save() {
     if (Bot.ProMode) return;   // pro mode never writes learned knowledge
