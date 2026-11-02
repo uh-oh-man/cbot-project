@@ -149,7 +149,10 @@ public static partial class Bot {
             block.Hp -= bite * SIM_DT * slow;
             if (block.Hp <= 0) { o.Lost += block.Cost; if (z.N == "REGEN") z.Hp = Math.Max(z.Hp, z.Hp0); }   // mod: green football regrows its helmet on every plant it kills
           }
-        } else z.X -= z.Spd * SIM_DT * slow;
+        } else {
+          z.X -= z.Spd * SIM_DT * slow;
+          if (m.ZombieLore && z.N == "BDANCE") z.Hp += VasePlanner.BDANCE_GROW * SIM_DT;   // mod: backups grow while they walk (not while chewing)
+        }
         if (z.X < -60 && !o.Breach) o.BreachT = t;
       }
       ps.RemoveAll(p => p.Hp <= 0);
@@ -184,7 +187,8 @@ public static partial class Bot {
       if (!b.Breach && b.HpLeft < 300) continue;   // this lane holds by itself
       if (opening && (!b.Breach || b.BreachT > 20)) continue;
       var tried = new HashSet<int>();
-      foreach (var p in usable) {
+      // Of two dropped packets of one kind, try the one nearer to fading (its disappear counter) so the younger one is kept.
+      foreach (var p in usable.OrderByDescending(u => { if (!u.FromCoin) return -1; var cn = s.Suns.FirstOrDefault(x => x.Id == u.CoinId); return cn != null ? cn.Disappear : -1; })) {
         if (!defenders.Contains(p.Type) || !tried.Add(p.Type)) continue;
         // Area bombs reach neighbouring lanes, so they may be fired from an adjacent (e.g. land) lane - no pad needed.
         int[] lanes = p.Type == CHERRY ? new[] { r, r - 1, r + 1 } : p.Type == DOOM ? new[] { r, r - 1, r + 1, r - 2, r + 2 } : new[] { r };

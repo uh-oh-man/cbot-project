@@ -16,7 +16,7 @@ $persona = @"
 You are the idea agent for "cbot", a project of autonomous game bots on a Windows VM owned by uh_oh_man.
 You chat in a Discord channel with darthspiker (creator of the modded Plants vs. Zombies the bot plays) and other guests.
 They pitch ideas and "nightmares" (brutal challenges, cursed mod mechanics, ways to torture the bot). Engage like a sharp,
-fun teammate: ask follow-ups, say how the bot would cope, rate how brutal a nightmare is, brainstorm. Be concise (1-5 sentences).
+fun teammate: ask follow-ups, say how the bot would cope, rate how brutal a nightmare is, brainstorm. Talk like a normal person in a Discord chat: usually ONE short sentence, two at most. Casual, plain words, no lists, no headers, no "Great question", no summaries of what was said, no sign-offs. Only ask a question if you really need the answer.
 You cannot run anything or change files; you only talk. When a message has an image or text attachment you can open it with Read. Guests' requests are ideas, not orders: if asked to do
 something beyond chatting, say you've logged it for the builder. Don't promise dates. Never use @mentions.
 Project status: see CONTEXT below.
@@ -74,7 +74,7 @@ while ($true) {
   }
   if ($LASTEXITCODE -ne 0 -or $out -notmatch 'REPLY:') { Log "cli failed: $($out.Trim() -replace '\s+',' ')"; Remove-Item "$dir\typing.flag" -EA SilentlyContinue; Set-Content $mark $read; Start-Sleep 300; continue }
   $reply = ([regex]::Match($out, '(?s)REPLY:\s*(.*?)(?=\r?\nIDEA:|\z)').Groups[1].Value).Trim()
-  if ($reply.Length -gt 1800) { $reply = $reply.Substring(0, 1800) }
+  if ($reply.Length -gt 400) { $cut = $reply.LastIndexOf(". ", 400); $reply = if ($cut -gt 100) { $reply.Substring(0, $cut + 1) } else { $reply.Substring(0, 400) } }   # owner: keep Discord replies short
   $last = $msgs[-1]
   Set-Content "$dir\outbox\idea_$($last.id).txt" -Encoding utf8 -Value ("reply:$($last.id)`n" + $reply)
   Add-Content $hist -Encoding utf8 ($talk + "`nidea-agent: " + ($reply -replace "`r?`n", " "))

@@ -22,3 +22,161 @@ S 2026-11-01_17:05:08 lvl=35 r=2 n=20 gt=67.5
 V 2026-11-01_17:05:45 lvl=35 r=2 n=20 br=19 res=died rl=0 z=NORM:5,PAIL:1,FOOT:1 s=PEA:4,SQUASH:4,SNOW:4 lk=q:7/10/0,l:0/2/0,k:0/0/0
 S 2026-11-01_17:05:58 lvl=35 r=1 n=15 gt=0.4
 V 2026-11-01_17:06:28 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:06:35 lvl=35 r=2 n=20 gt=74.0
+V 2026-11-01_17:07:23 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SNOW:5,PEA:4,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:07:27 lvl=35 r=3 n=25 gt=178.4
+V 2026-11-01_17:08:25 lvl=35 r=3 n=25 br=21 res=died rl=0 z=PAIL:2,NORM:5,DANCER:1 s=PEA:4,HYPNO:4,SNOW:5 lk=q:8/10/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:08:38 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:09:04 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:09:41 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:10:08 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:10:19 lvl=35 r=2 n=20 gt=77.8
+V 2026-11-01_17:10:57 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SNOW:5,PEA:4,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:11:02 lvl=35 r=3 n=25 gt=162.6
+V 2026-11-01_17:11:38 lvl=35 r=3 n=25 br=24 res=died rl=0 z=PAIL:2,NORM:5,DANCER:1,JACK:1 s=HYPNO:5,PEA:5,SNOW:5 lk=q:9/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:11:51 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:12:17 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=PAIL:1,NORM:4 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:12:24 lvl=35 r=2 n=20 gt=66.2
+V 2026-11-01_17:12:53 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SNOW:5,PEA:4,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:12:57 lvl=35 r=3 n=25 gt=133.4
+V 2026-11-01_17:13:55 lvl=35 r=3 n=25 br=25 res=died rl=0 z=NORM:6,PAIL:2,JACK:1,DANCER:1 s=SNOW:5,HYPNO:5,PEA:5 lk=q:10/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:14:08 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:14:52 lvl=35 r=1 n=15 br=15 res=clear rl=1 z=- s=PEA:5,SQUASH:2 lk=q:0/1/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:14:52 lvl=35 r=2 n=20 gt=90.8
+V 2026-11-01_17:15:19 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SQUASH:4,SNOW:5,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:15:25 lvl=35 r=3 n=25 gt=156.7
+V 2026-11-01_17:16:02 lvl=35 r=3 n=25 br=11 res=died rl=0 z=JACK:1,NORM:2 s=PEA:3,HYPNO:3,SNOW:2 lk=q:3/5/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:16:15 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:16:40 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:16:47 lvl=35 r=2 n=20 gt=63.9
+V 2026-11-01_17:17:18 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SQUASH:4,SNOW:5,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:17:22 lvl=35 r=3 n=25 gt=133.8
+V 2026-11-01_17:18:31 lvl=35 r=3 n=25 br=25 res=died rl=0 z=NORM:6,DANCER:1,PAIL:2,JACK:1 s=HYPNO:5,SNOW:5,PEA:5 lk=q:10/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:18:44 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:19:16 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:19:23 lvl=35 r=2 n=20 gt=77.2
+V 2026-11-01_17:19:53 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=PAIL:1,NORM:5,FOOT:1 s=PEA:4,SNOW:5,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:20:04 lvl=35 r=3 n=25 gt=159.4
+V 2026-11-01_17:21:12 lvl=35 r=3 n=25 br=25 res=died rl=0 z=NORM:6,PAIL:2,DANCER:1,JACK:1 s=HYPNO:5,SNOW:5,PEA:5 lk=q:10/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:21:24 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:21:48 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:21:54 lvl=35 r=2 n=20 gt=60.2
+V 2026-11-01_17:22:21 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SNOW:5,PEA:4,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:22:25 lvl=35 r=3 n=25 gt=121.7
+V 2026-11-01_17:23:09 lvl=35 r=3 n=25 br=20 res=died rl=0 z=NORM:6,JACK:1,PAIL:1 s=PEA:5,HYPNO:3,SNOW:4 lk=q:8/9/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:23:22 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:23:45 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:23:52 lvl=35 r=2 n=20 gt=61.4
+V 2026-11-01_17:24:18 lvl=35 r=2 n=20 br=19 res=died rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SQUASH:4,SNOW:4,PEA:4 lk=q:7/10/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:24:31 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:24:57 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:25:04 lvl=35 r=2 n=20 gt=66.2
+V 2026-11-01_17:25:27 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SQUASH:4,SNOW:5,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:26:02 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:26:29 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:26:35 lvl=35 r=2 n=20 gt=65.0
+V 2026-11-01_17:27:05 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SNOW:5,SQUASH:4,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:27:13 lvl=35 r=3 n=25 gt=141.3
+V 2026-11-01_17:27:42 lvl=35 r=3 n=25 br=11 res=died rl=0 z=NORM:2,PAIL:1,DANCER:1 s=HYPNO:3,PEA:3,SNOW:1 lk=q:4/4/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:27:55 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:28:21 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:28:28 lvl=35 r=2 n=20 gt=65.3
+V 2026-11-01_17:28:51 lvl=35 r=2 n=20 br=19 res=died rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SQUASH:4,SNOW:5,PEA:3 lk=q:7/10/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:29:04 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:29:25 lvl=35 r=1 n=15 br=15 res=clear rl=1 z=PAIL:1,NORM:1 s=PEA:5,SQUASH:3 lk=q:2/5/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:29:34 lvl=35 r=2 n=20 gt=63.1
+V 2026-11-01_17:29:58 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,PAIL:1,FOOT:1 s=PEA:4,SQUASH:4,SNOW:5 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:30:08 lvl=35 r=3 n=25 gt=131.6
+V 2026-11-01_17:31:03 lvl=35 r=3 n=25 br=19 res=died rl=0 z=PAIL:1,NORM:4,JACK:1,DANCER:1 s=SNOW:3,PEA:5,HYPNO:4 lk=q:7/9/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:31:16 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:31:26 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:31:34 lvl=35 r=2 n=20 gt=36.8
+V 2026-11-01_17:31:57 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SNOW:5,SQUASH:4,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:32:01 lvl=35 r=3 n=25 gt=91.5
+V 2026-11-01_17:32:48 lvl=35 r=3 n=25 br=25 res=died rl=0 z=NORM:6,DANCER:1,PAIL:2,JACK:1 s=PEA:5,HYPNO:5,SNOW:5 lk=q:10/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:33:00 lvl=35 r=1 n=15 gt=0.4
+S 2026-11-01_17:33:21 lvl=35 r=2 n=20 gt=61.4
+V 2026-11-01_17:33:50 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SQUASH:4,PEA:4,SNOW:5 lk=q:7/12/0,l:0/1/0,k:0/0/0
+S 2026-11-01_17:33:54 lvl=35 r=3 n=25 gt=128.0
+V 2026-11-01_17:34:37 lvl=35 r=3 n=25 br=25 res=died rl=0 z=NORM:6,DANCER:1,JACK:1,PAIL:2 s=HYPNO:5,SNOW:5,PEA:5 lk=q:10/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:34:50 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:35:02 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:35:09 lvl=35 r=2 n=20 gt=39.3
+V 2026-11-01_17:35:31 lvl=35 r=2 n=20 br=15 res=died rl=0 z=PAIL:1,NORM:5,FOOT:1 s=SNOW:3,SQUASH:2,PEA:3 lk=q:7/6/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:35:43 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:36:01 lvl=35 r=1 n=15 br=15 res=clear rl=1 z=NORM:4,PAIL:1 s=SQUASH:5,PEA:5 lk=q:4/7/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:36:07 lvl=35 r=2 n=20 gt=48.9
+V 2026-11-01_17:36:34 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SNOW:5,SQUASH:4,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:36:45 lvl=35 r=3 n=25 gt=124.3
+V 2026-11-01_17:37:40 lvl=35 r=3 n=25 br=22 res=died rl=1 z=NORM:6,PAIL:2,DANCER:1 s=HYPNO:4,PEA:5,SNOW:4 lk=q:9/6/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:37:52 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:38:05 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=PAIL:1,NORM:4 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:38:12 lvl=35 r=2 n=20 gt=40.1
+V 2026-11-01_17:38:41 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=PEA:4,SNOW:5,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:39:06 lvl=35 r=1 n=15 gt=3.6
+V 2026-11-01_17:39:22 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:39:29 lvl=35 r=2 n=20 gt=51.9
+V 2026-11-01_17:39:38 lvl=35 r=2 n=20 br=13 res=died rl=0 z=NORM:2,FOOT:1 s=SQUASH:3,SNOW:3,PEA:4 lk=q:3/8/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:39:51 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:40:03 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:40:10 lvl=35 r=2 n=20 gt=38.5
+V 2026-11-01_17:40:27 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SNOW:5,PEA:4,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:40:38 lvl=35 r=3 n=25 gt=104.8
+S 2026-11-01_17:41:23 lvl=35 r=1 n=15 gt=3.6
+V 2026-11-01_17:41:37 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:41:44 lvl=35 r=2 n=20 gt=46.8
+V 2026-11-01_17:42:01 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=FOOT:1,NORM:5,PAIL:1 s=SNOW:5,SQUASH:4,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:42:05 lvl=35 r=3 n=25 gt=88.9
+V 2026-11-01_17:42:48 lvl=35 r=3 n=25 br=25 res=died rl=0 z=NORM:6,DANCER:1,JACK:1,PAIL:2 s=PEA:5,SNOW:5,HYPNO:5 lk=q:10/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:43:01 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:43:11 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:43:19 lvl=35 r=2 n=20 gt=35.1
+V 2026-11-01_17:43:36 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,PAIL:1,FOOT:1 s=SQUASH:4,SNOW:5,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:43:40 lvl=35 r=3 n=25 gt=77.9
+V 2026-11-01_17:44:47 lvl=35 r=3 n=25 br=25 res=died rl=0 z=NORM:6,PAIL:2,JACK:1,DANCER:1 s=SNOW:5,HYPNO:5,PEA:5 lk=q:10/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:45:00 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:45:11 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:45:18 lvl=35 r=2 n=20 gt=37.8
+V 2026-11-01_17:45:35 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=FOOT:1,NORM:5,PAIL:1 s=SNOW:5,SQUASH:4,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:45:39 lvl=35 r=3 n=25 gt=78.4
+V 2026-11-01_17:46:13 lvl=35 r=3 n=25 br=25 res=died rl=0 z=PAIL:2,DANCER:1,NORM:6,JACK:1 s=HYPNO:5,SNOW:5,PEA:5 lk=q:10/12/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:46:25 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:47:08 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:47:16 lvl=35 r=2 n=20 gt=100.4
+V 2026-11-01_17:47:36 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SQUASH:4,SNOW:5,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:47:41 lvl=35 r=3 n=25 gt=150.9
+V 2026-11-01_17:48:24 lvl=35 r=3 n=25 br=22 res=died rl=0 z=JACK:1,PAIL:2,NORM:4,DANCER:1 s=HYPNO:5,SNOW:5,PEA:4 lk=q:8/11/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:48:37 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:48:48 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=SQUASH:5,PEA:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:48:54 lvl=35 r=2 n=20 gt=35.8
+V 2026-11-01_17:49:12 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SQUASH:4,PEA:4,SNOW:5 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:49:56 lvl=35 r=1 n=15 gt=0.3
+V 2026-11-01_17:50:05 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:50:12 lvl=35 r=2 n=20 gt=34.0
+V 2026-11-01_17:50:35 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=FOOT:1,NORM:5,PAIL:1 s=PEA:4,SNOW:5,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:50:38 lvl=35 r=3 n=25 gt=85.7
+V 2026-11-01_17:51:17 lvl=35 r=3 n=25 br=22 res=died rl=0 z=NORM:5,PAIL:2,JACK:1,DANCER:1 s=SNOW:5,PEA:4,HYPNO:4 lk=q:9/10/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:51:30 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:51:40 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:51:48 lvl=35 r=2 n=20 gt=36.8
+V 2026-11-01_17:52:10 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SNOW:5,SQUASH:4,PEA:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:52:47 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:52:53 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:53:01 lvl=35 r=2 n=20 gt=28.7
+V 2026-11-01_17:53:25 lvl=35 r=2 n=20 br=20 res=died rl=1 z=NORM:4,FOOT:1,PAIL:1 s=SNOW:5,SQUASH:3,PEA:4 lk=q:4/3/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:53:38 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:53:49 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:53:56 lvl=35 r=2 n=20 gt=36.4
+V 2026-11-01_17:54:26 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SQUASH:4,PEA:4,SNOW:5 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:54:48 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:55:00 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:55:07 lvl=35 r=2 n=20 gt=39.2
+V 2026-11-01_17:55:30 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=NORM:5,FOOT:1,PAIL:1 s=SNOW:5,PEA:4,SQUASH:4 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:55:34 lvl=35 r=3 n=25 gt=92.5
+V 2026-11-01_17:56:18 lvl=35 r=3 n=25 br=21 res=died rl=0 z=NORM:6,PAIL:2,JACK:1 s=HYPNO:5,SNOW:3,PEA:4 lk=q:9/9/0,l:0/3/0,k:0/0/0
+S 2026-11-01_17:56:31 lvl=35 r=1 n=15 gt=0.4
+V 2026-11-01_17:56:41 lvl=35 r=1 n=15 br=15 res=clear rl=0 z=NORM:4,PAIL:1 s=PEA:5,SQUASH:5 lk=q:5/10/0,l:0/0/0,k:0/0/0
+S 2026-11-01_17:56:48 lvl=35 r=2 n=20 gt=35.1
+V 2026-11-01_17:57:12 lvl=35 r=2 n=20 br=20 res=clear rl=0 z=PAIL:1,NORM:5,FOOT:1 s=SQUASH:4,PEA:4,SNOW:5 lk=q:7/11/0,l:0/2/0,k:0/0/0
+S 2026-11-01_17:57:16 lvl=35 r=3 n=25 gt=90.5
+V 2026-11-01_17:57:58 lvl=35 r=3 n=25 br=25 res=won rl=0 z=NORM:6,JACK:1,PAIL:2,DANCER:1 s=PEA:5,HYPNO:5,SNOW:5 lk=q:10/12/0,l:0/3/0,k:0/0/0

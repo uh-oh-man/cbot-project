@@ -39,6 +39,12 @@ public static class VasePlanner {
   static int lvl = -1;
   public static int Round;                 // 0 = no vase round seen this attempt
   public static bool Hunting;              // a football is out, nothing to squash it with, squashes may still be in vases
+  // Mod author, round 3: "When the dancer shows up, start breaking all vases for hypnos. If there are one or two more backup
+  // dancers left, spam peas on them." On while an enemy DANCER is on the lawn, or 3+ enemy backups; off at <= 2 backups.
+  public static bool DanceHunt;
+  public static string LastWhy = "";   // the planner's current decision, for the panel
+  public const double BDANCE_GROW = 35;    // hp / game-s a backup dancer gains while it is not eating (replays 17:13:55, 17:16:02,
+                                           // 17:23:09: +40 every ~1 s from 270 to 2190; it paused while the backup was chewing)
   static bool active, hintFinal; static int hintRound, maxRound;
   static Rec cur;
   static HashSet<int> prevVases, vanished;
@@ -72,7 +78,9 @@ public static class VasePlanner {
     int v; if (hpSeen.TryGetValue(n, out v)) return v;
     switch (n) {
       case "NORM": case "BDANCE": return 570; case "CONE": return 940; case "PAIL": case "DOOR": return 1400;
-      case "FOOT": return 1900; case "JACK": return 900; default: return 800;
+      case "FOOT": return 1900; case "JACK": return 900;
+      case "BDANCEG": return 900;   // a backup as the planner should fear it: it keeps growing while it walks
+      default: return 800;
     }
   }
   static string F(double x) { return x.ToString("0.00", Inv); }
@@ -237,12 +245,13 @@ public static class VasePlanner {
   // (time needed to kill / time it has) over the zombies: < 1 holds, > 1 a breach is expected (capped at 3).
   // A standing squash / hypno takes the first zombie to reach it; each other plant in the way costs ~3 s of eating.
   static double LaneRisk(State s, List<Plt> rowPlants, int row, List<Zom> live, string extra, float extraX) {
-    var xs = new float[20]; var hp = new double[20]; var sp = new double[20]; int n = 0;
-    foreach (var z in live) if (z.Row == row && n < 19) { xs[n] = z.X; hp[n] = Seen.Hp(z); sp[n] = Speed(Mem.ZomName(z.Type)); n++; }
-    if (extra != null) { xs[n] = extraX; hp[n] = Hp(extra); sp[n] = Speed(extra); n++; }
+    var xs = new float[20]; var hp = new double[20]; var sp = new double[20]; var gr = new bool[20]; int n = 0;
+    foreach (var z in live) if (z.Row == row && n < 19) { string zn = Mem.ZomName(z.Type); xs[n] = z.X; hp[n] = Seen.Hp(z); sp[n] = Speed(zn); gr[n] = zn == "BDANCE"; n++; }
+    if (extra != null) { xs[n] = extraX; hp[n] = Hp(extra); sp[n] = Speed(extra); gr[n] = extra == "BDANCE" || extra == "BDANCEG"; n++; }
     if (n == 0) return 0;
     for (int i = 1; i < n; i++) for (int j = i; j > 0 && xs[j] < xs[j - 1]; j--) {   // nearest the house first
       float tx = xs[j]; xs[j] = xs[j - 1]; xs[j - 1] = tx; double th = hp[j]; hp[j] = hp[j - 1]; hp[j - 1] = th; th = sp[j]; sp[j] = sp[j - 1]; sp[j - 1] = th;
+      bool tg = gr[j]; gr[j] = gr[j - 1]; gr[j - 1] = tg;
     }
     foreach (var p in rowPlants) if (p.Type == SQUASH || p.Type == HYPNO)
       for (int i = 0; i < n; i++) if (hp[i] > 0 && xs[i] + 40 > Bot.CellX(p.Col) - 40) { hp[i] = 0; break; }
@@ -258,7 +267,9 @@ public static class VasePlanner {
       }
       if (dps <= 0) { worst = 3; break; }
       double reach = Math.Max(1, (xs[i] + 40) / (sp[i] * (slow ? 0.5 : 1))) + 3 * block;
-      t += hp[i] / dps;
+      // A backup dancer grows ~35 hp/s: one or two peas never catch up with it (17:23:09 lane 3: two shooters, 870 -> 1450 hp).
+      if (gr[i]) { double net = dps - BDANCE_GROW * 0.8; if (net <= 2) { worst = 3; break; } t += hp[i] / net; }
+      else t += hp[i] / dps;
       worst = Math.Max(worst, t / reach);
     }
     if (row >= 0 && row < 6 && s.Mowers[row] == 1) worst *= 0.6;   // a ready mower forgives one breach
@@ -283,13 +294,35 @@ public static class VasePlanner {
     var e = Estimate(s); double v;
     return e.RemZ.TryGetValue(name, out v) ? v : e.RemS.TryGetValue(name, out v) ? v : 0;
   }
-  // A dropped packet about to fade: learned lifetime when known, else the coin's own disappear counter
-  // (vanilla: 1500 ticks; the blink a player sees starts in the last ~3 s).
-  public static bool Fading(State s, uint coinId) {
-    double left = Learn.PacketTimeLeft(coinId);
-    if (left >= 0) return left < 3;
+  // A dropped packet about to fade. MEASURED in this mod (replays, K: age/disappear): a packet vanishes when its own
+  // disappear counter reaches 1500 ticks (8 untouched fades, all at 1488-1500; ~15.7 game-s after it first shows).
+  // Learn.PacketLifetime had drifted to ~11.3 s (it learns from packets that vanished for other reasons) and made every
+  // squash look "fading" ~8 s after it dropped - that parked/spent all of them before the football came out.
+  // So the coin's counter (it drives the blink a player sees) is the only clock used here.
+  public const int PACKET_LIFE = 1500, FADE_AT = 1250;   // ticks; fading = the last 2.5 game-s
+  public static double PacketLeft(State s, uint coinId) {   // game-s before it fades, -1 unknown
     var c = s.Suns.FirstOrDefault(x => x.Id == coinId);
-    return c != null && c.Disappear >= 1200;
+    return c == null ? -1 : Math.Max(0, (PACKET_LIFE - c.Disappear) / 100.0);
+  }
+  public static bool Fading(State s, uint coinId) {
+    var c = s.Suns.FirstOrDefault(x => x.Id == coinId);
+    return c != null && c.Disappear >= FADE_AT;
+  }
+  // Expected danger from this lane's unopened vases (P(zombie) by look, football-weighted): where shooters / snow peas should stand.
+  public static double LaneThreat(State s, int row) {
+    if (s.Vases.Count == 0) return 0;
+    var e = Estimate(s); var zf = Frac(e.RemZ, "NORM"); double pf; zf.TryGetValue("FOOT", out pf);
+    return s.Vases.Where(k => k / 10 == row).Sum(k => e.Pz(LookIdx(s, k))) * (1 + 3 * pf);
+  }
+  // A plant (not a squash / hypno) in the lane that a football will stop to eat, with a free cell right of it for the squash.
+  static bool HasBait(State s, List<Plt> rowPlants, int row) {
+    foreach (var p in rowPlants) {
+      if (p.Type == SQUASH || p.Type == HYPNO) continue;
+      int c = p.Col + 1;
+      if (c <= 8 && !s.Blocked.Contains(row * 10 + c) && !rowPlants.Any(q => q.Col == c)) return true;
+      if (p.Col >= 1 && !s.Blocked.Contains(row * 10 + p.Col - 1) && !rowPlants.Any(q => q.Col == p.Col - 1)) return true;
+    }
+    return false;
   }
 
   // ---------- Observe: what broke, what came out ----------
@@ -299,7 +332,7 @@ public static class VasePlanner {
     if (s.Level != lvl) { if (active) EndRound("left"); else ResetAttempt(); lvl = s.Level; BuildPriors(); }
     if (lastGT >= 0 && s.GameTime + 1 < lastGT) { if (active) EndRound("died"); else ResetAttempt(); }   // the clock restarted: a new attempt
     lastGT = s.GameTime;
-    if (s.Vases.Count == 0 && !active && Round == 0) { prevVases = null; status = ""; Hunting = false; return; }   // not a vase level (yet)
+    if (s.Vases.Count == 0 && !active && Round == 0) { prevVases = null; status = ""; Hunting = false; DanceHunt = false; return; }   // not a vase level (yet)
     double gt = s.GameTime;
     if (prevVases == null) { if (s.Vases.Count > 0) Resume(s); Snapshot(s); Finish(s); return; }
 
@@ -357,10 +390,12 @@ public static class VasePlanner {
     estFor = null;
     var e = Estimate(s); var live = Live(s);
     Hunting = s.Vases.Count > 0 && SquashHeld(s) == 0 && e.RemSquash > 0.3 && UncoveredFeet(s, live).Count > 0;
+    int nDancer = live.Count(z => Mem.ZomName(z.Type) == "DANCER"), nBack = live.Count(z => Mem.ZomName(z.Type) == "BDANCE");
+    DanceHunt = s.Vases.Count > 0 && !Hunting && (nDancer > 0 || nBack >= 1);   // owner: backups keep healing, peas never finish them - hunt hypnos while ANY backup is alive
     if (Round == 0) { status = ""; return; }
     int res = SquashReserve(s), held = SquashHeld(s);
     status = "VASE R" + Round + (FinalRound ? " (final)" : "") + ": " + (s.Vases.Count == 0 ? "between rounds" : s.Vases.Count + " left (?" + e.Q + " leaf" + e.Leaf + " skull" + e.Skull + ")")
-      + ", FOOT left~" + e.RemFoot.ToString("0.0", Inv) + ", squash " + held + "/reserve " + res + ", P(z|?)=" + F(e.PzQ) + (Hunting ? ", HUNT" : "");
+      + ", FOOT left~" + e.RemFoot.ToString("0.0", Inv) + ", squash " + held + "/reserve " + res + ", P(z|?)=" + F(e.PzQ) + (Hunting ? ", HUNT" : "") + (DanceHunt ? ", DANCE HUNT" : "");
   }
 
   static void StartRound(State s, int n) {
@@ -416,7 +451,7 @@ public static class VasePlanner {
   }
   static void ResetAttempt() {
     Round = 0; active = false; cur = null; hintFinal = false; hintRound = 0; vanished = null; pending.Clear(); look.Clear();
-    clearT = -1; lastClickGT = -99; prevVases = null; Hunting = false; status = ""; estFor = null;
+    clearT = -1; lastClickGT = -99; prevVases = null; Hunting = false; DanceHunt = false; status = ""; estFor = null;
   }
 
   // Dave's lines (bot.cs): "more vases" -> 2, "the last of 'em" -> final. Only ever raises the round (hot reload resets the bot's copy to 1).
@@ -445,11 +480,30 @@ public static class VasePlanner {
 
   // ---------- ChooseBreak: the risk planner ----------
   // now: monotone wall-clock seconds (pacing defaults are the lead's wall-clock values). Returns row*10+col, or -1 (why says why, "" = just pacing).
+  const double RUSH_GAP = 0.3;   // wall-clock s between round-1 breaks
   public static int ChooseBreak(State s, double now, out string why) {
     why = "";
-    if (s.Vases.Count == 0 || now - lastBreakNow < 0.5 || now < nextEval) return -1;
+    // Owner's order: round 1 (NORM / PAIL, ~5 squashes inside) is broken back-to-back to get the squashes out fast; no
+    // risk / threat / crowd / weapon-on-lawn vetoes. bot.cs only calls this with an empty cursor, and dropped packets are
+    // still planted by the pro loop between clicks. (An older all-at-once try died in round 1 3/4 times, but that was with the
+    // broken packet-fade clock that dumped the squashes early.)
+    bool rush = Round == 1 && !FinalRound;
+    if (s.Vases.Count == 0 || now - lastBreakNow < (rush ? RUSH_GAP : 0.5) || now < nextEval) return -1;
     var e = Estimate(s); var live = Live(s); var rows = ByRow(s);
     int held = SquashHeld(s);
+    if (rush) {
+      bool hopeless1 = live.Any(z => !s.Plants.Any(p => p.Row == z.Row));
+      if (s.Vases.Count == 1 && live.Count > 0 && !hopeless1) { why = "wait: last vase of round 1 - clearing the lawn first (breaking it wipes our plants)"; nextEval = now + 0.25; return -1; }
+      int rb = -1; double rs = 1e9;
+      foreach (int k in s.Vases) {   // most likely plant first, from the right (whatever comes out starts far from the house)
+        double sc = -e.Pp(LookIdx(s, k)) - 0.01 * (k % 10);
+        if (sc < rs) { rs = sc; rb = k; }
+      }
+      if (rb < 0) return -1;
+      why = "r" + rb / 10 + "c" + rb % 10 + " " + LookName(LookIdx(s, rb)) + " : P(plant)=" + F(e.Pp(LookIdx(s, rb))) + ", squash " + held + ", zombies out " + live.Count + " [round 1 rush]";
+      lastBreakNow = now; lastClickGT = s.GameTime;
+      return rb;
+    }
     bool weaponOnLawn = s.Suns.Any(c => c.IsPacket && c.Seed != SQUASH && !(c.Seed == HYPNO && HypnoTarget(s) == null));   // a held squash never blocks breaking
     bool desperate = !weaponOnLawn && live.Count <= 3 && live.Any(z => z.X < 380 && !s.Plants.Any(p => p.Row == z.Row && p.Col * 80 + 40 < z.X));
     var feet = UncoveredFeet(s, live);
@@ -460,13 +514,15 @@ public static class VasePlanner {
       int rr = r;
       if (lane[r] > 1 || live.Any(z => z.Row == rr && (z.X < 300 || (z.X < 600 && dps == 0)))) threat = true;
     }
-    if (weaponOnLawn && !desperate && !Hunting) { why = "wait: a dropped plant is still on the lawn"; nextEval = now + 0.25; return -1; }
+    if (weaponOnLawn && !desperate && !Hunting && !DanceHunt) { why = "wait: a dropped plant is still on the lawn"; nextEval = now + 0.25; return -1; }
     // Owner's rule: a zombie walking down a completely empty lane cannot be stopped anyway - then the last vase may as well go.
     bool hopeless = live.Any(z => !s.Plants.Any(p => p.Row == z.Row));
     if (s.Vases.Count == 1 && !FinalRound && live.Count > 0 && !hopeless) { why = "wait: last vase of the round - clearing the lawn first (breaking it wipes our plants)"; nextEval = now + 0.25; return -1; }
 
     var zf = Frac(e.RemZ, "NORM"); var sf = Frac(e.RemS, "PEA");
     double pSq; sf.TryGetValue("SQUASH", out pSq);
+    double pHy; sf.TryGetValue("HYPNO", out pHy);
+    var dancers = live.Where(z => { var nm = Mem.ZomName(z.Type); return nm == "DANCER" || nm == "BDANCE"; }).ToList();
     bool needSquash = held == 0 && (feet.Count > 0 || e.RemFoot >= 0.5);
     bool needHypno = live.Any(z => { var nm = Mem.ZomName(z.Type); return nm == "DANCER" || nm == "BDANCE" || nm == "PAIL" || nm == "FOOT"; });
     bool needShooter = lane.Any(d => d > 0.8) || s.Vases.Any(k => k / 10 >= 0 && k / 10 < 6 && !rows[k / 10].Any(p => IsShooter(p.Type)));
@@ -480,31 +536,77 @@ public static class VasePlanner {
       double pz = e.Pz(lk), pp = e.Pp(lk), rz = 0;
       foreach (var kv in zf) {
         double d = LaneRisk(s, rows[row], row, live, kv.Key, Bot.CellX(col) - 40);
-        if (kv.Key == "FOOT" && held > 0) d *= 0.5;   // a squash in hand answers one football once it stops to eat
+        // A squash in hand answers one football once it stops to eat - only if the lane has a plant for it to stop at
+        // (a football in an empty lane never stops: replay 17:04:22, lane 3 got its first plant 1.7 s after the football came out).
+        if (kv.Key == "FOOT" && held > 0 && HasBait(s, rows[row], row)) d *= 0.5;
+        else if (kv.Key == "FOOT" && held > 0) d *= 1.2;
+        // A dancer brings backups into its lane and both neighbours: the release is only as safe as the weakest of the three.
+        if (kv.Key == "DANCER")
+          for (int nr = row - 1; nr <= row + 1; nr++) if (nr >= 0 && nr < 6 && (nr == row || rows[nr].Count > 0 || s.Vases.Any(v => v / 10 == nr)))
+            d = Math.Max(d, LaneRisk(s, rows[nr], nr, live, "BDANCEG", Bot.CellX(col) - 140));
         rz += kv.Value * d;
       }
       double risk = pz * (rz + 0.1 * live.Count), score;
       if (Hunting && feet.Count > 0) {   // Darth's gambit: dig for the squash, away from the football's lane
         int rd = feet.Min(f => Math.Abs(f.Row - row));
         score = -(pp * pSq * 3 + pp * 0.3) + 0.5 * risk - 0.05 * rd;
+      } else if (DanceHunt) {   // dig for hypnos (and shooters), away from the dancer group's lanes
+        bool near = dancers.Any(z => Math.Abs(z.Row - row) <= 1);
+        score = -(pp * pHy * 3 + pp * 0.4) + 0.5 * risk + (near ? 0.3 * pz : 0);
       } else score = risk - 0.6 * pp * plantVal;
+      // Never pour zombies into a lane with no shooter: replay 17:34:37 - the dance hunt opened four vases in unarmed
+      // lane 3 in 7 s (PAIL + 2 NORM out), lane 3 stayed empty and they walked in after the last vase. Hunts skip the
+      // safety waits, so this penalty is what keeps them out of undefended lanes (worse if that lane already has enemies).
+      int lsh = rows[row].Count(p => IsShooter(p.Type));
+      // (raised 1.2 -> 2.0: 17:42:48 / 17:34:37 still opened the last lane-3 vases with "armed x0" during the dance hunt)
+      if (lsh == 0) score += pz * (2.0 + 0.8 * live.Count(z => z.Row == row) + (lane[row] >= 2 ? 1.5 : 0));
+      // Busy lane: its shooters are already working on a tough zombie (or losing). Another zombie there now only stacks on
+      // them (17:42:48: lane 4 opened 4 vases in 4 s - NORM, JACK, PAIL out against 2 shooters - and broke).
+      else if (Busy(row, live, lane)) score += pz * (0.8 + Math.Min(2, lane[row]));
       score -= 0.01 * col;   // tie-break from the right: whatever comes out starts far from the house
       if (score < bestScore) { bestScore = score; best = k; bestRisk = risk; bestPz = pz; bestPp = pp; }
     }
     if (best < 0) return -1;
-    double gap = Hunting ? 0.5 : desperate ? 0.8 : threat ? 2.5 : 1.8;   // 1.0 flooded round 2 (10 vases in 9 s -> a football out before any defence)
-    if (!Hunting && !threat && bestRisk < 0.15) gap = Math.Min(gap, 0.6);   // computed low risk: no reason to wait
+    double gap = Hunting ? 0.5 : DanceHunt ? 0.6 : desperate ? 0.6 : threat ? 1.2 : 0.8;   // owner: "it should always be doing an action" (was 2.5 / 1.8 s of idle)   // 1.0 flooded round 2 (10 vases in 9 s -> a football out before any defence)
+    if (!Hunting && !threat && bestRisk < 0.15) gap = Math.Min(gap, 0.4);   // computed low risk: no reason to wait
+    // Squash clock: a squash in hand lives ~15.7 game-s and a football can still come. Every vase opened while it lives is a
+    // chance to meet the football WITH the squash; at the old 3.5 s pace the four round-2 squashes all expired before it came
+    // (17:05:45: football from the 19th vase at 136 s, last squash gone at ~115 s). Open vases quickly while it lasts.
+    bool squashClock = held > 0 && feet.Count == 0 && e.RemFoot >= 0.5;
+    if (squashClock) gap = Math.Min(gap, threat ? 1.4 : 0.9);
     if (now - lastBreakNow < gap) { nextEval = now + 0.1; return -1; }
-    if (!Hunting && !desperate) {
-      if (live.Count >= 3 && bestPz > 0.2) { why = "wait: " + live.Count + " zombies out, best vase still P(zombie)=" + F(bestPz) + " - letting the shooters thin them"; nextEval = now + 0.25; return -1; }
-      if (live.Count > 0 && bestRisk > 1.5) { why = "wait: every vase too risky now (best risk " + F(bestRisk) + ")"; nextEval = now + 0.25; return -1; }
+    // Final round endgame pacing: nothing new can come after the last vase and the last-vase wait is off, so do not release
+    // a likely zombie into a lane that is unarmed or already busy - give its shooters up to 5 game-s to clear it first (the
+    // dance hunt skips the other waits; backups keep healing, so this wait is capped, never a stall).
+    {
+      int fr = best / 10;
+      bool unarmed = !rows[fr].Any(p => IsShooter(p.Type));
+      if (FinalRound && !Hunting && !desperate && bestPz > 0.3 && (unarmed || Busy(fr, live, lane)) && s.GameTime - lastClickGT >= 0 && s.GameTime - lastClickGT < (DanceHunt ? 3.0 : 5.0)) {
+        why = "wait: final round - best vase r" + fr + "c" + best % 10 + " P(zombie)=" + F(bestPz) + " goes into lane " + fr + (unarmed ? " (no shooter)" : " (busy, risk " + F(lane[fr]) + ")") + " - pacing";
+        nextEval = now + 0.25; return -1;
+      }
+    }
+    if (!Hunting && !desperate && !DanceHunt) {
+      if (live.Count >= 4 && bestPz > 0.35) { why = "wait: " + live.Count + " zombies out, best vase still P(zombie)=" + F(bestPz) + " - letting the shooters thin them"; nextEval = now + 0.25; return -1; }
+      if (live.Count > 0 && bestRisk > 2.5) { why = "wait: every vase too risky now (best risk " + F(bestRisk) + ")"; nextEval = now + 0.25; return -1; }
     }
     int br = best / 10, bc = best % 10, armed = rows[br].Count(p => p.Col < bc && IsShooter(p.Type)), res = SquashReserve(s);
     why = "r" + br + "c" + bc + " " + LookName(LookIdx(s, best)) + " : P(zombie)=" + F(bestPz) + " P(plant)=" + F(bestPp) + ", lane " + br + " armed x" + armed
         + " (risk " + F(bestRisk) + ", lane now " + F(lane[br]) + "), FOOT remaining~" + e.RemFoot.ToString("0.0", Inv) + ", squash " + held + "/reserve " + res
-        + (Hunting ? " [HUNT: P(squash|plant)=" + F(pSq) + "]" : desperate ? " [desperate]" : threat ? " [threat]" : "") + (FinalRound ? " [final round]" : "");
+        + (Hunting ? " [HUNT: P(squash|plant)=" + F(pSq) + "]" : DanceHunt ? " [DANCE HUNT: " + dancers.Count + " dancers out, P(hypno|plant)=" + F(pHy) + "]" : desperate ? " [desperate]" : threat ? " [threat]" : "") + (squashClock ? " [squash clock]" : "") + (FinalRound ? " [final round]" : "");
     lastBreakNow = now; lastClickGT = s.GameTime;
     return best;
+  }
+
+  // A lane whose shooters are busy: a tough enemy (bucket, jack, dancer, backup, football...) walking in it, or it is losing.
+  static bool Busy(int row, List<Zom> live, double[] lane) {
+    if (row < 0 || row > 5) return false;
+    if (lane[row] > 0.8) return true;
+    return live.Any(z => {
+      if (z.Row != row || z.X >= 720) return false;
+      string n = Mem.ZomName(z.Type);
+      return n == "PAIL" || n == "JACK" || n == "DANCER" || n == "BDANCE" || n == "FOOT" || n == "CONE" || n == "DOOR" || Seen.Hp(z) >= 900;
+    });
   }
 
   // ---------- Squash / hypno advice ----------
@@ -516,9 +618,11 @@ public static class VasePlanner {
     bool fast = Speed(n) >= 25 || n == "REGEN";
     if (n == "FOOT") return z.Eating || fading || z.X < 160;   // near the house nothing is lost by trying
     if (Tough.Contains(n) || Seen.Hp(z) >= 1700) return !fast || z.Eating || fading || z.X < 160;
-    if (fading) return true;
     var live = Live(s); var rows = ByRow(s);
     double danger = z.Row >= 0 && z.Row < 6 ? LaneRisk(s, rows[z.Row], z.Row, live, null, 0) : 0;
+    // A fading squash on a zombie the lane already handles is wasted (17:05:26: squash on a 190 hp NORM facing a pea + snow).
+    // Then the caller parks it in front of the vases instead (AmbushCell), or falls back to any zombie if there is no spot.
+    if (fading) return danger >= 0.5 || Seen.Hp(z) >= 1000;
     if (!active && s.Vases.Count == 0) return danger > 1 || Seen.Hp(z) >= 1000;   // not a vase round: no reserve to keep
     int reserve = SquashReserve(s), held = SquashHeld(s);
     if (reserve == 0) return danger >= 0.7 || Seen.Hp(z) >= 1000;   // no football can come: squashes are free
@@ -550,10 +654,86 @@ public static class VasePlanner {
   }
 
   // Hypno target: the dancer, then its backup dancers, then tough ones. Never a charmed zombie, never one with a hypno already in its path.
-  public static Zom HypnoTarget(State s) {
+  public static Zom HypnoTarget(State s) { return HypnoTargets(s).FirstOrDefault(); }
+  public static List<Zom> HypnoTargets(State s) {
     Func<string, int> pri = nm => nm == "DANCER" ? 4 : nm == "BDANCE" ? 3 : (nm == "PAIL" || nm == "FOOT" || nm == "REGEN" || nm == "GARG") ? 2 : 0;
-    return s.Zombies.Where(z => z.X < 650 && !z.Charmed && pri(Mem.ZomName(z.Type)) > 0
-                              && !s.Plants.Any(q => q.Row == z.Row && q.Type == HYPNO && Bot.CellX(q.Col) < z.X + 30))
-                    .OrderByDescending(z => pri(Mem.ZomName(z.Type))).ThenBy(z => z.X).FirstOrDefault();
+    var rows = ByRow(s); var live = Live(s);
+    // Dancers are worth chasing up to the vase columns (a dancer from a col-8 vase starts at ~x 690).
+    return s.Zombies.Where(z => z.X < (pri(Mem.ZomName(z.Type)) >= 3 ? 740 : 650) && !z.Charmed && pri(Mem.ZomName(z.Type)) > 0
+                              && !s.Plants.Any(q => q.Row == z.Row && q.Type == HYPNO && Bot.CellX(q.Col) < z.X + 30)
+                              // Already being finished by one of OUR charmed zombies (replay 17:42:48: the last hypno went on a 271 hp
+                              // dancer locked in a fight with our charmed backup - it was dead 3 s later; the PAIL in unarmed lane 3 then walked in).
+                              && !(Seen.Hp(z) < 500 && s.Zombies.Any(o => o.Charmed && o.Row == z.Row && Math.Abs(o.X - z.X) < 90))
+                              // A bucket the lane's shooters already beat is not worth a hypno while vases (the dancer!) can still come:
+                              // hypnos are the only answer to backups (owner), so keep it for those.
+                              && !(Mem.ZomName(z.Type) == "PAIL" && s.Vases.Count > 0 && z.Row >= 0 && z.Row < 6 && LaneRisk(s, rows[z.Row], z.Row, live, null, 0) < 0.7))
+                    .OrderByDescending(z => pri(Mem.ZomName(z.Type))).ThenBy(z => z.X).ToList();
+  }
+  // A hypno packet with no target yet: hold it while it lives (a dancer / pail may come out of the next vases and the main hypno
+  // rule then puts it exactly in that zombie's path), and park it only in its last ~4 game-s. Parking at once (the old rule)
+  // fed hypnos to whatever came next - 17:44:47: three hypnos stacked in lane 0, one charmed a NORM, and the dancer from the
+  // last vase (lane 2) met none.
+  public const double HYPNO_PARK_LEFT = 4.0;
+  public static bool ParkHypnoNow(State s, uint coinId) {
+    double left = PacketLeft(s, coinId);
+    return left < 0 || left <= HYPNO_PARK_LEFT || s.Vases.Count <= 1;
+  }
+  // Where to park a hypno that would otherwise fade. One per lane (stacking a 2nd/3rd in one lane wasted them, 17:44:47), in the
+  // lane whose unopened vases most likely release a tough zombie (dancer x2, pail, jack), preferring lanes with shooters, and
+  // just in front of those shooters with a free column before the nearest vase: weak NORMs die to the peas on the way, tough
+  // ones arrive and eat it (17:44:47: a hypno right next to a vase at r3c4 charmed the 270 hp NORM that came out of it).
+  public static string HypnoParkWhy = "";
+  public static int HypnoParkCell(State s, Func<int, int, bool> free) {
+    HypnoParkWhy = "";
+    if (s.Vases.Count == 0) return -1;
+    var e = Estimate(s); var zf = Frac(e.RemZ, "NORM"); var live = Live(s); var rows = ByRow(s);
+    double pT = 0, v;
+    if (zf.TryGetValue("DANCER", out v)) pT += 2 * v;
+    foreach (var nm in new[] { "PAIL", "JACK", "FOOT", "CONE", "DOOR" }) if (zf.TryGetValue(nm, out v)) pT += v;
+    int bestCell = -1; double bestW = 0;
+    for (int row = 0; row < 6; row++) {
+      int rr = row;
+      var vs = s.Vases.Where(k => k / 10 == rr).ToList();
+      if (vs.Count == 0) continue;
+      int minV = vs.Min(k => k % 10);
+      if (minV < 2) continue;
+      int front = rows[row].Where(p => IsShooter(p.Type)).Select(p => p.Col).DefaultIfEmpty(-1).Max();
+      int nShoot = rows[row].Count(p => IsShooter(p.Type));
+      int hyp = rows[row].Count(p => p.Type == HYPNO);
+      int lo = Math.Max(1, front + 1), hi = minV - 1;
+      if (lo > hi) continue;
+      int target = Math.Max(lo, Math.Min(Math.Min(3, minV - 2), hi));
+      var order = new List<int>();
+      for (int c = target; c >= lo; c--) order.Add(c);
+      for (int c = target + 1; c <= hi; c++) order.Add(c);
+      int cell = -1;
+      foreach (int c in order) if (free(row, c)) { cell = c; break; }
+      if (cell < 0) continue;
+      int cc = cell;
+      if (live.Any(z => z.Row == rr && z.X + 30 < Bot.CellX(cc))) continue;   // something already walked past the spot
+      double w = vs.Sum(k => e.Pz(LookIdx(s, k))) * (0.3 + pT) * (nShoot >= 1 ? 1.0 : 0.6) / (1 + 3 * hyp);
+      if (live.Any(z => z.Row == rr && z.X + 30 >= Bot.CellX(cc))) w *= 0.5;   // a walker already on its way would get it first
+      if (w > bestW) { bestW = w; bestCell = row * 10 + cell; }
+    }
+    if (bestCell >= 0) HypnoParkWhy = "lane " + bestCell / 10 + " (tough-zombie weight " + F(bestW) + ", in front of its shooters, one hypno per lane)";
+    return bestCell;
+  }
+  // Where a hypno must go so that TARGET z is the first enemy to bite it. A dancer always has a backup ~100 px in front of it
+  // in its own lane, so the old "one column ahead" spot fed the hypno to that backup (17:13:55: hypno r4c4 for the dancer at
+  // x 466 went to the backup at 366; 17:16:02: parked r0c3, dancer stopped at 365, backup at 265 took it). The cells that
+  // worked were the dancer's own (17:23:09 r3c5 vs x 438, 17:18:31 r4c3 vs x 283): measured, a zombie at x bites a plant in
+  // the column whose left edge L = 40 + 80c lies about in (x - 40, x + 15). So: the column under the target, or the next one
+  // ahead - but never where another enemy in the lane would reach it first. free(row, col) = may plant there. -1: no spot.
+  public static int HypnoCell(State s, Zom z, Func<int, int, bool> free) {
+    if (z == null) return -1;
+    int c0 = (int)Math.Round((z.X - 50) / 80.0);
+    for (int c = Math.Min(8, c0); c >= Math.Max(0, c0 - 2); c--) {
+      double L = 40 + 80 * c;
+      if (L > z.X + 20) continue;   // already behind the target (17:42:48: L 360 vs x 336-339 = +21..24 -> MISS)
+      bool first = !s.Zombies.Any(o => o.Id != z.Id && !o.Charmed && o.Row == z.Row && o.X < z.X && o.X > L - 45);
+      if (!first) continue;
+      if (free(z.Row, c)) return z.Row * 10 + c;
+    }
+    return -1;
   }
 }

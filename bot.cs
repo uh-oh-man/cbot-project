@@ -255,6 +255,7 @@ public static partial class Bot {
           vaseFinalRound = vaseFinalRound || VasePlanner.FinalRound;
           if (s.Vases.Count > 0 && Mem.CursorType() == 0) {
             string vwhy; int v = VasePlanner.ChooseBreak(s, DateTime.Now.Ticks / 1e7, out vwhy);
+            if (!string.IsNullOrEmpty(vwhy)) VasePlanner.LastWhy = (v >= 0 ? "breaking " : "") + vwhy;
             if (v >= 0) {
               lastVase = DateTime.Now;
               if (!vaseSeen) { vaseSeen = true; Event("VASEBREAKER: risk planner - opening the vase with the best odds, only when the lawn can take it"); }
@@ -466,7 +467,8 @@ public static partial class Bot {
     Pvz.Click(yes ? 424 : 600, 497);
   }
   // Live self-test of message clicks: pick up a seed by message and check the game's cursor state.
-  static int postTest;   // 0 untested, 1 works, -1 does not
+  static int postTest, postTries;   // 0 untested, 1 works, -1 does not (retried every 15 s, up to 8 times)
+  static DateTime postRetryAt = DateTime.MinValue;
   static void SelfTestPostClick(Pkt p) {
     if (Mem.CursorType() != 0) return;
     Pvz.PostClick(p.CX, p.CY);
@@ -476,8 +478,8 @@ public static partial class Bot {
       postTest = 1; Pvz.UsePost = true;
       Event("SPEED-UP: message clicks work (seed picked up without moving the mouse) - switching to fast input");
     } else {
-      postTest = -1; Pvz.UsePost = false;
-      Event("message clicks did not register (cursor state " + ct + ") - staying with normal mouse clicks");
+      postTest = -1; Pvz.UsePost = false; postTries++; postRetryAt = DateTime.Now.AddSeconds(15);
+      Event("message clicks did not register (cursor state " + ct + ") - normal mouse clicks for now, retrying in 15 s (try " + (postTries + 1) + "/8)");
     }
   }
   // The No button moves with the dialog's text length (2-line vs 3-line warnings), so try the likely heights until it closes.
@@ -666,7 +668,9 @@ public static partial class Bot {
   static void ExecutePlant(State s, Cand act, ref DateTime lastPlant) {
     lastPlant = DateTime.Now;
     var p = act.P; int before = s.Plants.Count;
-    if (postTest == 0 && !act.ShovelFirst) { SelfTestPostClick(p); if (Pvz.UsePost) { lastPlant = DateTime.Now; } }
+    // Fast (message) input: test it, and if a test fails (e.g. right after a reload the game is still busy) try again later
+    // instead of staying on slow mouse clicks for the whole run (seen 17:29: one failed test = 250 ms per plant all session).
+    if ((postTest == 0 || (postTest == -1 && postTries < 8 && DateTime.Now > postRetryAt)) && !act.ShovelFirst) { SelfTestPostClick(p); if (Pvz.UsePost) { lastPlant = DateTime.Now; } }
     if (p.FromCoin) Learn.PacketsTaken.Add(p.CoinId);
     if (act.ShovelFirst) {
       Pvz.FastClick(ShovelX(s), 36); Thread.Sleep(60);

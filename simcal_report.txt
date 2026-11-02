@@ -1,0 +1,26 @@
+SIM CALIBRATION REPORT 2026-11-01 17:58:25  (25831 log lines, 50 level segments)
+Report only: Pro is non-learning and never reads this file.
+
+ZOMBIE MOTION at +5 s, per kind (speed bias = real px moved / sim px moved; >1 means the sim is too slow)
+kind          n    sim px   real px    bias   |x err|    simDead   simAlive  bothGone
+NORM       1789      54.5      51.7    0.95      11.7        192        101       676
+BDANCE     1122      37.9      28.5    0.75      22.0         52          1        49
+PAIL        718      39.5      41.7    1.06      11.8         22         30        82
+DANCER      217      65.2      24.7    0.38      47.1          4          1        14
+FOOT         19      48.3     104.7    2.17      94.7          3         41         4
+JACK          0       0.0       0.0       -       0.0          0          8         0
+  simDead = sim killed it within 5 s but it was alive; simAlive = sim kept it but it was gone (killed, mowed, or bombed).
+
+LANE BREACH TIME (actual = mower fired / game over in that lane; err = actual - predicted, s; confounded = a plant went into the lane first)
+lane  preds brkPred   hits  mean err mean|err|   conf  averted  falseAl   miss missConf  holdOk
+0      1936      56      1       1.9       1.9     20       22       13      0       12    1868
+1      1951      98     46       1.7       3.4      0       21       31      2        2    1849
+2      2080     196    121       8.4      10.0     12       21       42     30       13    1841
+3      2134     233    145       3.7       5.3     31       46       11      6       37    1858
+4      2108     239    161       5.5       6.4     10       48       20     14       13    1842
+
+BREACH ERROR BY HORIZON (clean hits only)
+<10 s    n   231  mean err     6.1  mean|err|     6.3
+10-20 s  n   115  mean err     5.5  mean|err|     6.9
+20-40 s  n   128  mean err     3.7  mean|err|     7.2
+  Predictions repeat every 2 s per lane, so counts are correlated; averted = sim said breach, a plant went in, no breach followed.

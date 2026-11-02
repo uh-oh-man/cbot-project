@@ -150,6 +150,7 @@ public static class Learn {
   // Dropped seed packets: how long they stay on the lawn before fading (learned from ones that expired untouched).
   public static double PacketLifetime = -1; static int lifetimeN;
   static readonly Dictionary<uint, double> packetSeen = new Dictionary<uint, double>();
+  static readonly Dictionary<uint, int> packetCtr = new Dictionary<uint, int>(), packetCtr0 = new Dictionary<uint, int>();   // disappear counter: last seen / first seen
   public static readonly HashSet<uint> PacketsTaken = new HashSet<uint>();   // ones we picked up ourselves
   public static double PacketTimeLeft(uint id) {
     double t0; if (PacketLifetime < 0 || !packetSeen.TryGetValue(id, out t0)) return -1;
@@ -158,10 +159,14 @@ public static class Learn {
   }
   static void TrackPackets(State s, double now) {
     var present = new HashSet<uint>();
-    foreach (var c in s.Suns.Where(c => c.IsPacket)) { present.Add(c.Id); if (!packetSeen.ContainsKey(c.Id)) packetSeen[c.Id] = now; }
+    foreach (var c in s.Suns.Where(c => c.IsPacket)) { present.Add(c.Id); if (!packetSeen.ContainsKey(c.Id)) { packetSeen[c.Id] = now; packetCtr0[c.Id] = c.Disappear; } packetCtr[c.Id] = c.Disappear; }
     foreach (var id in packetSeen.Keys.Where(k => !present.Contains(k)).ToList()) {
-      double life = now - packetSeen[id]; packetSeen.Remove(id);
-      if (PacketsTaken.Remove(id) || life < 2 || s.Plants.Count == 0) continue;   // we used it, or the level ended
+      int c0, c1; packetCtr0.TryGetValue(id, out c0); packetCtr.TryGetValue(id, out c1); packetCtr0.Remove(id); packetCtr.Remove(id);
+      // Only a packet that really ran its clock out counts (its fade counter was near the end when last seen) - packets
+      // collected, wiped by a round change or swept up at level end used to drag the estimate down to ~11 s (real: ~15.7 s).
+      // Time it was already on the lawn before we first saw it (bot restarted) is added back from the counter.
+      double life = now - packetSeen[id] + Math.Max(0, c0) / 100.0; packetSeen.Remove(id);
+      if (PacketsTaken.Remove(id) || life < 2 || s.Plants.Count == 0 || c1 < 1400) continue;
       double old = PacketLifetime;
       PacketLifetime = lifetimeN == 0 ? life : PacketLifetime * 0.7 + life * 0.3; lifetimeN++;
       if (lifetimeN == 1 || Math.Abs(PacketLifetime - old) > 2) Lesson("dropped seed packets fade after ~" + PacketLifetime.ToString("0") + "s if nobody picks them up");
@@ -490,7 +495,7 @@ public static class Learn {
       foreach (var lv in LevelUse) foreach (var u in lv.Value) lines.Add("LU|" + lv.Key + "|" + u.Key + "|" + u.Value);
       foreach (var rg in RangeMax) lines.Add("R|" + rg.Key + "|" + rg.Value.ToString(IC) + "|" + (rangeN.ContainsKey(rg.Key) ? rangeN[rg.Key] : 0));
       foreach (var u in unhurtD) if (u.Value.Count > 0) lines.Add("RU|" + u.Key + "|" + string.Join(";", u.Value.Select(d => d.ToString("0", IC))));
-      lines.Add("T|" + PacketLifetime.ToString(IC) + "|" + lifetimeN);
+      lines.Add("T2|" + PacketLifetime.ToString(IC) + "|" + lifetimeN);
       foreach (var v in SeedValue) lines.Add("V|" + v.Key + "|" + v.Value.ToString(IC));
       lines.Add("K|" + SkyBaseline.ToString(IC));
       foreach (var p in Picks) lines.Add(string.Join("|", "U", p.Key, p.Value[0], p.Value[1]));
@@ -514,7 +519,7 @@ public static class Learn {
         else if (p[0] == "D2") LevelDeaths[int.Parse(p[1])] = int.Parse(p[2]);
         else if (p[0] == "LU") { int lv = int.Parse(p[1]); if (!LevelUse.ContainsKey(lv)) LevelUse[lv] = new Dictionary<int, int>(); LevelUse[lv][int.Parse(p[2])] = int.Parse(p[3]); }
         else if (p[0] == "R") { RangeMax[int.Parse(p[1])] = double.Parse(p[2], IC); rangeN[int.Parse(p[1])] = int.Parse(p[3]); }
-        else if (p[0] == "T") { PacketLifetime = double.Parse(p[1], IC); lifetimeN = int.Parse(p[2]); }
+        else if (p[0] == "T2") { PacketLifetime = double.Parse(p[1], IC); lifetimeN = int.Parse(p[2]); }
         else if (p[0] == "V") SeedValue[int.Parse(p[1])] = double.Parse(p[2], IC);
         else if (p[0] == "K") SkyBaseline = double.Parse(p[1], IC);
         else if (p[0] == "U") Picks[int.Parse(p[1])] = new[] { int.Parse(p[2]), int.Parse(p[3]) };

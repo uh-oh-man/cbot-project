@@ -268,6 +268,7 @@ public static class Viz {
       int y = dr.Y;
       if (sav != null) g.DrawString("SAVING: " + sav, f9b, new SolidBrush(gold), dr.X, y);
       else if (ch != null) g.DrawString("DOING: " + ch.Label + " - " + ch.Why, f9b, new SolidBrush(green), dr.X, y);
+      else if (VasePlanner.Active && VasePlanner.LastWhy.Length > 0) g.DrawString(Fit("VASES: " + VasePlanner.LastWhy, 95), f9b, new SolidBrush(green), dr.X, y);   // vase levels: the action is breaking vases
       else g.DrawString("nothing worth planting right now", f9, dim, dr.X, y);
       y += 17;
       double top = cs.Count > 0 ? Math.Max(1, cs[0].Score) : 1;

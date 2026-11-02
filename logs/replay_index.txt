@@ -7,3 +7,43 @@
 2026-11-01 17:03:32 lvl=35 result=DIED round=1 killer=FOOT dur=0.0s lines=4 file=20261101_170332_lvl35_DIED.txt round 2 vases left 4 killer=FOOT
 2026-11-01 17:04:22 lvl=35 result=DIED round=2 killer=FOOT dur=74.3s lines=220 file=20261101_170422_lvl35_DIED.txt round 2 vases left 9 killer=FOOT
 2026-11-01 17:05:45 lvl=35 result=DIED round=2 killer=FOOT dur=140.8s lines=250 file=20261101_170545_lvl35_DIED.txt round 2 vases left 1 killer=FOOT
+2026-11-01 17:08:25 lvl=35 result=DIED round=3 killer=BDANCE dur=294.6s lines=250 file=20261101_170825_lvl35_DIED.txt round 3 vases left 0 killer=BDANCE
+2026-11-01 17:09:28 lvl=35 result=DIED round=1 killer=NORM dur=99.5s lines=250 file=20261101_170928_lvl35_DIED.txt round 1 vases left 0 killer=NORM
+2026-11-01 17:11:38 lvl=35 result=DIED round=3 killer=BDANCE dur=234.4s lines=250 file=20261101_171138_lvl35_DIED.txt round 3 vases left 1 killer=BDANCE
+2026-11-01 17:13:55 lvl=35 result=DIED round=3 killer=BDANCE dur=248.4s lines=250 file=20261101_171355_lvl35_DIED.txt round 3 vases left 0 killer=BDANCE
+2026-11-01 17:14:41 lvl=35 result=RELOAD round=1 killer=- dur=67.2s lines=188 file=20261101_171441_lvl35_RELOAD.txt
+2026-11-01 17:16:02 lvl=35 result=DIED round=3 killer=BDANCE dur=155.7s lines=250 file=20261101_171602_lvl35_DIED.txt round 3 vases left 11 killer=BDANCE
+2026-11-01 17:18:31 lvl=35 result=DIED round=3 killer=PAIL dur=273.0s lines=250 file=20261101_171831_lvl35_DIED.txt round 3 vases left 0 killer=PAIL
+2026-11-01 17:21:12 lvl=35 result=DIED round=3 killer=BDANCE dur=295.2s lines=250 file=20261101_172112_lvl35_DIED.txt round 3 vases left 0 killer=BDANCE
+2026-11-01 17:23:09 lvl=35 result=DIED round=3 killer=BDANCE dur=208.9s lines=250 file=20261101_172309_lvl35_DIED.txt round 3 vases left 0 killer=BDANCE
+2026-11-01 17:24:18 lvl=35 result=DIED round=2 killer=FOOT dur=112.4s lines=250 file=20261101_172418_lvl35_DIED.txt round 2 vases left 1 killer=FOOT
+2026-11-01 17:25:50 lvl=35 result=DIED round=2 killer=NORM dur=157.5s lines=250 file=20261101_172550_lvl35_DIED.txt round 2 vases left 0 killer=NORM
+2026-11-01 17:27:42 lvl=35 result=DIED round=3 killer=BDANCE dur=199.7s lines=250 file=20261101_172742_lvl35_DIED.txt round 3 vases left 14 killer=BDANCE
+2026-11-01 17:28:51 lvl=35 result=DIED round=2 killer=FOOT dur=112.4s lines=250 file=20261101_172851_lvl35_DIED.txt round 2 vases left 1 killer=FOOT
+2026-11-01 17:29:16 lvl=35 result=RELOAD round=1 killer=- dur=24.6s lines=78 file=20261101_172916_lvl35_RELOAD.txt
+2026-11-01 17:31:03 lvl=35 result=DIED round=3 killer=BDANCE dur=208.3s lines=250 file=20261101_173103_lvl35_DIED.txt round 3 vases left 0 killer=BDANCE
+2026-11-01 17:32:48 lvl=35 result=DIED round=3 killer=NORM dur=170.6s lines=250 file=20261101_173248_lvl35_DIED.txt round 3 vases left 0 killer=NORM
+2026-11-01 17:33:11 lvl=35 result=RELOAD round=1 killer=- dur=20.5s lines=81 file=20261101_173311_lvl35_RELOAD.txt
+2026-11-01 17:34:37 lvl=35 result=DIED round=3 killer=NORM dur=186.0s lines=250 file=20261101_173437_lvl35_DIED.txt round 3 vases left 0 killer=NORM
+2026-11-01 17:35:31 lvl=35 result=DIED round=2 killer=FOOT dur=81.2s lines=243 file=20261101_173531_lvl35_DIED.txt round 2 vases left 5 killer=FOOT
+2026-11-01 17:35:45 lvl=35 result=RELOAD round=1 killer=- dur=2.2s lines=17 file=20261101_173545_lvl35_RELOAD.txt
+2026-11-01 17:36:50 lvl=35 result=RELOAD round=3 killer=- dur=124.2s lines=250 file=20261101_173650_lvl35_RELOAD.txt
+2026-11-01 17:37:40 lvl=35 result=DIED round=3 killer=BDANCE dur=95.4s lines=247 file=20261101_173740_lvl35_DIED.txt round 3 vases left 0 killer=BDANCE
+2026-11-01 17:38:47 lvl=35 result=RELOAD round=2 killer=- dur=109.1s lines=250 file=20261101_173847_lvl35_RELOAD.txt
+2026-11-01 17:38:54 lvl=35 result=DIED round=1 killer=NORM dur=15.2s lines=27 file=20261101_173854_lvl35_DIED.txt wave 0/20 killer=NORM
+2026-11-01 17:39:38 lvl=35 result=DIED round=2 killer=FOOT dur=66.9s lines=212 file=20261101_173938_lvl35_DIED.txt round 2 vases left 7 killer=FOOT
+2026-11-01 17:40:30 lvl=35 result=RELOAD round=2 killer=- dur=78.6s lines=250 file=20261101_174030_lvl35_RELOAD.txt
+2026-11-01 17:41:03 lvl=35 result=RELOAD round=3 killer=- dur=51.8s lines=176 file=20261101_174103_lvl35_RELOAD.txt
+2026-11-01 17:41:11 lvl=35 result=DIED round=1 killer=BDANCE dur=22.0s lines=43 file=20261101_174111_lvl35_DIED.txt wave 0/20 killer=BDANCE
+2026-11-01 17:42:48 lvl=35 result=DIED round=3 killer=PAIL dur=173.0s lines=250 file=20261101_174248_lvl35_DIED.txt round 3 vases left 0 killer=PAIL
+2026-11-01 17:44:47 lvl=35 result=DIED round=3 killer=BDANCE dur=211.6s lines=250 file=20261101_174447_lvl35_DIED.txt round 3 vases left 0 killer=BDANCE
+2026-11-01 17:46:13 lvl=35 result=DIED round=3 killer=NORM dur=146.2s lines=250 file=20261101_174613_lvl35_DIED.txt round 3 vases left 0 killer=NORM
+2026-11-01 17:48:24 lvl=35 result=DIED round=3 killer=PAIL dur=236.6s lines=250 file=20261101_174824_lvl35_DIED.txt round 3 vases left 0 killer=PAIL
+2026-11-01 17:49:43 lvl=35 result=DIED round=2 killer=NORM dur=132.5s lines=250 file=20261101_174943_lvl35_DIED.txt round 2 vases left 0 killer=NORM
+2026-11-01 17:51:17 lvl=35 result=DIED round=3 killer=BDANCE dur=163.1s lines=250 file=20261101_175117_lvl35_DIED.txt round 3 vases left 0 killer=BDANCE
+2026-11-01 17:52:35 lvl=35 result=DIED round=2 killer=PAIL dur=129.0s lines=250 file=20261101_175235_lvl35_DIED.txt round 2 vases left 0 killer=PAIL
+2026-11-01 17:53:11 lvl=35 result=RELOAD round=2 killer=- dur=47.9s lines=164 file=20261101_175311_lvl35_RELOAD.txt
+2026-11-01 17:53:25 lvl=35 result=DIED round=2 killer=FOOT dur=23.8s lines=61 file=20261101_175325_lvl35_DIED.txt round 2 vases left 0 killer=FOOT
+2026-11-01 17:54:35 lvl=35 result=DIED round=2 killer=NORM dur=114.3s lines=250 file=20261101_175435_lvl35_DIED.txt round 2 vases left 0 killer=NORM
+2026-11-01 17:56:18 lvl=35 result=DIED round=3 killer=PAIL dur=179.9s lines=250 file=20261101_175618_lvl35_DIED.txt round 3 vases left 0 killer=PAIL
+2026-11-01 17:57:58 lvl=35 result=WON round=3 killer=- dur=165.9s lines=250 file=20261101_175758_lvl35_WON.txt vr=3
